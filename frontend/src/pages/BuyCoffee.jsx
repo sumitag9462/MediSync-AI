@@ -137,7 +137,7 @@ const BuyCoffee = () => {
       >
         <h1 className="text-3xl font-bold text-gray-800 mb-4">☕ Buy Us a Coffee</h1>
         <p className="text-gray-600 mb-6">
-          Support <span className="font-semibold text-purple-500">MedWell</span>.
+          Support <span className="font-semibold text-purple-500">MediSync-AI</span>.
         </p>
 
         {/* Payment Type Buttons */}
@@ -243,7 +243,7 @@ const BuyCoffee = () => {
         {paymentStatus === "success" && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-green-600 font-semibold mt-2">✅ Payment successful! Thank you.</motion.p>}
         {paymentStatus === "failed" && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 font-semibold mt-2">❌ Payment failed. Please try again.</motion.p>}
 
-        <p className="text-sm text-gray-500 mt-4">100% of your donation goes to <span className="font-medium">MedWell</span>.</p>
+        <p className="text-sm text-gray-500 mt-4">100% of your donation goes to <span className="font-medium">MediSync-AI</span>.</p>
       </motion.div>
     </div>
   );

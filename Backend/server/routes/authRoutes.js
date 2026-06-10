@@ -64,14 +64,11 @@ router.post('/request-email-otp', async (req, res) => {
         await OTP.create({ email, otp });
 
         await transporter.sendMail({
-            // --- FIX: Changed quotes to backticks ---
-            from: `MedWell <${process.env.EMAIL_USER}>`,
+            from: `MediSync-AI <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: 'Your MedWell Verification Code',
-            // --- FIX: Changed quotes to backticks ---
-            text: `Your OTP for MedWell registration is: ${otp}. It will expire in 5 minutes.`,
-            // --- FIX: Changed quotes to backticks ---
-            html: `<div style="font-family: sans-serif; text-align: center; padding: 20px;"><h2>MedWell Verification</h2><p>Your one-time password is:</p><p style="font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0; background: #f0f0f0; padding: 10px; border-radius: 5px;">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
+            subject: 'Your MediSync-AI Verification Code',
+            text: `Your OTP for MediSync-AI registration is: ${otp}. It will expire in 5 minutes.`,
+            html: `<div style="font-family: sans-serif; text-align: center; padding: 20px;"><h2>MediSync-AI Verification</h2><p>Your one-time password is:</p><p style="font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0; background: #f0f0f0; padding: 10px; border-radius: 5px;">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
         });
 
         res.status(200).json({ message: 'Verification code sent to your email.' });
@@ -152,12 +149,10 @@ router.post('/request-password-reset-otp', async (req, res) => {
         await OTP.create({ email, otp });
 
         await transporter.sendMail({
-            // --- FIX: Changed quotes to backticks ---
-            from: `MedWell <${process.env.EMAIL_USER}>`,
+            from: `MediSync-AI <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: 'Your MedWell Password Reset Code',
-            // --- FIX: Changed quotes to backticks ---
-            html: `<div style="font-family: sans-serif; text-align: center; padding: 20px;"><h2>MedWell Password Reset</h2><p>Your one-time password is:</p><p style="font-size: 24px; font-weight: bold;">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
+            subject: 'Your MediSync-AI Password Reset Code',
+            html: `<div style="font-family: sans-serif; text-align: center; padding: 20px;"><h2>MediSync-AI Password Reset</h2><p>Your one-time password is:</p><p style="font-size: 24px; font-weight: bold;">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
         });
 
         res.status(200).json({ message: 'A verification code has been sent to your email.' });

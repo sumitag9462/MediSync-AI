@@ -17,7 +17,7 @@ const AuthPageLayout = ({ children, title, subtitle, page, linkText }) => {
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center">
                         <Pill size={36} className="text-purple-400" />
-                        <h1 className="text-4xl font-bold ml-2 text-white">MedWell</h1>
+                        <h1 className="text-4xl font-bold ml-2 text-white">MediSync-AI</h1>
                     </div>
                     <h2 className="text-2xl font-bold text-white mt-4">{title}</h2>
                     <p className="text-gray-400">{subtitle}</p>

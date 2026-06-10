@@ -6,7 +6,7 @@ import apiClient from "../../api/apiClient";
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { role: 'model', parts: [{ text: 'Hello! I am your MedWell assistant. How can I help you with your schedules?' }] }
+        { role: 'model', parts: [{ text: 'Hello! I am your MediSync-AI assistant. How can I help you with your schedules?' }] }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -105,7 +105,7 @@ const Chatbot = () => {
                 const riskData = res.data;
                 aiReply = `Your missed dose risk is: ${riskData.risk}. You missed ${riskData.missedNightCount} doses recently at night.`;
             } else {
-                const systemPrompt = `You are MedWell, a helpful AI assistant. User Data: ${JSON.stringify(userData)}`;
+                const systemPrompt = `You are MediSync-AI, a helpful AI assistant. User Data: ${JSON.stringify(userData)}`;
                 const res = await apiClient.post('/chatbot/message', {
                     history: messages,
                     input: currentInput,

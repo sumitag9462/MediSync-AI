@@ -36,7 +36,7 @@ const Sidebar = ({ currentPage, isSidebarOpen, setSidebarOpen }) => {
                             className="flex items-center"
                         >
                             <Pill size={24} className="text-purple-400" />
-                            <span className="text-xl font-bold ml-2 text-white">MedWell</span>
+                            <span className="text-xl font-bold ml-2 text-white">MediSync-AI</span>
                         </motion.div>
                     )}
                 </AnimatePresence>

@@ -18,7 +18,7 @@ router.post('/send', async (req, res) => {
 
   try {
     await client.messages.create({
-      body: `Your MedWell OTP is ${otp}`,
+      body: `Your MediSync-AI OTP is ${otp}`,
       from: process.env.TWILIO_PHONE_NUMBER,
       to: phone
     });

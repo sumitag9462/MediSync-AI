@@ -7,9 +7,9 @@ const features = [
   { icon: '⏰', title: 'Powerful Reminders', description: 'Set precise schedules for any elixir. Receive timely browser or email alerts so you never miss a dose.' },
   { icon: '📝', title: 'Simple Logging', description: 'Effortlessly track taken vs. missed doses with a single click, maintaining a perfect record.' },
   { icon: '📊', title: 'Wellness Dashboard', description: 'Visualize your progress with beautiful charts showing adherence rates, trends, and scores over time.' },
-  { icon: '🔮', title: 'Mystic Predictions', description: 'Our advanced AI predicts when a dose might be forgotten and sends proactive nudges to keep you on track.' },
-  { icon: '📅', title: 'Calendar Sync', description: 'Automatically sync your Grimoire to the Great Sky Calendar (Google Calendar) for a unified view.' },
-  { icon: '✍️', title: 'Natural Language', description: 'Ask questions in plain English, like "When is my next dose?" and get instant answers from the Mystic.' },
+  { icon: '🔮', title: 'AI Predictions', description: 'Our advanced AI predicts when a dose might be forgotten and sends proactive nudges to keep you on track.' },
+  { icon: '📅', title: 'Calendar Sync', description: 'Automatically sync your MediSync-AI schedule to Google Calendar for a unified view.' },
+  { icon: '✍️', title: 'Natural Language', description: 'Ask questions in plain English, like "When is my next dose?" and get instant answers from the MediSync-AI assistant.' },
 ];
 
 function App() {
@@ -49,7 +49,7 @@ function App() {
           transition={{ duration: 0.8, delay: 0.2, type: 'spring' }}
           className="text-6xl md:text-8xl font-serif font-bold text-foreground z-10"
         >
-          Alchemist's Grimoire
+          MediSync-AI
         </motion.h1>
         <motion.p 
           initial={{ y: -30, opacity: 0 }}
@@ -65,9 +65,8 @@ function App() {
           transition={{ duration: 0.5, delay: 0.8 }}
           className="z-10 mt-12"
         >
-          {/* --- THE FIX IS ON THIS LINE --- */}
           <Button size="lg" className="text-lg py-8 px-10 rounded-full shadow-lg shadow-pink-500/50">
-            Enter the Grimoire
+            Get Started
           </Button>
         </motion.div>
       </motion.header>
@@ -108,7 +107,7 @@ function App() {
 
       {/* Footer */}
       <footer className="text-center p-8 border-t">
-        <p className="text-muted-foreground">&copy; 2025 Alchemist's Grimoire. All rights reserved.</p>
+        <p className="text-muted-foreground">&copy; 2025 MediSync-AI. All rights reserved.</p>
       </footer> 
     </div>
   );

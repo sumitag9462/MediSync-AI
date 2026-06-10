@@ -98,7 +98,7 @@ export const googleCalendarApi = {
 
             const event = {
                 'summary': `${schedule.name} - ${schedule.dosage}`,
-                'description': `Medication schedule for ${schedule.name}, managed by MedWell.`,
+                'description': `Medication schedule for ${schedule.name}, managed by MediSync-AI.`,
                 'start': {
                     'dateTime': eventDateTime.toISOString(),
                     'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone,

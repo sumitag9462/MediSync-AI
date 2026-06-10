@@ -1,7 +1,7 @@
 {
-  "name": "medwell-backend",
+  "name": "medisync-ai-backend",
   "version": "1.0.0",
-  "description": "Backend for the MedWell application",
+  "description": "Backend for the MediSync-AI application",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -114,7 +114,7 @@ const LandingPage = () => {
         <header className="container mx-auto px-6 py-5 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Pill size={28} className="text-purple-400" />
-            <h1 className="text-2xl font-bold">MedWell</h1>
+            <h1 className="text-2xl font-bold">MediSync-AI</h1>
           </div>
           <nav className="space-x-6 flex items-center">
             <a href="#features" className="hover:text-purple-400 transition">
@@ -152,7 +152,7 @@ const LandingPage = () => {
             </h2>
             <p className="mt-4 text-gray-400 text-lg max-w-xl">
               Never miss a dose again. Track your medications, monitor your health, and achieve your wellness goals
-              with MedWell.
+              with MediSync-AI.
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -172,7 +172,7 @@ const LandingPage = () => {
           >
             <motion.img
               src={heroImg}
-              alt="MedWell Illustration"
+              alt="MediSync-AI Illustration"
               className="w-full max-w-md mx-auto drop-shadow-[0_0_25px_rgba(168,85,247,0.3)] rounded-2xl"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
@@ -182,7 +182,7 @@ const LandingPage = () => {
 
         {/* Features Section */}
         <section id="features" className="py-20 container mx-auto px-6">
-          <h3 className="text-4xl font-bold mb-12 text-center">Why You'll Love MedWell</h3>
+          <h3 className="text-4xl font-bold mb-12 text-center">Why You'll Love MediSync-AI</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <FeatureCard index={0} icon={<Clock size={32} />} title="Powerful Reminders">
               Customizable alerts for every dose, ensuring you stay on track with your schedule.
@@ -269,7 +269,7 @@ const LandingPage = () => {
           <div className="flex flex-col items-center md:items-start">
             <h4 className="text-2xl font-bold text-purple-200 mb-2">Support Us</h4>
             <p className="text-gray-300 max-w-md text-center md:text-left">
-              If you love MedWell and want to help us grow, consider sharing with friends, giving us feedback, or
+              If you love MediSync-AI and want to help us grow, consider sharing with friends, giving us feedback, or
               supporting us below!
             </p>
           </div>
@@ -290,7 +290,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="text-center text-gray-500 text-xs mt-8">
-          &copy; {new Date().getFullYear()} MedWell. All rights reserved.
+          &copy; {new Date().getFullYear()} MediSync-AI. All rights reserved.
         </div>
       </footer>
     </>
