@@ -1,0 +1,1050 @@
+[
+  {
+    "id": "atorvastatin",
+    "name": "Atorvastatin",
+    "brand": "Lipitor",
+    "info": {
+      "purpose": "Lowers cholesterol and triglyceride levels.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause muscle pain; monitor liver function.",
+      "sideEffects": "Headache, muscle pain, nausea."
+    }
+  },
+  {
+    "id": "metformin",
+    "name": "Metformin",
+    "brand": "Glucophage",
+    "info": {
+      "purpose": "Controls high blood sugar in type 2 diabetes.",
+      "usage": "Take orally with meals.",
+      "warnings": "Monitor kidney function; risk of lactic acidosis.",
+      "sideEffects": "Nausea, diarrhea, stomach upset."
+    }
+  },
+  {
+    "id": "levothyroxine",
+    "name": "Levothyroxine",
+    "brand": "Synthroid",
+    "info": {
+      "purpose": "Treats hypothyroidism (underactive thyroid).",
+      "usage": "Take orally on an empty stomach, 30 minutes before breakfast.",
+      "warnings": "May interact with certain medications; monitor thyroid levels.",
+      "sideEffects": "Hair loss, weight loss, increased appetite."
+    }
+  },
+  {
+    "id": "lisinopril",
+    "name": "Lisinopril",
+    "brand": "Prinivil",
+    "info": {
+      "purpose": "Treats high blood pressure and heart failure.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause dizziness; monitor blood pressure.",
+      "sideEffects": "Cough, dizziness, headache."
+    }
+  },
+  {
+    "id": "amlodipine",
+    "name": "Amlodipine",
+    "brand": "Norvasc",
+    "info": {
+      "purpose": "Treats high blood pressure and chest pain.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause swelling; monitor blood pressure.",
+      "sideEffects": "Swelling of ankles/feet, dizziness, palpitations."
+    }
+  },
+  {
+    "id": "metoprolol",
+    "name": "Metoprolol",
+    "brand": "Lopressor",
+    "info": {
+      "purpose": "Treats high blood pressure and chest pain.",
+      "usage": "Take orally once or twice daily.",
+      "warnings": "May cause dizziness; monitor heart rate.",
+      "sideEffects": "Fatigue, dizziness, depression."
+    }
+  },
+  {
+    "id": "albuterol",
+    "name": "Albuterol",
+    "brand": "ProAir",
+    "info": {
+      "purpose": "Relieves bronchospasm in asthma and COPD.",
+      "usage": "Inhale as needed for shortness of breath.",
+      "warnings": "Overuse may lead to decreased effectiveness.",
+      "sideEffects": "Tremors, nervousness, palpitations."
+    }
+  },
+  {
+    "id": "losartan",
+    "name": "Losartan",
+    "brand": "Cozaar",
+    "info": {
+      "purpose": "Treats high blood pressure and protects kidneys.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause dizziness; monitor blood pressure.",
+      "sideEffects": "Dizziness, back pain, cold-like symptoms."
+    }
+  },
+  {
+    "id": "gabapentin",
+    "name": "Gabapentin",
+    "brand": "Neurontin",
+    "info": {
+      "purpose": "Treats nerve pain and seizures.",
+      "usage": "Take orally three times daily.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Dizziness, fatigue, swelling."
+    }
+  },
+  {
+    "id": "hydrochlorothiazide",
+    "name": "Hydrochlorothiazide",
+    "brand": "Microzide",
+    "info": {
+      "purpose": "Treats high blood pressure and fluid retention.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause dehydration; monitor electrolytes.",
+      "sideEffects": "Dizziness, headache, increased urination."
+    }
+  },
+  {
+    "id": "sertraline",
+    "name": "Sertraline",
+    "brand": "Zoloft",
+    "info": {
+      "purpose": "Treats depression, anxiety, and PTSD.",
+      "usage": "Take orally once daily.",
+      "warnings": "May increase suicidal thoughts in young adults.",
+      "sideEffects": "Nausea, insomnia, sexual dysfunction."
+    }
+  },
+  {
+    "id": "furosemide",
+    "name": "Furosemide",
+    "brand": "Lasix",
+    "info": {
+      "purpose": "Treats fluid retention and high blood pressure.",
+      "usage": "Take orally once or twice daily.",
+      "warnings": "May cause dehydration; monitor electrolytes.",
+      "sideEffects": "Dizziness, dehydration, low blood pressure."
+    }
+  },
+  {
+    "id": "omeprazole",
+    "name": "Omeprazole",
+    "brand": "Prilosec",
+    "info": {
+      "purpose": "Treats acid reflux and stomach ulcers.",
+      "usage": "Take orally before meals.",
+      "warnings": "Long-term use may increase risk of bone fractures.",
+      "sideEffects": "Headache, stomach pain, nausea."
+    }
+  },
+  {
+    "id": "simvastatin",
+    "name": "Simvastatin",
+    "brand": "Zocor",
+    "info": {
+      "purpose": "Lowers cholesterol and triglyceride levels.",
+      "usage": "Take orally once daily in the evening.",
+      "warnings": "May cause muscle pain; monitor liver function.",
+      "sideEffects": "Headache, muscle pain, nausea."
+    }
+  },
+  {
+    "id": "acetaminophen",
+    "name": "Acetaminophen",
+    "brand": "Tylenol",
+    "info": {
+      "purpose": "Relieves mild to moderate pain and reduces fever.",
+      "usage": "Take orally every 4-6 hours as needed.",
+      "warnings": "Do not exceed recommended dose; may cause liver damage.",
+      "sideEffects": "Nausea, stomach pain, loss of appetite."
+    }
+  },
+  {
+    "id": "amlodipine-benazepril",
+    "name": "Amlodipine-Benazepril",
+    "brand": "Lotrel",
+    "info": {
+      "purpose": "Treats high blood pressure.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause dizziness; monitor blood pressure.",
+      "sideEffects": "Cough, dizziness, headache."
+    }
+  },
+  {
+    "id": "clopidogrel",
+    "name": "Clopidogrel",
+    "brand": "Plavix",
+    "info": {
+      "purpose": "Prevents blood clots in heart disease.",
+      "usage": "Take orally once daily.",
+      "warnings": "May increase bleeding risk; monitor platelet count.",
+      "sideEffects": "Bleeding, bruising, abdominal pain."
+    }
+  },
+  {
+    "id": "prednisone",
+    "name": "Prednisone",
+    "brand": "Deltasone",
+    "info": {
+      "purpose": "Treats inflammation and immune system disorders.",
+      "usage": "Take orally once daily or as directed.",
+      "warnings": "May cause weight gain; monitor blood sugar.",
+      "sideEffects": "Weight gain, mood changes, increased appetite."
+    }
+  },
+  {
+    "id": "tramadol",
+    "name": "Tramadol",
+    "brand": "Ultram",
+    "info": {
+      "purpose": "Treats moderate to severe pain.",
+      "usage": "Take orally every 4-6 hours as needed.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Dizziness, nausea, constipation."
+    }
+  },
+  {
+    "id": "tamsulosin",
+    "name": "Tamsulosin",
+    "brand": "Flomax",
+    "info": {
+      "purpose": "Treats symptoms of an enlarged prostate.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause dizziness; rise slowly from sitting.",
+      "sideEffects": "Dizziness, headache, runny nose."
+    }
+  },
+  {
+    "id": "losartan-hydrochlorothiazide",
+    "name": "Losartan-Hydrochlorothiazide",
+    "brand": "Hyzaar",
+    "info": {
+      "purpose": "Treats high blood pressure.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause dehydration; monitor electrolytes.",
+      "sideEffects": "Dizziness, headache, fatigue."
+    }
+  },
+  {
+    "id": "gabapentin-pregabalin",
+    "name": "Gabapentin-Pregabalin",
+    "brand": "Lyrica",
+    "info": {
+      "purpose": "Treats nerve pain and seizures.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Dizziness, fatigue, swelling."
+    }
+  },
+  {
+    "id": "fentanyl",
+    "name": "Fentanyl",
+    "brand": "Duragesic",
+    "info": {
+      "purpose": "Treats severe pain.",
+      "usage": "Apply patch to skin as directed.",
+      "warnings": "High potential for abuse; monitor closely.",
+      "sideEffects": "Drowsiness, constipation, nausea."
+    }
+  },
+  {
+    "id": "diazepam",
+    "name": "Diazepam",
+    "brand": "Valium",
+    "info": {
+      "purpose": "Treats anxiety and muscle spasms.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Drowsiness, dizziness, tiredness."
+    }
+  },
+    {
+    "id": "pantoprazole",
+    "name": "Pantoprazole",
+    "brand": "Protonix",
+    "info": {
+      "purpose": "Treats GERD and acid-related disorders.",
+      "usage": "Take orally once daily before meals.",
+      "warnings": "Long-term use may cause vitamin B12 deficiency.",
+      "sideEffects": "Headache, diarrhea, nausea."
+    }
+  },
+  {
+    "id": "montelukast",
+    "name": "Montelukast",
+    "brand": "Singulair",
+    "info": {
+      "purpose": "Prevents asthma attacks and allergies.",
+      "usage": "Take orally once daily in the evening.",
+      "warnings": "May cause mood changes; monitor behavior.",
+      "sideEffects": "Headache, stomach pain, dizziness."
+    }
+  },
+  {
+    "id": "rosuvastatin",
+    "name": "Rosuvastatin",
+    "brand": "Crestor",
+    "info": {
+      "purpose": "Lowers cholesterol and triglycerides.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause muscle pain; monitor liver function.",
+      "sideEffects": "Headache, nausea, muscle pain."
+    }
+  },
+  {
+    "id": "venlafaxine",
+    "name": "Venlafaxine",
+    "brand": "Effexor",
+    "info": {
+      "purpose": "Treats depression and anxiety disorders.",
+      "usage": "Take orally once or twice daily with food.",
+      "warnings": "May increase suicidal thoughts in young adults.",
+      "sideEffects": "Nausea, dizziness, insomnia."
+    }
+  },
+  {
+    "id": "warfarin",
+    "name": "Warfarin",
+    "brand": "Coumadin",
+    "info": {
+      "purpose": "Prevents blood clots.",
+      "usage": "Take orally once daily at the same time.",
+      "warnings": "Monitor INR regularly; risk of bleeding.",
+      "sideEffects": "Bleeding, bruising, nausea."
+    }
+  },
+  {
+    "id": "clonazepam",
+    "name": "Clonazepam",
+    "brand": "Klonopin",
+    "info": {
+      "purpose": "Treats seizures and panic disorders.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Drowsiness, dizziness, coordination problems."
+    }
+  },
+  {
+    "id": "ibuprofen",
+    "name": "Ibuprofen",
+    "brand": "Advil",
+    "info": {
+      "purpose": "Relieves pain, inflammation, and fever.",
+      "usage": "Take orally every 6-8 hours as needed.",
+      "warnings": "Do not exceed recommended dose; risk of stomach bleeding.",
+      "sideEffects": "Nausea, heartburn, dizziness."
+    }
+  },
+  {
+    "id": "escitalopram",
+    "name": "Escitalopram",
+    "brand": "Lexapro",
+    "info": {
+      "purpose": "Treats depression and anxiety.",
+      "usage": "Take orally once daily.",
+      "warnings": "May increase suicidal thoughts in young adults.",
+      "sideEffects": "Nausea, insomnia, fatigue."
+    }
+  },
+  {
+    "id": "alprazolam",
+    "name": "Alprazolam",
+    "brand": "Xanax",
+    "info": {
+      "purpose": "Treats anxiety and panic disorders.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Drowsiness, dizziness, fatigue."
+    }
+  },
+  {
+    "id": "duloxetine",
+    "name": "Duloxetine",
+    "brand": "Cymbalta",
+    "info": {
+      "purpose": "Treats depression, anxiety, and nerve pain.",
+      "usage": "Take orally once daily.",
+      "warnings": "May increase suicidal thoughts in young adults.",
+      "sideEffects": "Nausea, dry mouth, drowsiness."
+    }
+  },
+  {
+    "id": "allopurinol",
+    "name": "Allopurinol",
+    "brand": "Zyloprim",
+    "info": {
+      "purpose": "Prevents gout attacks.",
+      "usage": "Take orally once daily after meals.",
+      "warnings": "May cause rash; monitor liver function.",
+      "sideEffects": "Rash, nausea, diarrhea."
+    }
+  },
+  {
+    "id": "omeprazole-sodium-bicarbonate",
+    "name": "Omeprazole-Sodium Bicarbonate",
+    "brand": "Zegerid",
+    "info": {
+      "purpose": "Treats GERD and acid-related disorders.",
+      "usage": "Take orally once daily before meals.",
+      "warnings": "Long-term use may cause vitamin B12 deficiency.",
+      "sideEffects": "Headache, diarrhea, nausea."
+    }
+  },
+  {
+    "id": "cephalexin",
+    "name": "Cephalexin",
+    "brand": "Keflex",
+    "info": {
+      "purpose": "Treats bacterial infections.",
+      "usage": "Take orally every 6-12 hours as prescribed.",
+      "warnings": "Complete full course of treatment.",
+      "sideEffects": "Nausea, vomiting, diarrhea."
+    }
+  },
+  {
+    "id": "ciprofloxacin",
+    "name": "Ciprofloxacin",
+    "brand": "Cipro",
+    "info": {
+      "purpose": "Treats bacterial infections.",
+      "usage": "Take orally every 12 hours as prescribed.",
+      "warnings": "May cause tendon rupture; avoid sunlight.",
+      "sideEffects": "Nausea, diarrhea, dizziness."
+    }
+  },
+  {
+    "id": "prednisolone",
+    "name": "Prednisolone",
+    "brand": "Prednisolone",
+    "info": {
+      "purpose": "Treats inflammation and immune disorders.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May increase blood sugar; taper dose gradually.",
+      "sideEffects": "Weight gain, mood swings, fluid retention."
+    }
+  },
+  {
+    "id": "levetiracetam",
+    "name": "Levetiracetam",
+    "brand": "Keppra",
+    "info": {
+      "purpose": "Treats seizures.",
+      "usage": "Take orally twice daily.",
+      "warnings": "May cause dizziness or drowsiness.",
+      "sideEffects": "Drowsiness, weakness, coordination problems."
+    }
+  },
+  {
+    "id": "sildenafil",
+    "name": "Sildenafil",
+    "brand": "Viagra",
+    "info": {
+      "purpose": "Treats erectile dysfunction.",
+      "usage": "Take orally as needed before sexual activity.",
+      "warnings": "Do not take with nitrates; may cause low blood pressure.",
+      "sideEffects": "Headache, flushing, upset stomach."
+    }
+  },
+  {
+    "id": "metformin",
+    "name": "Metformin",
+    "brand": "Glucophage",
+    "info": {
+      "purpose": "Treats type 2 diabetes.",
+      "usage": "Take orally with meals.",
+      "warnings": "Monitor kidney function; may cause lactic acidosis.",
+      "sideEffects": "Nausea, diarrhea, stomach upset."
+    }
+  },
+  {
+    "id": "atorvastatin",
+    "name": "Atorvastatin",
+    "brand": "Lipitor",
+    "info": {
+      "purpose": "Lowers cholesterol and triglycerides.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause liver problems; avoid grapefruit.",
+      "sideEffects": "Muscle pain, headache, nausea."
+    }
+  },
+  {
+    "id": "levothyroxine",
+    "name": "Levothyroxine",
+    "brand": "Synthroid",
+    "info": {
+      "purpose": "Treats hypothyroidism.",
+      "usage": "Take orally on an empty stomach.",
+      "warnings": "Do not switch brands without doctor approval.",
+      "sideEffects": "Hair loss, palpitations, insomnia."
+    }
+  },
+  {
+    "id": "lisinopril",
+    "name": "Lisinopril",
+    "brand": "Prinivil",
+    "info": {
+      "purpose": "Treats high blood pressure and heart failure.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause dizziness; monitor kidney function.",
+      "sideEffects": "Cough, headache, dizziness."
+    }
+  },
+  {
+    "id": "amlodipine",
+    "name": "Amlodipine",
+    "brand": "Norvasc",
+    "info": {
+      "purpose": "Treats high blood pressure and angina.",
+      "usage": "Take orally once daily.",
+      "warnings": "Monitor blood pressure; avoid sudden dose changes.",
+      "sideEffects": "Swelling, fatigue, dizziness."
+    }
+  },
+  {
+    "id": "simvastatin",
+    "name": "Simvastatin",
+    "brand": "Zocor",
+    "info": {
+      "purpose": "Lowers cholesterol and triglycerides.",
+      "usage": "Take orally once daily in the evening.",
+      "warnings": "May cause muscle pain; avoid grapefruit.",
+      "sideEffects": "Headache, nausea, abdominal pain."
+    }
+  },
+  {
+    "id": "hydrochlorothiazide",
+    "name": "Hydrochlorothiazide",
+    "brand": "Microzide",
+    "info": {
+      "purpose": "Treats high blood pressure and edema.",
+      "usage": "Take orally once daily.",
+      "warnings": "Monitor electrolytes; may increase uric acid.",
+      "sideEffects": "Dizziness, dehydration, low potassium."
+    }
+  },
+  {
+    "id": "furosemide",
+    "name": "Furosemide",
+    "brand": "Lasix",
+    "info": {
+      "purpose": "Treats edema and high blood pressure.",
+      "usage": "Take orally or IV as prescribed.",
+      "warnings": "Monitor electrolytes and kidney function.",
+      "sideEffects": "Dehydration, low potassium, dizziness."
+    }
+  },
+  {
+    "id": "gabapentin",
+    "name": "Gabapentin",
+    "brand": "Neurontin",
+    "info": {
+      "purpose": "Treats nerve pain and seizures.",
+      "usage": "Take orally 2-3 times daily.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Dizziness, fatigue, tremor."
+    }
+  },
+  {
+    "id": "alprazolam",
+    "name": "Alprazolam",
+    "brand": "Xanax",
+    "info": {
+      "purpose": "Treats anxiety and panic disorders.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause dependence; avoid alcohol.",
+      "sideEffects": "Drowsiness, dizziness, coordination issues."
+    }
+  },
+  {
+    "id": "zolpidem",
+    "name": "Zolpidem",
+    "brand": "Ambien",
+    "info": {
+      "purpose": "Treats insomnia.",
+      "usage": "Take orally before bedtime.",
+      "warnings": "May cause drowsiness; avoid alcohol.",
+      "sideEffects": "Dizziness, headache, sleepwalking."
+    }
+  },
+  {
+    "id": "sertraline",
+    "name": "Sertraline",
+    "brand": "Zoloft",
+    "info": {
+      "purpose": "Treats depression and anxiety.",
+      "usage": "Take orally once daily.",
+      "warnings": "May increase suicidal thoughts in young adults.",
+      "sideEffects": "Nausea, diarrhea, insomnia."
+    }
+  },
+  {
+    "id": "clopidogrel",
+    "name": "Clopidogrel",
+    "brand": "Plavix",
+    "info": {
+      "purpose": "Prevents blood clots.",
+      "usage": "Take orally once daily.",
+      "warnings": "Risk of bleeding; inform doctor before surgery.",
+      "sideEffects": "Bruising, bleeding, nausea."
+    }
+  },
+  {
+    "id": "tramadol",
+    "name": "Tramadol",
+    "brand": "Ultram",
+    "info": {
+      "purpose": "Treats moderate to severe pain.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause dependence; avoid alcohol.",
+      "sideEffects": "Dizziness, nausea, constipation."
+    }
+  },
+  {
+    "id": "prednisone",
+    "name": "Prednisone",
+    "brand": "Prednisone",
+    "info": {
+      "purpose": "Treats inflammation and immune disorders.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "Do not stop suddenly; monitor blood sugar.",
+      "sideEffects": "Weight gain, mood swings, fluid retention."
+    }
+  },
+  {
+    "id": "clindamycin",
+    "name": "Clindamycin",
+    "brand": "Cleocin",
+    "info": {
+      "purpose": "Treats bacterial infections.",
+      "usage": "Take orally or IV as prescribed.",
+      "warnings": "Complete full course; risk of C. difficile infection.",
+      "sideEffects": "Diarrhea, nausea, rash."
+    }
+  },
+  {
+    "id": "azithromycin",
+    "name": "Azithromycin",
+    "brand": "Zithromax",
+    "info": {
+      "purpose": "Treats bacterial infections.",
+      "usage": "Take orally once daily.",
+      "warnings": "Do not skip doses; risk of liver problems.",
+      "sideEffects": "Nausea, diarrhea, abdominal pain."
+    }
+  },
+  {
+    "id": "levothyroxine",
+    "name": "Levothyroxine",
+    "brand": "Synthroid",
+    "info": {
+      "purpose": "Treats hypothyroidism.",
+      "usage": "Take orally on an empty stomach.",
+      "warnings": "Do not switch brands without doctor approval.",
+      "sideEffects": "Hair loss, palpitations, insomnia."
+    }
+  },
+  {
+    "id": "doxycycline",
+    "name": "Doxycycline",
+    "brand": "Vibramycin",
+    "info": {
+      "purpose": "Treats bacterial infections.",
+      "usage": "Take orally once or twice daily.",
+      "warnings": "Avoid sunlight; complete full course.",
+      "sideEffects": "Nausea, diarrhea, photosensitivity."
+    }
+  },
+  {
+    "id": "naproxen",
+    "name": "Naproxen",
+    "brand": "Aleve",
+    "info": {
+      "purpose": "Relieves pain, inflammation, and fever.",
+      "usage": "Take orally every 8-12 hours as needed.",
+      "warnings": "Do not exceed recommended dose; risk of stomach bleeding.",
+      "sideEffects": "Nausea, heartburn, dizziness."
+    }
+  },
+  {
+    "id": "levetiracetam",
+    "name": "Levetiracetam",
+    "brand": "Keppra",
+    "info": {
+      "purpose": "Treats seizures.",
+      "usage": "Take orally twice daily.",
+      "warnings": "May cause dizziness or drowsiness.",
+      "sideEffects": "Drowsiness, weakness, coordination problems."
+    }
+  },
+  {
+    "id": "lansoprazole",
+    "name": "Lansoprazole",
+    "brand": "Prevacid",
+    "info": {
+      "purpose": "Treats GERD and acid-related disorders.",
+      "usage": "Take orally once daily before meals.",
+      "warnings": "Long-term use may cause vitamin B12 deficiency.",
+      "sideEffects": "Headache, diarrhea, nausea."
+    }
+  },
+  {
+    "id": "omeprazole",
+    "name": "Omeprazole",
+    "brand": "Prilosec",
+    "info": {
+      "purpose": "Treats GERD and acid-related disorders.",
+      "usage": "Take orally once daily before meals.",
+      "warnings": "Long-term use may cause vitamin B12 deficiency.",
+      "sideEffects": "Headache, nausea, abdominal pain."
+    }
+  },
+  {
+    "id": "pantoprazole",
+    "name": "Pantoprazole",
+    "brand": "Protonix",
+    "info": {
+      "purpose": "Treats GERD and ulcers.",
+      "usage": "Take orally once daily.",
+      "warnings": "Monitor for low magnesium with long-term use.",
+      "sideEffects": "Headache, diarrhea, dizziness."
+    }
+  },
+  {
+    "id": "ranitidine",
+    "name": "Ranitidine",
+    "brand": "Zantac",
+    "info": {
+      "purpose": "Treats heartburn and ulcers.",
+      "usage": "Take orally before meals.",
+      "warnings": "Check for recalls; some formulations withdrawn.",
+      "sideEffects": "Headache, nausea, constipation."
+    }
+  },
+  {
+    "id": "albuterol",
+    "name": "Albuterol",
+    "brand": "Ventolin",
+    "info": {
+      "purpose": "Relieves bronchospasm in asthma and COPD.",
+      "usage": "Inhale via inhaler as needed.",
+      "warnings": "Avoid overuse; may increase heart rate.",
+      "sideEffects": "Tremor, nervousness, palpitations."
+    }
+  },
+  {
+    "id": "fluticasone",
+    "name": "Fluticasone",
+    "brand": "Flonase",
+    "info": {
+      "purpose": "Treats nasal allergy symptoms.",
+      "usage": "Use nasal spray once or twice daily.",
+      "warnings": "Do not exceed recommended dose.",
+      "sideEffects": "Nasal irritation, headache, nosebleeds."
+    }
+  },
+  {
+    "id": "montelukast",
+    "name": "Montelukast",
+    "brand": "Singulair",
+    "info": {
+      "purpose": "Prevents asthma attacks and allergies.",
+      "usage": "Take orally once daily in the evening.",
+      "warnings": "Monitor mood changes.",
+      "sideEffects": "Headache, abdominal pain, cough."
+    }
+  },
+  {
+    "id": "warfarin",
+    "name": "Warfarin",
+    "brand": "Coumadin",
+    "info": {
+      "purpose": "Prevents blood clots.",
+      "usage": "Take orally once daily.",
+      "warnings": "Monitor INR; risk of bleeding.",
+      "sideEffects": "Bleeding, bruising, nausea."
+    }
+  },
+  {
+    "id": "heparin",
+    "name": "Heparin",
+    "brand": "Heparin",
+    "info": {
+      "purpose": "Prevents and treats blood clots.",
+      "usage": "Administer via injection as prescribed.",
+      "warnings": "Monitor for bleeding; follow dosing carefully.",
+      "sideEffects": "Bleeding, thrombocytopenia, injection site reactions."
+    }
+  },
+  {
+    "id": "insulin",
+    "name": "Insulin",
+    "brand": "Humulin",
+    "info": {
+      "purpose": "Treats diabetes by controlling blood sugar.",
+      "usage": "Inject subcutaneously as prescribed.",
+      "warnings": "Monitor blood sugar; risk of hypoglycemia.",
+      "sideEffects": "Low blood sugar, injection site reactions."
+    }
+  },
+  {
+    "id": "glipizide",
+    "name": "Glipizide",
+    "brand": "Glucotrol",
+    "info": {
+      "purpose": "Treats type 2 diabetes.",
+      "usage": "Take orally 30 minutes before meals.",
+      "warnings": "Monitor blood sugar; risk of hypoglycemia.",
+      "sideEffects": "Nausea, dizziness, low blood sugar."
+    }
+  },
+  {
+    "id": "pioglitazone",
+    "name": "Pioglitazone",
+    "brand": "Actos",
+    "info": {
+      "purpose": "Treats type 2 diabetes.",
+      "usage": "Take orally once daily.",
+      "warnings": "May cause fluid retention; monitor liver.",
+      "sideEffects": "Weight gain, edema, fatigue."
+    }
+  },
+  {
+    "id": "ciprofloxacin",
+    "name": "Ciprofloxacin",
+    "brand": "Cipro",
+    "info": {
+      "purpose": "Treats bacterial infections.",
+      "usage": "Take orally or IV as prescribed.",
+      "warnings": "Avoid sunlight; risk of tendon rupture.",
+      "sideEffects": "Nausea, diarrhea, dizziness."
+    }
+  },
+  {
+    "id": "amoxicillin",
+    "name": "Amoxicillin",
+    "brand": "Amoxil",
+    "info": {
+      "purpose": "Treats bacterial infections.",
+      "usage": "Take orally every 8-12 hours.",
+      "warnings": "Complete full course; allergy risk.",
+      "sideEffects": "Rash, diarrhea, nausea."
+    }
+  },
+  {
+    "id": "prednisolone",
+    "name": "Prednisolone",
+    "brand": "Prednisolone",
+    "info": {
+      "purpose": "Treats inflammation and immune disorders.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "Do not stop abruptly; monitor blood sugar.",
+      "sideEffects": "Mood changes, fluid retention, weight gain."
+    }
+  },
+  {
+    "id": "methotrexate",
+    "name": "Methotrexate",
+    "brand": "Trexall",
+    "info": {
+      "purpose": "Treats cancer, rheumatoid arthritis, psoriasis.",
+      "usage": "Take orally or via injection as prescribed.",
+      "warnings": "Monitor liver and kidney function.",
+      "sideEffects": "Nausea, fatigue, mouth sores."
+    }
+  },
+  {
+    "id": "etanercept",
+    "name": "Etanercept",
+    "brand": "Enbrel",
+    "info": {
+      "purpose": "Treats autoimmune disorders like rheumatoid arthritis.",
+      "usage": "Inject subcutaneously as prescribed.",
+      "warnings": "Monitor for infections.",
+      "sideEffects": "Injection site reactions, headache, infections."
+    }
+  },
+  {
+    "id": "adalimumab",
+    "name": "Adalimumab",
+    "brand": "Humira",
+    "info": {
+      "purpose": "Treats autoimmune disorders.",
+      "usage": "Inject subcutaneously as prescribed.",
+      "warnings": "Monitor for infections.",
+      "sideEffects": "Injection site reactions, headache, nausea."
+    }
+  },
+  {
+    "id": "etanercept",
+    "name": "Etanercept",
+    "brand": "Enbrel",
+    "info": {
+      "purpose": "Treats rheumatoid arthritis and psoriasis.",
+      "usage": "Inject subcutaneously as prescribed.",
+      "warnings": "Avoid live vaccines; monitor infections.",
+      "sideEffects": "Injection site pain, headache, fatigue."
+    }
+  },
+  {
+    "id": "tiotropium",
+    "name": "Tiotropium",
+    "brand": "Spiriva",
+    "info": {
+      "purpose": "Treats COPD and asthma.",
+      "usage": "Inhale via inhaler once daily.",
+      "warnings": "Avoid swallowing capsules; not for acute attacks.",
+      "sideEffects": "Dry mouth, constipation, urinary retention."
+    }
+  },
+  {
+    "id": "salbutamol",
+    "name": "Salbutamol",
+    "brand": "Ventolin",
+    "info": {
+      "purpose": "Relieves bronchospasm.",
+      "usage": "Inhale via inhaler as needed.",
+      "warnings": "Monitor heart rate; avoid overuse.",
+      "sideEffects": "Tremor, nervousness, palpitations."
+    }
+  },
+  {
+    "id": "hydrocortisone",
+    "name": "Hydrocortisone",
+    "brand": "Cortef",
+    "info": {
+      "purpose": "Treats inflammation and adrenal insufficiency.",
+      "usage": "Take orally or topically as prescribed.",
+      "warnings": "Do not stop suddenly; monitor blood pressure.",
+      "sideEffects": "Weight gain, mood swings, fluid retention."
+    }
+  },
+  {
+    "id": "dexamethasone",
+    "name": "Dexamethasone",
+    "brand": "Decadron",
+    "info": {
+      "purpose": "Treats inflammation, allergies, and autoimmune disorders.",
+      "usage": "Take orally or via injection as prescribed.",
+      "warnings": "Do not stop suddenly; monitor blood sugar.",
+      "sideEffects": "Insomnia, weight gain, increased appetite."
+    }
+  },
+  {
+    "id": "bisoprolol",
+    "name": "Bisoprolol",
+    "brand": "Zebeta",
+    "info": {
+      "purpose": "Treats high blood pressure and heart failure.",
+      "usage": "Take orally once daily.",
+      "warnings": "Do not stop abruptly; monitor heart rate.",
+      "sideEffects": "Fatigue, dizziness, cold extremities."
+    }
+  },
+  {
+    "id": "carvedilol",
+    "name": "Carvedilol",
+    "brand": "Coreg",
+    "info": {
+      "purpose": "Treats high blood pressure and heart failure.",
+      "usage": "Take orally twice daily.",
+      "warnings": "Monitor heart rate and blood pressure.",
+      "sideEffects": "Dizziness, fatigue, low blood pressure."
+    }
+  },
+  {
+    "id": "propranolol",
+    "name": "Propranolol",
+    "brand": "Inderal",
+    "info": {
+      "purpose": "Treats high blood pressure, arrhythmias, and anxiety.",
+      "usage": "Take orally 2-3 times daily.",
+      "warnings": "Do not stop suddenly; monitor heart rate.",
+      "sideEffects": "Dizziness, fatigue, nausea."
+    }
+  },
+  {
+    "id": "clonazepam",
+    "name": "Clonazepam",
+    "brand": "Klonopin",
+    "info": {
+      "purpose": "Treats seizures and panic disorders.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause dependence; avoid alcohol.",
+      "sideEffects": "Drowsiness, dizziness, coordination problems."
+    }
+  },
+  {
+    "id": "diazepam",
+    "name": "Diazepam",
+    "brand": "Valium",
+    "info": {
+      "purpose": "Treats anxiety, muscle spasms, and seizures.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "May cause dependence; avoid alcohol.",
+      "sideEffects": "Drowsiness, fatigue, confusion."
+    }
+  },
+  {
+    "id": "fentanyl",
+    "name": "Fentanyl",
+    "brand": "Duragesic",
+    "info": {
+      "purpose": "Treats severe pain.",
+      "usage": "Administer via patch, injection, or lozenge as prescribed.",
+      "warnings": "High risk of addiction and overdose.",
+      "sideEffects": "Respiratory depression, drowsiness, nausea."
+    }
+  },
+  {
+    "id": "oxycodone",
+    "name": "Oxycodone",
+    "brand": "OxyContin",
+    "info": {
+      "purpose": "Treats moderate to severe pain.",
+      "usage": "Take orally as prescribed.",
+      "warnings": "Risk of addiction; avoid alcohol.",
+      "sideEffects": "Drowsiness, constipation, nausea."
+    }
+  },
+  {
+    "id": "acetaminophen",
+    "name": "Acetaminophen",
+    "brand": "Tylenol",
+    "info": {
+      "purpose": "Relieves pain and fever.",
+      "usage": "Take orally as needed.",
+      "warnings": "Do not exceed recommended dose; monitor liver function.",
+      "sideEffects": "Rarely rash, nausea, liver damage if overdosed."
+    }
+  },
+  {
+    "id": "ibuprofen",
+    "name": "Ibuprofen",
+    "brand": "Advil",
+    "info": {
+      "purpose": "Relieves pain, inflammation, and fever.",
+      "usage": "Take orally every 6-8 hours as needed.",
+      "warnings": "Avoid in stomach ulcers; monitor kidney function.",
+      "sideEffects": "Nausea, heartburn, dizziness."
+    }
+  },
+  {
+    "id": "naproxen",
+    "name": "Naproxen",
+    "brand": "Aleve",
+    "info": {
+      "purpose": "Relieves pain and inflammation.",
+      "usage": "Take orally every 8-12 hours as needed.",
+      "warnings": "Avoid in stomach ulcers; may increase bleeding risk.",
+      "sideEffects": "Nausea, dizziness, heartburn."
+    }
+  }
+]
+
+
+
