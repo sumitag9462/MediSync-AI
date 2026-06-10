@@ -46,7 +46,7 @@ const BuyCoffee = () => {
   const sendOtp = async (phone) => {
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/otp/send", { phone });
+      await axios.post("/api/otp/send", { phone });
       setOtpSent(true);
       setLoading(false);
 
@@ -66,7 +66,7 @@ const BuyCoffee = () => {
     if (!otp) return alert("Please enter OTP");
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/api/otp/verify", { 
+      const response = await axios.post("/api/otp/verify", { 
         otp, 
         phone: paymentType === "card" ? cardData.phone : walletData.phone 
       });
