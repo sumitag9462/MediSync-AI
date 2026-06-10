@@ -18,14 +18,18 @@ const requestEmailOtp = async (req, res) => {
         if (userExists) return res.status(400).json({ message: 'User with this email already exists.' });
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await OTP.create({ email, otp });
-        await transporter.sendMail({
-            from: `MediSync-AI <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: 'Your MediSync-AI Verification Code',
-            text: `Your OTP for MediSync-AI registration is: ${otp}. It will expire in 5 minutes.`,
-            html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Verification</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold;letter-spacing:5px;margin:20px 0;background:#f0f0f0;padding:10px;border-radius:5px">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
-        });
-        res.status(200).json({ message: 'Verification code sent to your email.' });
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            await transporter.sendMail({
+                from: `MediSync-AI <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: 'Your MediSync-AI Verification Code',
+                text: `Your OTP for MediSync-AI registration is: ${otp}. It will expire in 5 minutes.`,
+                html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Verification</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold;letter-spacing:5px;margin:20px 0;background:#f0f0f0;padding:10px;border-radius:5px">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
+            });
+        } else {
+            console.log(`\n==================================================\n⚠️  EMAIL_USER/EMAIL_PASS not configured in .env!\n🔑  Local Dev OTP for ${email}: ${otp}\n==================================================\n`);
+        }
+        res.status(200).json({ message: 'Verification code generated.' });
     } catch (error) {
         console.error('Error sending OTP:', error);
         res.status(500).json({ message: 'Error sending verification code.' });
@@ -77,13 +81,17 @@ const requestPasswordResetOtp = async (req, res) => {
         if (!user) return res.status(200).json({ message: 'If an account with this email exists, a verification code has been sent.' });
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await OTP.create({ email, otp });
-        await transporter.sendMail({
-            from: `MediSync-AI <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: 'Your MediSync-AI Password Reset Code',
-            html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Password Reset</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
-        });
-        res.status(200).json({ message: 'A verification code has been sent to your email.' });
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            await transporter.sendMail({
+                from: `MediSync-AI <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: 'Your MediSync-AI Password Reset Code',
+                html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Password Reset</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
+            });
+        } else {
+            console.log(`\n==================================================\n⚠️  EMAIL_USER/EMAIL_PASS not configured in .env!\n🔑  Local Dev Password Reset OTP for ${email}: ${otp}\n==================================================\n`);
+        }
+        res.status(200).json({ message: 'A verification code has been generated.' });
     } catch (error) {
         console.error('Password reset OTP error:', error);
         res.status(500).json({ message: 'Error sending verification code.' });
