@@ -22,6 +22,7 @@ app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/chatbot', require('./routes/chatbotRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/otp', require('./routes/otpRoutes'));
+app.use('/api/medicines', require('./routes/medicineRoutes'));
 
 
 // ✅ Mock payment route (works without Razorpay)

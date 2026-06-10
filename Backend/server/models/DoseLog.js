@@ -30,7 +30,7 @@ const doseLogSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-    enum: ['Taken', 'Skipped', 'Missed'],
+        enum: ['Taken', 'Skipped', 'Missed'],
     },
 }, {
     timestamps: true,

@@ -57,7 +57,7 @@ function App() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="mt-4 text-xl md:text-2xl text-muted-foreground max-w-2xl z-10"
         >
-          Never miss a vital dose. Automate your wellness schedule with a touch of magic.
+          Never miss a vital dose. Sync, track, and manage your medications with AI-powered precision.
         </motion.p>
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}

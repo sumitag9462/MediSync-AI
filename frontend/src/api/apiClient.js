@@ -12,7 +12,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // 1. Get the auth data from localStorage
-    const authDataString = localStorage.getItem('medwell_auth');
+    const authDataString = localStorage.getItem('medisync_auth');
     if (authDataString) {
       // 2. Parse the JSON to get the token
       const authData = JSON.parse(authDataString);
