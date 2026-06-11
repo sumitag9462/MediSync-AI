@@ -25,6 +25,7 @@ app.use('/api/chatbot', require('./routes/chatbotRoutes'));
 app.use('/api/medicines', require('./routes/medicineRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/otp', require('./routes/otpRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

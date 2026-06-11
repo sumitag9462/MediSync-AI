@@ -1,43 +1,13 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Pill } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, KeyRound, UnlockKeyhole } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
-
-const AuthPageLayout = ({ children, title, subtitle, page, linkText }) => {
-    const navigate = useNavigate();
-    return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-md"
-            >
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center">
-                        <Pill size={36} className="text-purple-400" />
-                        <h1 className="text-4xl font-bold ml-2 text-white">MediSync-AI</h1>
-                    </div>
-                    <h2 className="text-2xl font-bold text-white mt-4">{title}</h2>
-                    <p className="text-gray-400">{subtitle}</p>
-                </div>
-                <div className="bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700">
-                    {children}
-                </div>
-                <p className="text-center mt-6 text-gray-400">
-                    Remember your password?{' '}
-                    <a href="#" onClick={(e) => { e.preventDefault(); navigate(page); }} className="text-purple-400 hover:underline font-semibold">
-                        {linkText}
-                    </a>
-                </p>
-            </motion.div>
-        </div>
-    );
-};
-
+import AuthLayout from './AuthLayout';
+import { FloatingInput, MagneticButton, OtpInput } from './AuthComponents';
 
 const ForgotPasswordPage = () => {
-    const [step, setStep] = useState(1); // 1 for email, 2 for OTP
+    const [step, setStep] = useState(1);
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [message, setMessage] = useState('');
@@ -45,7 +15,6 @@ const ForgotPasswordPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Step 1: Request OTP
     const handleRequestOtp = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -62,16 +31,17 @@ const ForgotPasswordPage = () => {
         }
     };
 
-    // Step 2: Verify OTP and Redirect
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
+        if (otp.length < 6) {
+            setError('Please enter a complete 6-digit code.');
+            return;
+        }
         setIsLoading(true);
         setError('');
         try {
             const res = await apiClient.post('/auth/verify-password-reset-otp', { email, otp });
             if (res.data.success) {
-                // --- THIS IS THE FIX ---
-                // Changed the forward slash to a backtick to correctly form the URL string
                 navigate(`/reset-password/${res.data.resetToken}`);
             }
         } catch (err) {
@@ -82,36 +52,88 @@ const ForgotPasswordPage = () => {
     };
 
     return (
-        <AuthPageLayout title="Reset Password" subtitle="Enter your email to receive a verification code." page="/login" linkText="Back to Login">
-            {step === 1 && (
-                <form onSubmit={handleRequestOtp} className="space-y-6">
-                    <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Email</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" />
-                    </div>
-                    {error && <p className="text-center text-red-400 py-2">{error}</p>}
-                    {message && <p className="text-center text-green-400 py-2">{message}</p>}
-                    <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 disabled:opacity-50">
-                        {isLoading ? 'Sending...' : 'Send Verification Code'}
-                    </button>
-                </form>
-            )}
+        <AuthLayout 
+          title={step === 1 ? "Forgot Password" : "Verify Identity"} 
+          subtitle={step === 1 ? "Enter your email to receive a recovery code." : "We've sent a code to your email."} 
+          page="/login" 
+          linkText="Back to Login"
+          illustration={
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {step === 1 ? (
+                 <KeyRound size={160} className="text-white/20 animate-pulse" />
+              ) : (
+                 <UnlockKeyhole size={160} className="text-white/20 animate-pulse" />
+              )}
+              <div className="absolute w-[110%] h-[110%] border border-white/10 rounded-full animate-[spin_12s_linear_infinite]" />
+              <div className="absolute w-[130%] h-[130%] border border-pink-500/10 rounded-full animate-[spin_18s_linear_infinite_reverse]" />
+            </div>
+          }
+        >
+            <AnimatePresence mode="wait">
+                {step === 1 && (
+                    <motion.form 
+                        key="step1"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.3 }}
+                        onSubmit={handleRequestOtp} 
+                        className="space-y-6"
+                    >
+                        <div className="auth-stagger">
+                            <FloatingInput 
+                                label="Registered Email" type="email" value={email} 
+                                onChange={(e) => setEmail(e.target.value)} icon={Mail} required 
+                            />
+                        </div>
 
-            {step === 2 && (
-                <form onSubmit={handleVerifyOtp} className="space-y-6">
-                    <p className="text-center text-gray-300">A 6-digit code was sent to <span className="font-bold text-white">{email}</span>.</p>
-                    <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Verification Code</label>
-                        <input type="text" value={otp} onChange={e => setOtp(e.target.value)} required maxLength="6" className="w-full bg-gray-700 rounded-lg p-3 text-white text-center text-2xl tracking-[.5em]" />
-                    </div>
-                    {error && <p className="text-center text-red-400 py-2">{error}</p>}
-                    <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 disabled:opacity-50">
-                        {isLoading ? 'Verifying...' : 'Verify Code'}
-                    </button>
-                    <button type="button" onClick={() => setStep(1)} className="w-full text-center text-gray-400 mt-2 hover:text-white" disabled={isLoading}>Back</button>
-                </form>
-            )}
-        </AuthPageLayout>
+                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs text-center">{error}</div>}
+                        {message && <div className="auth-stagger p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-xs text-center">{message}</div>}
+
+                        <div className="auth-stagger pt-2">
+                            <MagneticButton type="submit" isLoading={isLoading}>
+                                Send Recovery Code
+                            </MagneticButton>
+                        </div>
+                    </motion.form>
+                )}
+
+                {step === 2 && (
+                    <motion.form 
+                        key="step2"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.3 }}
+                        onSubmit={handleVerifyOtp} 
+                        className="space-y-6"
+                    >
+                        <p className="text-gray-300 text-sm text-center auth-stagger">
+                            Enter the 6-digit recovery code sent to <br/>
+                            <span className="font-bold text-white text-base">{email}</span>
+                        </p>
+                        
+                        <div className="auth-stagger py-4">
+                            <OtpInput length={6} value={otp} onChange={setOtp} />
+                        </div>
+
+                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs text-center">{error}</div>}
+
+                        <div className="auth-stagger">
+                            <MagneticButton type="submit" isLoading={isLoading}>
+                                Verify Code
+                            </MagneticButton>
+                        </div>
+
+                        <div className="auth-stagger flex justify-center mt-4">
+                            <button type="button" onClick={() => setStep(1)} disabled={isLoading} className="text-sm text-gray-500 hover:text-white transition-colors">
+                                Change Email
+                            </button>
+                        </div>
+                    </motion.form>
+                )}
+            </AnimatePresence>
+        </AuthLayout>
     );
 };
 

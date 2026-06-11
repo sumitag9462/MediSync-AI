@@ -1,42 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Pill } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { UserPlus, Mail, MapPin, Phone, Lock, BrainCircuit, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
-
-// --- THIS LAYOUT COMPONENT WAS MISSING ---
-const AuthPageLayout = ({ children, title, subtitle, page, linkText }) => {
-    const navigate = useNavigate();
-    return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-md"
-            >
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center">
-                        <Pill size={36} className="text-purple-400" />
-                        <h1 className="text-4xl font-bold ml-2 text-white">MediSync-AI</h1>
-                    </div>
-                    <h2 className="text-2xl font-bold text-white mt-4">{title}</h2>
-                    <p className="text-gray-400">{subtitle}</p>
-                </div>
-                <div className="bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700">
-                    {children}
-                </div>
-                <p className="text-center mt-6 text-gray-400">
-                    {page === '/login' ? "Already have an account?" : "Don't have an account?"}{' '}
-                    <a href="#" onClick={(e) => { e.preventDefault(); navigate(page); }} className="text-purple-400 hover:underline font-semibold">
-                        {linkText}
-                    </a>
-                </p>
-            </motion.div>
-        </div>
-    );
-};
-// --- END OF LAYOUT COMPONENT ---
-
+import AuthLayout from './AuthLayout';
+import { FloatingInput, MagneticButton, OtpInput } from './AuthComponents';
 
 const RegisterPage = () => {
     const [step, setStep] = useState(1);
@@ -73,11 +41,13 @@ const RegisterPage = () => {
 
     const handleVerifyAndRegister = async (e) => {
         e.preventDefault();
+        if (otp.length < 6) {
+            setError('Please enter a complete 6-digit code.');
+            return;
+        }
         setIsLoading(true);
         setError('');
         
-        // --- THIS IS THE FIX ---
-        // Added backticks to correctly create the fullName string
         const fullName = `${formData.firstName} ${formData.middleName} ${formData.lastName}`.replace(/\s+/g, ' ').trim();
         
         try {
@@ -91,95 +61,133 @@ const RegisterPage = () => {
             });
 
             setMessage(res.data.message);
-            setTimeout(() => {
-                navigate('/login');
-            }, 2000);
+            setTimeout(() => navigate('/login'), 2000);
             
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed. Please try again.');
             setIsLoading(false);
         }
     };
-    
+
     return (
-        <AuthPageLayout title="Create Your Account" subtitle="Start your path to better health today." page="/login" linkText="Login">
-            {step === 1 && (
-                <form onSubmit={handleRequestOtp} className="space-y-4">
-                    <div className="flex space-x-4">
-                        <div className="w-1/2">
-                            <label className="text-sm font-bold text-gray-300 block mb-2">First Name</label>
-                            <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="Alex" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" required />
+        <AuthLayout 
+          title="Create Account" 
+          subtitle={step === 1 ? "Start your path to better health today." : "We've sent a code to verify your identity."}
+          page="/login" 
+          linkText="Sign In"
+          illustration={
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {step === 1 ? (
+                <UserPlus size={160} className="text-white/20 animate-pulse" />
+              ) : (
+                <ShieldCheck size={160} className="text-white/20 animate-pulse" />
+              )}
+              <div className="absolute w-full h-full border border-white/10 rounded-full animate-[spin_15s_linear_infinite]" />
+              <div className="absolute w-[120%] h-[120%] border border-cyan-500/10 rounded-full animate-[spin_20s_linear_infinite_reverse]" />
+            </div>
+          }
+        >
+            <AnimatePresence mode="wait">
+                {step === 1 && (
+                    <motion.form 
+                        key="step1"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.3 }}
+                        onSubmit={handleRequestOtp} 
+                        className="space-y-4"
+                    >
+                        <div className="flex gap-4 auth-stagger">
+                            <FloatingInput 
+                                label="First Name" name="firstName" value={formData.firstName} 
+                                onChange={handleInputChange} required 
+                            />
+                            <FloatingInput 
+                                label="Last Name" name="lastName" value={formData.lastName} 
+                                onChange={handleInputChange} required 
+                            />
                         </div>
-                        <div className="w-1/2">
-                            <label className="text-sm font-bold text-gray-300 block mb-2">Last Name</label>
-                            <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Doe" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" required />
+                        <div className="auth-stagger">
+                            <FloatingInput 
+                                label="Middle Name (Optional)" name="middleName" value={formData.middleName} 
+                                onChange={handleInputChange} 
+                            />
                         </div>
-                    </div>
-                     <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Middle Name (Optional)</label>
-                        <input type="text" name="middleName" value={formData.middleName} onChange={handleInputChange} placeholder="J." className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" />
-                    </div>
-                    <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Email</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="you@example.com" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" required />
-                    </div>
-                    <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Mobile Number</label>
-                        <input type="tel" name="mobile" value={formData.mobile} onChange={handleInputChange} placeholder="+91 00000 00000" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" required />
-                    </div>
-                     <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Your Location</label>
-                        <input type="text" name="place" value={formData.place} onChange={handleInputChange} placeholder="e.g., New York, USA" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" required />
-                    </div>
-                    <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Password</label>
-                        <input 
-                            type="password" 
-                            name="password" 
-                            value={formData.password} 
-                            onChange={handleInputChange} 
-                            placeholder="At least 8 characters" 
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" 
-                            required 
-                            minLength="8"
-                            title="Password must be at least 8 characters long"
-                        />
-                    </div>
-                    
-                    {error && <p className="text-center text-red-400 py-2">{error}</p>}
+                        <div className="auth-stagger">
+                            <FloatingInput 
+                                label="Email Address" type="email" name="email" value={formData.email} 
+                                onChange={handleInputChange} icon={Mail} required 
+                            />
+                        </div>
+                        <div className="flex gap-4 auth-stagger">
+                            <div className="w-1/2">
+                                <FloatingInput 
+                                    label="Mobile" type="tel" name="mobile" value={formData.mobile} 
+                                    onChange={handleInputChange} icon={Phone} required 
+                                />
+                            </div>
+                            <div className="w-1/2">
+                                <FloatingInput 
+                                    label="Location" name="place" value={formData.place} 
+                                    onChange={handleInputChange} icon={MapPin} required 
+                                />
+                            </div>
+                        </div>
+                        <div className="auth-stagger">
+                            <FloatingInput 
+                                label="Password" type="password" name="password" value={formData.password} 
+                                onChange={handleInputChange} required minLength="8" title="At least 8 characters"
+                            />
+                        </div>
+                        
+                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs">{error}</div>}
 
-                    <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg mt-4 hover:opacity-90 disabled:opacity-50">
-                        {isLoading ? 'Sending...' : 'Send Verification Code'}
-                    </button>
-                </form>
-            )}
+                        <div className="auth-stagger pt-2">
+                            <MagneticButton type="submit" isLoading={isLoading}>
+                                Send Verification Code
+                            </MagneticButton>
+                        </div>
+                    </motion.form>
+                )}
 
-            {step === 2 && (
-                 <form onSubmit={handleVerifyAndRegister} className="space-y-4">
-                    <p className="text-center text-gray-300">A 6-digit code was sent to <span className="font-bold text-white">{formData.email}</span>. Please enter it below.</p>
-                    <div>
-                        <label className="text-sm font-bold text-gray-300 block mb-2">Verification Code</label>
-                        <input 
-                            type="text" 
-                            value={otp} 
-                            onChange={e => setOtp(e.target.value)} 
-                            placeholder="_ _ _ _ _ _" 
-                            maxLength="6"
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white text-center text-2xl tracking-[.5em]" 
-                            required 
-                        />
-                    </div>
+                {step === 2 && (
+                    <motion.form 
+                        key="step2"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.3 }}
+                        onSubmit={handleVerifyAndRegister} 
+                        className="space-y-6"
+                    >
+                        <p className="text-gray-300 text-sm text-center auth-stagger">
+                            Enter the 6-digit verification code sent to <br/>
+                            <span className="font-bold text-white text-base">{formData.email}</span>
+                        </p>
+                        
+                        <div className="auth-stagger py-4">
+                            <OtpInput length={6} value={otp} onChange={setOtp} />
+                        </div>
 
-                    {message && <p className="text-center text-green-400 py-2">{message}</p>}
-                    {error && <p className="text-center text-red-400 py-2">{error}</p>}
+                        {message && <div className="auth-stagger p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-xs text-center">{message}</div>}
+                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs text-center">{error}</div>}
 
-                    <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg mt-4 hover:opacity-90 disabled:opacity-50">
-                        {isLoading ? 'Verifying...' : 'Verify & Create Account'}
-                    </button>
-                    <button type="button" onClick={() => setStep(1)} className="w-full text-center text-gray-400 mt-2 hover:text-white disabled:opacity-50" disabled={isLoading}>Back</button>
-                </form>
-            )}
-        </AuthPageLayout>
+                        <div className="auth-stagger">
+                            <MagneticButton type="submit" isLoading={isLoading}>
+                                Verify & Create Account
+                            </MagneticButton>
+                        </div>
+                        
+                        <div className="auth-stagger flex justify-center mt-4">
+                            <button type="button" onClick={() => setStep(1)} disabled={isLoading} className="text-sm text-gray-500 hover:text-white transition-colors">
+                                Edit details
+                            </button>
+                        </div>
+                    </motion.form>
+                )}
+            </AnimatePresence>
+        </AuthLayout>
     );
 };
 

@@ -6,7 +6,7 @@ export const predictionService = {
             return null; // Not enough data for a meaningful prediction
         }
 
-        const missedDoses = doseLogs.filter(log => log.status === 'Skipped');
+        const missedDoses = doseLogs.filter(log => log.status === 'Skipped' || log.status === 'Missed');
         if (missedDoses.length === 0) {
             return null; // Perfect adherence!
         }

@@ -1,47 +1,61 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import {
-  Pill,
-  Clock,
-  BookOpen,
-  BarChart2,
-  ChevronsRight,
-  Calendar,
-  User,
-  Award,
-  Activity,
-} from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import FeatureCard from '../Components/cards/FeatureCard';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { TextPlugin } from 'gsap/TextPlugin';
+import Lenis from 'lenis';
+import { 
+  Pill, Activity, Calendar, Award, User, ChevronsRight, 
+  BarChart2, BookOpen, Clock, ChevronDown, MessageSquare, 
+  Menu, X, ArrowRight, Zap, BrainCircuit, HeartPulse, Send,
+  CheckCircle2, ShieldCheck
+} from 'lucide-react';
 import heroImg from '../assets/hero-img.png';
+import apiClient from '../api/apiClient';
 
-// 🧍‍♂️ Local profile images (add them in src/assets/)
-import divyamPic from '../assets/divyam.jpg.jpeg';
-import sumitPic from '../assets/sumit.jpg.jpeg';
-import divyanshPic from '../assets/divyansh.jpg.jpeg';
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-// ✉️ Contact Form Component
+// --- Smooth Scroll Component ---
+function SmoothScroll({ children }) {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(lenis.raf);
+    };
+  }, []);
+  return <>{children}</>;
+}
+
+// --- Contact Form (Formspree) ---
 const ContactForm = () => {
   const [status, setStatus] = useState('');
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('Sending...');
     const form = e.target;
-    const data = new FormData(form);
-
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
     try {
-      const response = await fetch('https://formspree.io/f/xyznwbbr', {
-        method: 'POST',
-        body: data,
-        headers: { Accept: 'application/json' },
-      });
-
-      if (response.ok) {
-        setStatus('Thanks for your message! We will get back to you soon.');
+      const response = await apiClient.post('/contact/submit', data);
+      if (response.data.success) {
+        setStatus(response.data.message);
         form.reset();
       } else {
-        setStatus('Oops! There was a problem submitting your form.');
+        setStatus(response.data.message || 'Oops! There was a problem submitting your form.');
       }
     } catch (error) {
       setStatus('Oops! There was a problem submitting your form.');
@@ -51,289 +65,575 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="panel-glass p-10 rounded-3xl shadow-xl max-w-2xl mx-auto backdrop-blur-md border border-gray-700">
-      <h3 className="text-3xl md:text-4xl font-bold mb-3 text-white text-center">Get in Touch</h3>
-      <p className="text-gray-400 mb-8 text-center">
-        Have a question? Fill out the form below and we'll get back to you.
-      </p>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {['name', 'email', 'phone', 'place'].map((field) => (
-          <div key={field}>
-            <label className="text-sm font-semibold text-gray-300 block mb-2 capitalize">
-              {field === 'place' ? 'Location' : field}
-            </label>
-            <input
-              type={field === 'email' ? 'email' : 'text'}
-              name={field}
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-xl p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-              placeholder={
-                field === 'name'
-                  ? 'Alex Doe'
-                  : field === 'email'
-                  ? 'you@example.com'
-                  : field === 'phone'
-                  ? '+91 XXXXX XXXXX'
-                  : 'New Delhi, India'
-              }
-              required
-            />
-          </div>
-        ))}
-        <div>
-          <label className="text-sm font-semibold text-gray-300 block mb-2">Your Query</label>
+    <div className="relative p-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl max-w-2xl mx-auto overflow-hidden group">
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <h3 className="text-3xl font-extrabold mb-3 text-white text-center tracking-tight">Get in Touch</h3>
+      <p className="text-gray-400 mb-8 text-center">Have a question? Fill out the form below and we'll get back to you.</p>
+      <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {['name', 'email', 'phone', 'place'].map((field) => (
+            <div key={field} className="relative">
+              <input
+                type={field === 'email' ? 'email' : 'text'}
+                name={field}
+                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all peer"
+                placeholder=" "
+                required
+              />
+              <label className="absolute left-4 top-4 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:top-1 peer-focus:text-xs peer-focus:text-purple-400 peer-valid:top-1 peer-valid:text-xs capitalize pointer-events-none">
+                {field === 'place' ? 'Location' : field}
+              </label>
+            </div>
+          ))}
+        </div>
+        <div className="relative">
           <textarea
             name="message"
             rows="4"
-            className="w-full bg-gray-800/50 border border-gray-700 rounded-xl p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-            placeholder="How can we help you today?"
+            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all peer"
+            placeholder=" "
             required
           ></textarea>
+          <label className="absolute left-4 top-4 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:top-1 peer-focus:text-xs peer-focus:text-purple-400 peer-valid:top-1 peer-valid:text-xs pointer-events-none">
+            Your Query
+          </label>
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center pt-2">
           <button
             type="submit"
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-10 rounded-full shadow-lg transition-all"
+            className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-transparent rounded-full hover:bg-white/5 border border-white/10 hover:border-purple-500 overflow-hidden"
           >
-            Send Message
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-20 transition-opacity" />
+            <span className="relative flex items-center gap-2">Send Message <Send size={18} className="group-hover:translate-x-1 transition-transform" /></span>
           </button>
         </div>
-        {status && <p className="text-center text-sm text-gray-300 mt-4">{status}</p>}
+        {status && <p className="text-center text-sm text-purple-300 mt-4 animate-fade-in">{status}</p>}
       </form>
     </div>
   );
 };
 
-// 🏠 Landing Page
-const LandingPage = () => {
-  const navigate = useNavigate();
+// --- Feature Card 3D ---
+const FeatureCard3D = ({ icon, title, children, index }) => {
+  const cardRef = useRef(null);
 
-  return (
-    <>
-      <div className="bg-gray-900 text-white min-h-screen scroll-smooth">
-        {/* Header */}
-        <header className="container mx-auto px-6 py-5 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Pill size={28} className="text-purple-400" />
-            <h1 className="text-2xl font-bold">MediSync-AI</h1>
-          </div>
-          <nav className="space-x-6 flex items-center">
-            <a href="#features" className="hover:text-purple-400 transition">
-              Features
-            </a>
-            <a href="#about" className="hover:text-purple-400 transition">
-              About Us
-            </a>
-            <a href="#contact" className="hover:text-purple-400 transition">
-              Contact Us
-            </a>
-            <button
-              onClick={() => navigate('/login')}
-              className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold transition"
-            >
-              Login / Sign Up
-            </button>
-          </nav>
-        </header>
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -10;
+    const rotateY = ((x - centerX) / centerX) * 10;
+    
+    gsap.to(cardRef.current, {
+      rotateX, rotateY, scale: 1.02, duration: 0.4, ease: "power2.out", transformPerspective: 1000
+    });
+  };
 
-        {/* Hero Section */}
-        <main className="container mx-auto px-6 text-center md:text-left flex flex-col md:flex-row items-center justify-between py-20 gap-10">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex-1"
-          >
-            <h2 className="text-5xl md:text-6xl font-extrabold leading-tight">
-              Your Personal{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
-                Wellness
-              </span>{' '}
-              Companion
-            </h2>
-            <p className="mt-4 text-gray-400 text-lg max-w-xl">
-              Never miss a dose again. Track your medications, monitor your health, and achieve your wellness goals
-              with MediSync-AI.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/register')}
-              className="mt-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-10 rounded-full shadow-lg transition-all"
-            >
-              Get Started for Free
-            </motion.button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex-1 flex justify-center"
-          >
-            <motion.img
-              src={heroImg}
-              alt="MediSync-AI Illustration"
-              className="w-full max-w-md mx-auto drop-shadow-[0_0_25px_rgba(168,85,247,0.3)] rounded-2xl"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </motion.div>
-        </main>
-
-        {/* Features Section */}
-        <section id="features" className="py-20 container mx-auto px-6">
-          <h3 className="text-4xl font-bold mb-12 text-center">Why You'll Love MediSync-AI</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <FeatureCard index={0} icon={<Clock size={32} />} title="Powerful Reminders">
-              Customizable alerts for every dose, ensuring you stay on track with your schedule.
-            </FeatureCard>
-            <FeatureCard index={1} icon={<BookOpen size={32} />} title="Simple Logging">
-              Log doses with a single tap. Keep a detailed history of taken and missed medications.
-            </FeatureCard>
-            <FeatureCard index={2} icon={<BarChart2 size={32} />} title="Wellness Dashboard">
-              Visualize your progress with insightful charts and track your health journey over time.
-            </FeatureCard>
-            <FeatureCard index={3} icon={<ChevronsRight size={32} />} title="AI Predictions">
-              Our smart system predicts potential adherence issues and helps you stay consistent.
-            </FeatureCard>
-            <FeatureCard index={4} icon={<Calendar size={32} />} title="Calendar Sync">
-              Integrate your medication schedule with your personal calendar for seamless planning.
-            </FeatureCard>
-            <FeatureCard index={5} icon={<User size={32} />} title="Natural Language Assistant">
-              Ask our AI chatbot anything about your schedule, just like talking to a real person.
-            </FeatureCard>
-            <FeatureCard index={6} icon={<Award size={32} />} title="Gamification">
-              Earn streaks and achievements as you consistently follow your medication schedule.
-            </FeatureCard>
-            <FeatureCard index={7} icon={<Activity size={32} />} title="Device Integration">
-              Sync your wellness data with Google Fit or smartwatch for smarter insights.
-            </FeatureCard>
-          </div>
-        </section>
-
-        {/* 🌟 About Us Section */}
-        <section id="about" className="py-20 bg-gray-950/40 backdrop-blur-sm relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5 blur-3xl opacity-70 pointer-events-none"></div>
-
-          <h3 className="text-4xl font-bold text-center mb-12 relative z-10">Meet the Team</h3>
-
-          <div className="flex flex-wrap justify-center gap-10 px-6 relative z-10">
-            {/* Member 1 */}
-            <TeamCard
-              img={divyamPic}
-              name="Divyam Pancholi"
-              role="Lead Developer"
-              email="divyam.20234061@mnnit.ac.in"
-              phone="+91 9306583122"
-              linkedin="https://www.linkedin.com/in/divyam-pancholi-23a5b9331/"
-              github="https://github.com/ValarCode"
-              borderColor="purple"
-            />
-
-            {/* Member 2 */}
-            <TeamCard
-              img={sumitPic}
-              name="Sumit Agrawal"
-              role="UI/UX Designer"
-              email="sumit.20234165@mnnit.ac.in"
-              phone="+91 7902016000"
-              linkedin="https://www.linkedin.com/in/sumit-agrawal-3611a1285/"
-              github="https://github.com/sumitag9462"
-              borderColor="pink"
-            />
-
-            {/* Member 3 */}
-            <TeamCard
-              img={divyanshPic}
-              name="Divyansh Meena"
-              role="Backend Engineer"
-              email="divyansh.20234062@mnnit.ac.in"
-              phone="+91 6397161731"
-              linkedin="https://www.linkedin.com/in/divyansh-meena-497508300/"
-              github="https://github.com/de13vil"
-              borderColor="blue"
-            />
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="py-20">
-          <ContactForm />
-        </section>
-      </div>
-
-      {/* Footer */}
-      <footer className="relative w-full bg-gradient-to-r from-purple-900/40 via-gray-900/70 to-pink-900/40 bg-opacity-70 backdrop-blur-md py-10 px-4 overflow-hidden">
-        <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-96 h-40 bg-gradient-to-r from-purple-500/30 via-pink-400/20 to-purple-500/30 rounded-full blur-3xl opacity-60 pointer-events-none z-0" />
-        <div className="relative z-10 container mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex flex-col items-center md:items-start">
-            <h4 className="text-2xl font-bold text-purple-200 mb-2">Support Us</h4>
-            <p className="text-gray-300 max-w-md text-center md:text-left">
-              If you love MediSync-AI and want to help us grow, consider sharing with friends, giving us feedback, or
-              supporting us below!
-            </p>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <motion.button
-              onClick={() => navigate('/buy-coffee')}
-              whileHover={{ scale: 1.07, boxShadow: '0 0 24px 2px #a78bfa55' }}
-              whileTap={{ scale: 0.97 }}
-              className="bg-gradient-to-r from-purple-500/80 to-pink-400/80 text-white font-bold py-3 px-8 rounded-full shadow text-lg mb-2 transition-all flex items-center gap-2"
-            >
-              <span role="img" aria-label="coffee">
-                ☕
-              </span>{' '}
-              Buy us a Coffee
-            </motion.button>
-           
-             
-          </div>
-        </div>
-        <div className="text-center text-gray-500 text-xs mt-8">
-          &copy; {new Date().getFullYear()} MediSync-AI. All rights reserved.
-        </div>
-      </footer>
-    </>
-  );
-};
-
-// 💁‍♂️ Team Card component
-const TeamCard = ({ img, name, role, email, phone, linkedin, github, borderColor }) => {
-  const colorMap = {
-    purple: 'from-purple-400 to-pink-500',
-    pink: 'from-pink-400 to-purple-400',
-    blue: 'from-blue-400 to-pink-500',
+  const handleMouseLeave = () => {
+    gsap.to(cardRef.current, {
+      rotateX: 0, rotateY: 0, scale: 1, duration: 0.7, ease: "elastic.out(1, 0.3)"
+    });
   };
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.05, y: -5 }}
-      className={`bg-gray-900/60 border border-${borderColor}-600/30 rounded-3xl shadow-lg w-80 p-6 text-center backdrop-blur-md transition-all hover:shadow-${borderColor}-500/40 hover:border-${borderColor}-400/60`}
+    <div 
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="feature-card-anim opacity-0 translate-y-10 relative p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-lg overflow-hidden group cursor-pointer"
     >
-      <div className="relative w-32 h-32 mx-auto mb-5">
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${colorMap[borderColor]} blur-md animate-pulse`}></div>
-        <img
-          src={img}
-          alt={name}
-          className={`w-32 h-32 rounded-full mx-auto border-4 border-transparent bg-gradient-to-r ${colorMap[borderColor]} p-[2px] object-cover relative z-10`}
-        />
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute -right-10 -top-10 w-32 h-32 bg-purple-500/20 blur-[50px] rounded-full pointer-events-none group-hover:bg-pink-500/20 transition-colors" />
+      <div className="relative z-10">
+        <div className="w-14 h-14 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center mb-6 text-purple-400 group-hover:text-pink-400 transition-colors group-hover:scale-110 duration-300">
+          {icon}
+        </div>
+        <h3 className="text-xl font-bold text-white mb-3 tracking-tight">{title}</h3>
+        <p className="text-gray-400 leading-relaxed text-sm">{children}</p>
       </div>
-      <h4 className="text-xl font-semibold text-white">{name}</h4>
-      <p className="text-gray-400 text-sm mt-1">{role}</p>
-      <p className="text-gray-400 mt-3 flex items-center justify-center gap-2 whitespace-nowrap">
-        <span role="img" aria-label="email">📧</span> {email}
-      </p>
-      <p className="text-gray-400 flex items-center justify-center gap-2 whitespace-nowrap">
-        <span role="img" aria-label="phone">📱</span> {phone}
-      </p>
-      <a href={linkedin} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-pink-400 mt-2 inline-block">
-        LinkedIn
-      </a>
-      <br />
-      <a href={github} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-pink-400 mt-2 inline-block">
-        GitHub Profile
-      </a>
-    </motion.div>
+    </div>
+  );
+};
+
+// --- Landing Page Main Component ---
+const LandingPage = () => {
+  const navigate = useNavigate();
+  const heroRef = useRef(null);
+  const headlineRef = useRef(null);
+  const typeRef = useRef(null);
+  const statsRef = useRef(null);
+  const timelineRef = useRef(null);
+  
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeFaq, setActiveFaq] = useState(null);
+
+  useEffect(() => {
+    // Navbar Scroll Effect
+    const handleScroll = () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        nav.classList.add('bg-black/60', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'py-4');
+        nav.classList.remove('py-6', 'bg-transparent');
+      } else {
+        nav.classList.remove('bg-black/60', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'py-4');
+        nav.classList.add('py-6', 'bg-transparent');
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+
+    // Initial Hero Animation
+    const tl = gsap.timeline();
+    
+    // Headline animation without destroying HTML
+    const headline = headlineRef.current;
+    if (headline) {
+        tl.fromTo(headline, 
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
+        );
+    }
+
+    // Typewriter effect
+    if(typeRef.current) {
+      tl.to(typeRef.current, {
+        text: "Track your medications, monitor your health, and achieve your wellness goals with our intelligent AI system.",
+        duration: 2,
+        ease: "none",
+      }, "-=0.2");
+    }
+
+    // Floating elements
+    gsap.utils.toArray('.hero-float').forEach((el, i) => {
+      gsap.to(el, {
+        y: () => -20 - Math.random() * 20,
+        rotation: () => Math.random() * 10 - 5,
+        duration: 3 + Math.random() * 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: i * 0.2
+      });
+    });
+
+    // Stats Counter Animation
+    const stats = document.querySelectorAll('.stat-number');
+    ScrollTrigger.create({
+      trigger: statsRef.current,
+      start: "top 80%",
+      onEnter: () => {
+        stats.forEach(stat => {
+          const target = parseFloat(stat.getAttribute('data-target'));
+          gsap.to(stat, {
+            innerHTML: target,
+            duration: 2,
+            snap: { innerHTML: 1 },
+            ease: "power2.out"
+          });
+        });
+      },
+      once: true
+    });
+
+    // Features Stagger Reveal
+    gsap.to('.feature-card-anim', {
+      scrollTrigger: { trigger: "#features", start: "top 75%" },
+      opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: "power3.out"
+    });
+
+    // Timeline Animation
+    gsap.to('.timeline-progress', {
+      scrollTrigger: {
+        trigger: timelineRef.current,
+        start: "top center",
+        end: "bottom center",
+        scrub: 1,
+      },
+      height: "100%",
+      ease: "none"
+    });
+
+    gsap.utils.toArray('.timeline-node').forEach((node, i) => {
+      gsap.fromTo(node, 
+        { opacity: 0, scale: 0.5, x: i % 2 === 0 ? -50 : 50 },
+        {
+          scrollTrigger: { trigger: node, start: "top 80%" },
+          opacity: 1, scale: 1, x: 0, duration: 0.6, ease: "back.out(1.5)"
+        }
+      );
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, []);
+
+  const toggleFaq = (index) => {
+    setActiveFaq(activeFaq === index ? null : index);
+  };
+
+  return (
+    <SmoothScroll>
+      <div className="bg-[#030305] text-white min-h-screen font-sans overflow-x-hidden selection:bg-purple-500/30">
+        
+        {/* Animated Background System */}
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] animate-blob" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-600/10 rounded-full blur-[150px] animate-blob" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] bg-blue-600/10 rounded-full blur-[100px] animate-blob" style={{ animationDelay: '4s' }} />
+          <div className="noise-bg absolute inset-0" />
+        </div>
+
+        {/* Navigation */}
+        <nav id="navbar" className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-6 px-6 lg:px-12">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all">
+                <Pill size={24} className="text-white" />
+              </div>
+              <span className="text-xl font-bold tracking-tight">MediSync<span className="text-purple-400">-AI</span></span>
+            </div>
+            
+            {/* Desktop Nav */}
+            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+              <a href="#features" className="hover:text-white transition-colors">Features</a>
+              <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
+              <a href="#ai" className="hover:text-white transition-colors">AI Engine</a>
+              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            </div>
+
+            <div className="hidden md:flex items-center gap-4">
+              <button onClick={() => navigate('/login')} className="text-sm font-semibold hover:text-purple-400 transition-colors">Log in</button>
+              <button onClick={() => navigate('/register')} className="text-sm font-semibold bg-white text-black px-5 py-2.5 rounded-full hover:scale-105 hover:bg-gray-100 transition-all">
+                Get Started
+              </button>
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <button className="md:hidden text-gray-300 hover:text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
+        </nav>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-3xl pt-24 px-6 md:hidden flex flex-col gap-6">
+            <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">Features</a>
+            <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">How it works</a>
+            <a href="#ai" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">AI Engine</a>
+            <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">Contact</a>
+            <div className="h-px w-full bg-white/10 my-4" />
+            <button onClick={() => { setIsMobileMenuOpen(false); navigate('/login'); }} className="text-xl font-bold text-left">Log in</button>
+            <button onClick={() => { setIsMobileMenuOpen(false); navigate('/register'); }} className="text-xl font-bold bg-white text-black text-center py-4 rounded-2xl mt-4">Get Started</button>
+          </div>
+        )}
+
+        {/* Main Content */}
+        <main className="relative z-10">
+          
+          {/* Hero Section */}
+          <section ref={heroRef} className="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 lg:px-12 overflow-hidden">
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 hero-float">
+                  <span className="flex h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                  <span className="text-sm font-medium text-gray-300">MediSync AI 2.0 is now live</span>
+                </div>
+                
+                <h1 ref={headlineRef} className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-[1.05] mb-6">
+                  Intelligent <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 animate-gradient-x">Health</span> Routing.
+                </h1>
+                
+                <p ref={typeRef} className="text-lg md:text-xl text-gray-400 mb-10 min-h-[80px] md:min-h-[60px] leading-relaxed"></p>
+                
+                <div className="flex flex-wrap items-center gap-4">
+                  <button onClick={() => navigate('/register')} className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-black transition-all duration-200 bg-white rounded-full hover:scale-105 overflow-hidden">
+                    <span className="relative flex items-center gap-2">Start for free <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></span>
+                  </button>
+                  <button onClick={() => document.getElementById('ai').scrollIntoView({behavior: 'smooth'})} className="inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-white/5 border border-white/10 rounded-full hover:bg-white/10">
+                    See AI in action
+                  </button>
+                </div>
+              </div>
+
+              {/* Hero Visual */}
+              <div className="relative h-[500px] w-full flex items-center justify-center lg:justify-end">
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-pink-500/20 blur-[100px] rounded-full pointer-events-none" />
+                
+                {/* 3D Mockup Container */}
+                <div className="relative w-full max-w-md aspect-[3/4] bg-black/40 border border-white/10 rounded-[40px] shadow-2xl backdrop-blur-xl overflow-hidden hero-float animate-float-complex">
+                  {/* Mockup Top Bar */}
+                  <div className="h-12 border-b border-white/10 flex items-center justify-center gap-2">
+                    <div className="w-16 h-1.5 bg-white/20 rounded-full" />
+                  </div>
+                  {/* Mockup Content */}
+                  <div className="p-6 flex flex-col gap-4 h-full relative">
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 pointer-events-none mix-blend-overlay" />
+                    <img src={heroImg} alt="App mockup" className="w-full h-auto object-contain rounded-2xl drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]" />
+                    
+                    {/* Floating UI Elements inside mockup */}
+                    <div className="absolute top-20 -left-6 bg-white/10 border border-white/10 backdrop-blur-md p-3 rounded-2xl shadow-xl flex items-center gap-3 animate-float-complex" style={{animationDelay: '1s'}}>
+                      <div className="bg-green-500/20 text-green-400 p-2 rounded-lg"><CheckCircle2 size={20} /></div>
+                      <div>
+                        <p className="text-xs text-gray-400">Status</p>
+                        <p className="text-sm font-bold text-white">Dose Taken</p>
+                      </div>
+                    </div>
+                    
+                    <div className="absolute bottom-32 -right-6 bg-white/10 border border-white/10 backdrop-blur-md p-3 rounded-2xl shadow-xl flex items-center gap-3 animate-float-complex" style={{animationDelay: '2s'}}>
+                      <div className="bg-purple-500/20 text-purple-400 p-2 rounded-lg"><BrainCircuit size={20} /></div>
+                      <div>
+                        <p className="text-xs text-gray-400">AI Suggestion</p>
+                        <p className="text-sm font-bold text-white">Optimal Time: 9 AM</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Stats Section */}
+          <section ref={statsRef} className="py-20 border-y border-white/5 bg-white/[0.02]">
+            <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+              {[
+                { label: "Active Users", value: "25", suffix: "k+" },
+                { label: "Doses Tracked", value: "100", suffix: "m+" },
+                { label: "AI Predictions", value: "99", suffix: "%" },
+                { label: "Uptime", value: "99.9", suffix: "%" }
+              ].map((stat, i) => (
+                <div key={i} className="flex flex-col gap-2">
+                  <div className="text-4xl md:text-5xl font-extrabold text-white tracking-tighter">
+                    <span className="stat-number" data-target={stat.value}>0</span>
+                    <span className="text-purple-400">{stat.suffix}</span>
+                  </div>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-widest">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Features Section */}
+          <section id="features" className="py-32 px-6 lg:px-12 relative">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center max-w-3xl mx-auto mb-20">
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Everything you need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">stay healthy.</span></h2>
+                <p className="text-lg text-gray-400">A complete toolset designed for individuals who want precision, reliability, and intelligence in their daily routine.</p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <FeatureCard3D index={0} icon={<Clock />} title="Precision Reminders">
+                  Customizable alerts that adapt to your timezone, sleep schedule, and daily routine automatically.
+                </FeatureCard3D>
+                <FeatureCard3D index={1} icon={<BrainCircuit />} title="AI Insights">
+                  Our neural network analyzes your adherence patterns to predict and prevent missed doses before they happen.
+                </FeatureCard3D>
+                <FeatureCard3D index={2} icon={<BarChart2 />} title="Deep Analytics">
+                  Visualize your wellness journey with beautiful, interactive charts that uncover hidden health trends.
+                </FeatureCard3D>
+                <FeatureCard3D index={3} icon={<ShieldCheck />} title="Privacy First">
+                  Bank-grade encryption ensures your medical data remains strictly confidential and secure at all times.
+                </FeatureCard3D>
+                <FeatureCard3D index={4} icon={<Calendar />} title="Calendar Sync">
+                  Seamlessly integrates with Google Calendar and Apple Calendar for a unified life schedule.
+                </FeatureCard3D>
+                <FeatureCard3D index={5} icon={<Zap />} title="Lightning Fast">
+                  Built on a modern tech stack ensuring zero lag, instant syncing, and offline capabilities.
+                </FeatureCard3D>
+              </div>
+            </div>
+          </section>
+
+          {/* AI Showcase Section */}
+          <section id="ai" className="py-32 px-6 lg:px-12 relative overflow-hidden bg-black/40 border-y border-white/5">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none mix-blend-overlay" />
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-6 text-sm font-semibold">
+                  <MessageSquare size={16} /> MediSync AI Engine
+                </div>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Talk to your data naturally.</h2>
+                <p className="text-lg text-gray-400 mb-8 leading-relaxed">
+                  Stop navigating through complex menus. Just ask our AI assistant anything about your schedule, side effects, or health history, and get instant, accurate answers.
+                </p>
+                <ul className="space-y-4">
+                  {[
+                    "What did I miss yesterday?",
+                    "Can I take Ibuprofen with Megaflam?",
+                    "Reschedule my 9 AM dose to 10 AM today."
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-center gap-3 text-gray-300 bg-white/5 border border-white/10 p-4 rounded-xl">
+                      <ArrowRight size={18} className="text-pink-400" /> "{text}"
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="relative rounded-3xl bg-[#0a0a0f] border border-white/10 shadow-2xl overflow-hidden aspect-square md:aspect-video lg:aspect-square flex flex-col">
+                <div className="h-14 border-b border-white/10 flex items-center px-6 gap-3 bg-white/[0.02]">
+                  <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                  <span className="ml-4 text-xs font-mono text-gray-500">AI Assistant</span>
+                </div>
+                <div className="flex-1 p-6 flex flex-col gap-4 overflow-hidden relative">
+                  <div className="self-end bg-purple-600 text-white px-5 py-3 rounded-2xl rounded-tr-sm max-w-[80%] shadow-lg">
+                    <p className="text-sm">I have a headache. Can I take aspirin right now?</p>
+                  </div>
+                  <div className="self-start bg-white/10 border border-white/10 text-gray-200 px-5 py-4 rounded-2xl rounded-tl-sm max-w-[85%] shadow-lg backdrop-blur-md">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BrainCircuit size={16} className="text-pink-400" />
+                      <span className="text-xs font-bold text-pink-400">MediSync AI</span>
+                    </div>
+                    <p className="text-sm leading-relaxed">Looking at your logs, you took Megaflam 15mg at 9:00 AM. It is generally not recommended to mix Aspirin with NSAIDs like Megaflam as it increases the risk of side effects. Please consult your doctor first.</p>
+                  </div>
+                </div>
+                <div className="h-16 border-t border-white/10 bg-white/[0.02] flex items-center px-4">
+                  <div className="w-full h-10 bg-black/50 border border-white/10 rounded-xl px-4 flex items-center text-sm text-gray-500">
+                    Ask AI anything...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* How It Works Timeline */}
+          <section id="how-it-works" className="py-32 px-6 lg:px-12">
+            <div className="max-w-3xl mx-auto text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">How MediSync works.</h2>
+              <p className="text-lg text-gray-400">A frictionless experience from onboarding to daily mastery.</p>
+            </div>
+
+            <div ref={timelineRef} className="max-w-4xl mx-auto relative pb-10">
+              {/* Background Line */}
+              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-white/10 transform md:-translate-x-1/2" />
+              {/* Animated Progress Line */}
+              <div className="timeline-progress absolute left-8 md:left-1/2 top-0 w-[3px] bg-gradient-to-b from-purple-500 via-pink-500 to-purple-500 transform md:-translate-x-1/2 h-0 shadow-[0_0_15px_rgba(168,85,247,0.6)]" />
+
+              {[
+                { title: "Create Your Profile", desc: "Sign up securely in seconds. No complex setups or endless forms." },
+                { title: "Add Medications", desc: "Input your prescriptions. We handle the complex scheduling logic automatically." },
+                { title: "Get Notified", desc: "Receive intelligent, timely reminders on your phone, watch, or browser." },
+                { title: "Track & Optimize", desc: "View detailed analytics and let AI suggest improvements to your routine." }
+              ].map((step, i) => (
+                <div key={i} className={`timeline-node relative flex items-center mb-20 md:mb-32 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                  <div className="absolute left-8 md:left-1/2 w-6 h-6 rounded-full bg-[#030305] border-4 border-purple-500 transform -translate-x-1/2 z-10 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                  <div className={`ml-20 md:ml-0 w-full md:w-1/2 ${i % 2 === 0 ? 'md:pl-16' : 'md:pr-16 text-left md:text-right'}`}>
+                    <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors">
+                      <span className="text-purple-400 font-mono font-bold mb-2 block">Step 0{i+1}</span>
+                      <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">{step.title}</h3>
+                      <p className="text-gray-400">{step.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Testimonials Marquee */}
+          <section className="py-20 border-y border-white/5 bg-white/[0.02] overflow-hidden flex flex-col gap-6">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-extrabold tracking-tight">Loved by thousands.</h2>
+            </div>
+            
+            <div className="relative w-full flex overflow-hidden group">
+              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#030305] to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#030305] to-transparent z-10 pointer-events-none" />
+              
+              <div className="flex animate-marquee group-hover:[animation-play-state:paused] whitespace-nowrap">
+                {[1,2,3,4,5,6].map((_, i) => (
+                  <div key={i} className="inline-block w-[350px] md:w-[450px] mx-4 p-6 rounded-3xl bg-white/5 border border-white/10 whitespace-normal">
+                    <div className="flex items-center gap-1 mb-4 text-yellow-500">
+                      {[1,2,3,4,5].map(s => <span key={s}>★</span>)}
+                    </div>
+                    <p className="text-gray-300 mb-6 text-lg">"Absolutely life-changing app. The AI predictions saved me from mixing incompatible meds. The UI is gorgeous and perfectly smooth."</p>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+                        {String.fromCharCode(65 + i)}
+                      </div>
+                      <div>
+                        <p className="font-bold text-white">Verified User</p>
+                        <p className="text-xs text-gray-500">Patient</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FAQ Section */}
+          <section className="py-32 px-6 lg:px-12 max-w-4xl mx-auto">
+            <h2 className="text-4xl font-extrabold mb-12 text-center tracking-tight">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              {[
+                { q: "Is MediSync-AI completely free?", a: "Yes! Our core tracking and AI assistant features are currently free to use." },
+                { q: "How secure is my medical data?", a: "We use end-to-end encryption. Your data is stored securely and never sold to third parties." },
+                { q: "Does it sync with Google Calendar?", a: "Yes, you can easily connect your Google Calendar in the dashboard to mirror your schedule." },
+                { q: "What if I miss a dose?", a: "The system logs it as missed and the AI adapts your adherence score, optionally offering advice on next steps." }
+              ].map((faq, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300">
+                  <button 
+                    onClick={() => toggleFaq(i)}
+                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+                  >
+                    <span className="font-bold text-lg">{faq.q}</span>
+                    <ChevronDown size={20} className={`transform transition-transform duration-300 ${activeFaq === i ? 'rotate-180 text-purple-400' : 'text-gray-500'}`} />
+                  </button>
+                  <div className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${activeFaq === i ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <p className="text-gray-400">{faq.a}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* CTA & Contact */}
+          <section id="contact" className="py-32 relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-900/20 pointer-events-none" />
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+              <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                  <h2 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tighter">Ready to sync your <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">health routine?</span></h2>
+                  <p className="text-xl text-gray-400 mb-10">Join thousands of users who have transformed their medical adherence with our intelligent platform.</p>
+                  <button onClick={() => navigate('/register')} className="group relative inline-flex items-center justify-center px-10 py-5 font-bold text-black transition-all duration-200 bg-white rounded-full hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+                    <span className="relative flex items-center gap-2 text-lg">Create Free Account <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></span>
+                  </button>
+                </div>
+                <div>
+                  <ContactForm />
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* Minimal Premium Footer */}
+        <footer className="border-t border-white/10 bg-[#020203] pt-16 pb-8 px-6 lg:px-12 relative z-10">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Pill size={20} className="text-purple-400" />
+              <span className="text-lg font-bold tracking-tight">MediSync-AI</span>
+            </div>
+            
+            <div className="flex gap-6 text-sm text-gray-500 font-medium">
+              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
+            </div>
+            
+            <div className="text-sm text-gray-600">
+              &copy; {new Date().getFullYear()} MediSync-AI. All rights reserved.
+            </div>
+          </div>
+        </footer>
+
+      </div>
+    </SmoothScroll>
   );
 };
 

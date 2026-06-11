@@ -16,14 +16,14 @@ const AnalyticsPage = () => {
                 const doseLogs = await medicineApi.getDoseLogs();
                 if (doseLogs && doseLogs.length > 0) {
                     const totalTaken = doseLogs.filter(l => l.status === 'Taken').length;
-                    const totalMissed = doseLogs.filter(l => l.status === 'Skipped').length;
+                    const totalMissed = doseLogs.filter(l => l.status === 'Skipped' || l.status === 'Missed').length;
                     const totalLogs = totalTaken + totalMissed;
                     const overallAdherence = totalLogs > 0 ? Math.round((totalTaken / totalLogs) * 100) : 0;
 
                     const weeklyAdherence = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, dayIndex) => {
                         const dayLogs = doseLogs.filter(d => new Date(d.actionTime).getDay() === dayIndex);
                         const takenCount = dayLogs.filter(d => d.status === 'Taken').length;
-                        const totalCount = dayLogs.filter(d => d.status === 'Taken' || d.status === 'Skipped').length;
+                        const totalCount = dayLogs.filter(d => ['Taken', 'Skipped', 'Missed'].includes(d.status)).length;
                         if (totalCount === 0) return { name: day, adherence: 0 };
                         return { name: day, adherence: Math.round((takenCount / totalCount) * 100) };
                     });
@@ -34,7 +34,7 @@ const AnalyticsPage = () => {
                         { hour: 'Evening (6-11pm)', missed: 0 },
                         { hour: 'Night (12-5am)', missed: 0 },
                     ];
-                    doseLogs.filter(d => d.status === 'Skipped').forEach(d => {
+                    doseLogs.filter(d => d.status === 'Skipped' || d.status === 'Missed').forEach(d => {
                         const hour = new Date(d.scheduledTime).getHours();
                         if (hour >= 6 && hour < 12) missedByHour[0].missed++;
                         else if (hour >= 12 && hour < 18) missedByHour[1].missed++;

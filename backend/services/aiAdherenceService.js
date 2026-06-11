@@ -15,6 +15,8 @@ exports.predictMissedDoses = async (userId) => {
     const riskLevel = nightMisses.length >= 3 ? 'High' : nightMisses.length >= 1 ? 'Medium' : 'Low';
     return {
         riskLevel,
+        risk: riskLevel, // Chatbot compatibility alias
+        missedNightCount: nightMisses.length, // Chatbot compatibility alias
         message: riskLevel === 'High' ? 'High risk of missing evening doses. Suggest setting alarms.' :
                  riskLevel === 'Medium' ? 'Moderate risk of missing evening doses.' : 'Keep up the good work!',
         factors: [`Night-time misses in past 30 logs: ${nightMisses.length}`],

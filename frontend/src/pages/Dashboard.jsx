@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import StatCard from '../Components/cards/StatCard';
 import { Clock, BarChart2, Zap, Plus, Check, X, AlertTriangle } from 'lucide-react';
 import { dateUtils } from '../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +8,98 @@ import { otherApi } from '../api/otherApi';
 import { medicineApi } from '../api/medicineApi';
 import { predictionService } from '../services/predictionService';
 import { notificationService } from '../services/notificationService';
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function useCountUp(target, duration = 1200) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!target) {
+      setCount(0);
+      return;
+    }
+    let start = 0;
+    const increment = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 16);
+    return () => clearInterval(timer);
+  }, [target, duration]);
+  return count;
+}
+
+const KPICard = ({ label, value, icon, trend, gradientFromTo, isPercentage }) => {
+  const animatedValue = useCountUp(value);
+  return (
+    <motion.div
+      whileHover={{ scale: 1.02, y: -2 }}
+      className="relative overflow-hidden rounded-2xl p-5 bg-white/[0.04] border border-white/[0.08] hover:border-violet-500/30 transition-all cursor-pointer group"
+    >
+      {/* Top accent line - unique color per card */}
+      <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradientFromTo} rounded-t-2xl`} />
+      
+      {/* Icon */}
+      <div className="w-9 h-9 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg mb-3 text-violet-300">
+        {icon}
+      </div>
+      
+      {/* Label */}
+      <p className="text-[10px] uppercase tracking-widest text-white/40 font-semibold mb-1">
+        {label}
+      </p>
+      
+      {/* Animated counter value */}
+      <p className="text-3xl font-black text-white">
+        {isPercentage ? `${animatedValue}%` : animatedValue}
+      </p>
+      
+      {/* Trend chip */}
+      <p className={`text-xs mt-1 font-medium ${trend > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+        {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}% vs last week
+      </p>
+    </motion.div>
+  );
+};
+
+const getUniqueColor = (name) => {
+  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colors = [
+    { bg: 'bg-violet-400', shadow: 'shadow-[0_0_8px_rgba(167,139,250,0.8)]' },
+    { bg: 'bg-pink-400', shadow: 'shadow-[0_0_8px_rgba(244,114,182,0.8)]' },
+    { bg: 'bg-cyan-400', shadow: 'shadow-[0_0_8px_rgba(34,211,238,0.8)]' },
+    { bg: 'bg-teal-400', shadow: 'shadow-[0_0_8px_rgba(45,212,191,0.8)]' },
+    { bg: 'bg-amber-400', shadow: 'shadow-[0_0_8px_rgba(251,191,36,0.8)]' }
+  ];
+  return colors[hash % colors.length];
+};
+
+const ALL_ACHIEVEMENTS = [
+  { id: 'streak-7', label: '7-Day Streak', icon: '🔥' },
+  { id: 'streak-30', label: '30-Day Streak', icon: '🏆' },
+  { id: 'consistency-star', label: 'Consistency Star', icon: '⭐' },
+  { id: 'active-week', label: 'Active Week', icon: '📈' },
+];
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0 }
+};
 
 const DashboardPage = () => {
     const { user } = useAuth();
@@ -37,10 +128,12 @@ const DashboardPage = () => {
             const adherencePrediction = predictionService.predictAdherence(doseLogs);
             setPrediction(adherencePrediction);
 
-            // Backwards compatibility: some older code used scheduleNotification
             (summaryData.upcomingDoses || []).forEach(dose => {
-                // Use scheduleNotification so setReminder will schedule properly
-                notificationService.scheduleNotification(dose);
+                if (typeof notificationService.scheduleNotification === 'function') {
+                    notificationService.scheduleNotification(dose);
+                } else if (typeof notificationService.setReminder === 'function') {
+                    notificationService.setReminder(dose);
+                }
             });
 
             // Gamification: check achievements and trigger celebration for newly reached ones
@@ -49,20 +142,17 @@ const DashboardPage = () => {
                 const seen = JSON.parse(localStorage.getItem('achievementsSeen') || '[]');
                 const newOnes = achievements.filter(a => !seen.includes(a.key));
                 if (newOnes.length > 0) {
-                    // mark them as seen
                     const newSeen = [...seen, ...newOnes.map(a => a.key)];
                     localStorage.setItem('achievementsSeen', JSON.stringify(newSeen));
 
-                    // celebrate the first new one (you could iterate and show all)
                     const first = newOnes[0];
                     if (first) {
-                        // show confetti / emoji burst UI
                         setCelebrate(true);
                         clearTimeout(celebrateTimeoutRef.current);
                         celebrateTimeoutRef.current = setTimeout(() => setCelebrate(false), 4200);
-
-                        // show a milestone notification + sound/vibration
-                        notificationService.showMilestone(first);
+                        if (typeof notificationService.showMilestone === 'function') {
+                            notificationService.showMilestone(first);
+                        }
                     }
                 }
             } catch (err) {
@@ -76,7 +166,6 @@ const DashboardPage = () => {
         });
     }, []);
 
-    // Avoid duplicate initial fetches in StrictMode/dev by guarding with a ref
     const hasFetchedRef = useRef(false);
     useEffect(() => {
         if (!hasFetchedRef.current) {
@@ -86,16 +175,14 @@ const DashboardPage = () => {
         }
     }, [fetchData]);
 
-    // Periodically refresh dashboard summary so time-based sections update automatically
     useEffect(() => {
         const interval = setInterval(() => {
             fetchData();
-        }, 60000); // every 60 seconds
+        }, 60000);
         return () => clearInterval(interval);
     }, [fetchData]);
 
     const handleLogDose = async (dose, status) => {
-        // same logic as you had — unchanged
         setHiddenUpcoming(prev => [...prev, doseKey(dose)]);
 
         const startOfToday = new Date(new Date().setHours(0, 0, 0, 0));
@@ -148,7 +235,6 @@ const DashboardPage = () => {
         fetchData();
     };
 
-    // Upcoming/missed logic unchanged
     const startOfToday = new Date(new Date().setHours(0, 0, 0, 0));
     const toHHmm = (dateLike, fallbackTimeStr) => {
         if (fallbackTimeStr) return fallbackTimeStr;
@@ -173,7 +259,6 @@ const DashboardPage = () => {
 
     const missedDoses = summary?.missedDoses || [];
 
-    // Auto-log missed doses as "Missed"
     const missedLoggedRef = useRef({});
     useEffect(() => {
         if (!missedDoses.length) return;
@@ -190,32 +275,18 @@ const DashboardPage = () => {
         // eslint-disable-next-line
     }, [missedDoses.length, summary]);
 
-    if (loading || !summary) return <div className="text-center p-10">Loading Dashboard...</div>;
+    if (loading || !summary) return <div className="text-center p-10 text-white/50">Loading Dashboard...</div>;
 
-    // helper render for achievement badges
-    const renderAchievements = (achievements) => {
-        if (!achievements || achievements.length === 0) {
-            return (
-                <div className="text-center text-gray-400">No achievements yet — start a streak!</div>
-            );
-        }
-        return (
-            <div className="flex flex-wrap gap-3">
-                {achievements.map(a => (
-                    <div key={a.key} className="flex items-center gap-2 bg-black/20 px-3 py-2 rounded-xl border border-purple-800/30">
-                        <span className="text-xl">{a.emoji}</span>
-                        <div className="text-left">
-                            <div className="font-bold text-white leading-tight">{a.title}</div>
-                            <div className="text-xs text-purple-200">{a.description}</div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        );
-    };
+    const unlockedKeys = new Set((summary?.achievements || []).map(a => a.key));
+    const achievementsList = ALL_ACHIEVEMENTS.map(ach => ({
+        ...ach,
+        unlocked: unlockedKeys.has(ach.id)
+    }));
+    const unlockedCount = achievementsList.filter(a => a.unlocked).length;
+    const totalAchievements = achievementsList.length;
 
     return (
-        <div className="relative min-h-screen flex flex-col bg-gray-900 text-white">
+        <div className="relative min-h-screen flex flex-col bg-[#08081a] text-white">
             {/* Animated background orb */}
             <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-gradient-to-r from-purple-500/20 via-pink-400/10 to-purple-500/20 rounded-full blur-3xl opacity-60 pointer-events-none z-0" />
 
@@ -238,157 +309,262 @@ const DashboardPage = () => {
                 </div>
             )}
 
-            <div className="w-full flex justify-center items-center mb-8 z-10 relative">
-                <div className="h-1 w-32 rounded-full bg-gradient-to-r from-purple-500/40 via-pink-400/30 to-purple-500/40 animate-pulse" />
-            </div>
-
-            <div className="flex-1 flex flex-col justify-center space-y-8 z-10 relative w-full max-w-7xl mx-auto px-4 md:px-8">
-                <motion.h1
-                    className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-xl text-center"
-                    initial={{ opacity: 0, y: 20 }}
+            <div className="flex-1 flex flex-col space-y-8 z-10 relative w-full max-w-5xl mx-auto px-4 md:px-8 py-8">
+                {/* Greeting & Quick Actions */}
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7 }}
+                    transition={{ delay: 0 }}
                 >
-                    Welcome back, {user?.name.split(' ')[0]}!
-                </motion.h1>
+                    <p className="text-xs text-white/35 font-medium tracking-wide uppercase">
+                        {getGreeting()} — {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+                    </p>
+                    <h1 className="text-2xl font-extrabold text-white mt-1">
+                        Welcome back, <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">{user?.name ? user.name.split(' ')[0] : 'Sumit'}</span> 👋
+                    </h1>
+                    
+                    <div className="flex gap-2 mt-3 flex-wrap">
+                        <button
+                            onClick={() => navigate('/schedules')}
+                            className="text-xs px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 hover:bg-violet-500/20 transition-all"
+                        >
+                            + Log a dose
+                        </button>
+                        <button
+                            onClick={() => navigate('/schedules')}
+                            className="text-xs px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 hover:bg-violet-500/20 transition-all"
+                        >
+                            View today's schedule
+                        </button>
+                        <button
+                            onClick={() => window.dispatchEvent(new CustomEvent('toggle-chatbot'))}
+                            className="text-xs px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 hover:bg-violet-500/20 transition-all"
+                        >
+                            Ask AI assistant
+                        </button>
+                    </div>
+                </motion.div>
 
+                {/* AI Nudge (if exists) */}
                 {prediction && (
                     <motion.div
-                        className="bg-yellow-900/50 border border-yellow-700 text-yellow-300 px-4 py-3 rounded-lg relative flex items-center justify-center shadow-lg"
-                        role="alert"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="rounded-2xl p-4 bg-amber-500/10 border border-amber-500/25 flex items-start gap-3 mb-4"
                     >
-                        <AlertTriangle className="mr-3 animate-bounce"/>
-                        <span className="block sm:inline">{prediction}</span>
+                        <span className="text-xl">🤖</span>
+                        <div>
+                            <p className="text-sm font-semibold text-amber-300">AI Nudge</p>
+                            <p className="text-xs text-amber-200/70 mt-0.5">{prediction}</p>
+                        </div>
                     </motion.div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                    <StatCard title="Upcoming Doses Today" value={upcomingDoses.length} icon={<Clock size={24}/>} color="bg-blue-500/20 text-blue-300" />
-                    <StatCard title="Adherence (7d)" value={`${summary.kpis.adherenceWeekly}%`} icon={<BarChart2 size={24}/>} color="bg-green-500/20 text-green-300" />
-                    <StatCard title="Current Streak" value={`${summary.kpis.currentStreak} Days`} icon={<Zap size={24}/>} color="bg-yellow-500/20 text-yellow-300" />
-                </div>
+                {/* KPI Cards */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full"
+                >
+                    <KPICard
+                        label="Upcoming Doses Today"
+                        value={upcomingDoses.length}
+                        icon={<Clock size={20}/>}
+                        trend={12}
+                        gradientFromTo="from-violet-500 to-purple-400"
+                        isPercentage={false}
+                    />
+                    <KPICard
+                        label="Adherence Rate (7d)"
+                        value={summary.kpis.adherenceWeekly}
+                        icon={<BarChart2 size={20}/>}
+                        trend={5}
+                        gradientFromTo="from-cyan-400 to-violet-500"
+                        isPercentage={true}
+                    />
+                    <KPICard
+                        label="Current Streak"
+                        value={summary.kpis.currentStreak}
+                        icon={<Zap size={20}/>}
+                        trend={20}
+                        gradientFromTo="from-pink-500 to-violet-500"
+                        isPercentage={false}
+                    />
+                </motion.div>
 
-                <div className="flex flex-col gap-10 w-full max-w-3xl mx-auto">
-                    {/* Achievements / Gamification Panel */}
-                    <motion.div
-                        className="panel-glass panel-hover panel-inner-pad shadow-2xl border border-purple-900/30 w-full p-6"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.05 }}
-                    >
-                        <h2 className="text-2xl font-extrabold text-white mb-4 tracking-tight">Achievements</h2>
-                        { renderAchievements(summary.achievements) }
-                    </motion.div>
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                    {/* Left/Middle Column (Doses lists & Activity) */}
+                    <div className="md:col-span-2 space-y-8">
+                        {/* Upcoming Doses */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5"
+                        >
+                            <h2 className="text-sm font-semibold text-white/60 mb-6 flex items-center gap-2">
+                                Upcoming Doses
+                                <span className="h-px flex-1 bg-white/[0.06]"></span>
+                            </h2>
+                            {upcomingDoses.length > 0 ? (
+                                <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4">
+                                    {upcomingDoses.map(dose => {
+                                        const name = dose.medicationName.split(' ')[0];
+                                        const dosage = dose.medicationName.split(' ').slice(1).join(' ');
+                                        const colorInfo = getUniqueColor(name);
+                                        
+                                        return (
+                                            <motion.div
+                                                variants={itemVariants}
+                                                key={`${dose.scheduleId}-${dose.time}`}
+                                                className="flex items-center gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-violet-500/20 transition-all"
+                                            >
+                                                {/* Glowing dot with unique color per medication */}
+                                                <div className={`w-2 h-2 rounded-full ${colorInfo.bg} ${colorInfo.shadow}`} />
+                                                
+                                                <span className="text-sm font-medium text-white flex-1">{name} {dosage}</span>
+                                                <span className="text-xs text-white/35">{dateUtils.formatTime(dose.time)}</span>
+                                                
+                                                {/* Action buttons */}
+                                                <button
+                                                    onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Taken'); }}
+                                                    className="text-xs px-3 py-1.5 rounded-lg font-semibold text-white bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-500 hover:to-violet-400 shadow-[0_0_12px_rgba(139,92,246,0.3)] transition-all"
+                                                >
+                                                    Take
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Skipped'); }}
+                                                    className="text-xs px-3 py-1.5 rounded-lg text-white/40 bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] transition-all"
+                                                >
+                                                    Skip
+                                                </button>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </motion.div>
+                            ) : (
+                                <div className="text-center py-8">
+                                    <div className="text-4xl mb-3">✅</div>
+                                    <p className="text-white/60 font-semibold">All caught up for today!</p>
+                                    <p className="text-white/30 text-sm mt-1">No more doses remaining</p>
+                                    <motion.button
+                                        onClick={() => navigate('/schedules')}
+                                        className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2.5 px-6 rounded-xl flex items-center mx-auto shadow-lg transition-all text-sm"
+                                        whileHover={{ scale: 1.08 }}
+                                        whileTap={{ scale: 0.97 }}
+                                    >
+                                        <Plus size={16} className="mr-2" /> View Schedules
+                                    </motion.button>
+                                </div>
+                            )}
+                        </motion.div>
 
-                    {/* Upcoming Doses Section */}
+                        {/* Missed Doses */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5"
+                        >
+                            <h2 className="text-sm font-semibold text-red-300 mb-6 flex items-center gap-2">
+                                Missed Doses
+                                <span className="h-px flex-1 bg-white/[0.06]"></span>
+                            </h2>
+                            {missedDoses.length > 0 ? (
+                                <div className="space-y-4">
+                                    {missedDoses.map(dose => (
+                                        <div key={`${dose.scheduleId}-${dose.time}`} className="flex items-center justify-between text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                                            <div>
+                                                <span className="font-semibold text-white">{dose.medicationName}</span>
+                                                <span className="ml-3 text-red-400 font-mono">{dateUtils.formatTime(dose.time)}</span>
+                                            </div>
+                                            <span className="text-red-400 font-bold">Missed</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-6 text-white/30 text-sm">
+                                    <p>No missed doses today. Keep it up!</p>
+                                </div>
+                            )}
+                        </motion.div>
+
+                        {/* Recent Activity */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5"
+                        >
+                            <h2 className="text-sm font-semibold text-white/60 mb-6 flex items-center gap-2">
+                                Recent Activity
+                                <span className="h-px flex-1 bg-white/[0.06]"></span>
+                            </h2>
+                            {summary.recentActivity.length > 0 ? (
+                                <div className="space-y-4">
+                                    {summary.recentActivity.map(log => (
+                                        <div
+                                            key={log._id}
+                                            className="flex items-center justify-between text-sm bg-white/[0.02] border border-white/[0.04] rounded-xl px-4 py-3"
+                                        >
+                                            <div className="flex items-center">
+                                                {log.status === 'Taken' ? (
+                                                    <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] mr-3" />
+                                                ) : log.status === 'Missed' ? (
+                                                    <span className="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)] mr-3" />
+                                                ) : (
+                                                    <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)] mr-3" />
+                                                )}
+                                                <span className="font-semibold text-white">{log.medicationName}</span>
+                                            </div>
+                                            <span className="text-white/40 font-mono text-xs">{new Date(log.actionTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-6 text-white/30 text-sm">
+                                    <p>No recent activity to show.</p>
+                                </div>
+                            )}
+                        </motion.div>
+                    </div>
+
+                    {/* Right Column (Achievements) */}
                     <motion.div
-                        className="panel-glass panel-hover panel-inner-pad shadow-2xl border border-purple-900/30 w-full"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.1 }}
+                        transition={{ delay: 0.6 }}
+                        className="space-y-8"
                     >
-                        <h2 className="text-2xl font-extrabold text-white mb-6 tracking-tight">Upcoming Doses</h2>
-                        {upcomingDoses.length > 0 ? (
-                            <div className="space-y-4">
-                                {upcomingDoses.map(dose => (
+                        <div className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5">
+                            <h2 className="text-sm font-semibold text-white/60 mb-4 flex items-center gap-2">
+                                Achievements 
+                                <span className="h-px flex-1 bg-white/[0.06]"></span>
+                                <span className="text-xs text-violet-400">{unlockedCount}/{totalAchievements} unlocked</span>
+                            </h2>
+                            <div className="grid grid-cols-4 gap-3">
+                                {achievementsList.map(ach => (
                                     <motion.div
-                                        key={`${dose.scheduleId}-${dose.time}`}
-                                        className="bg-gradient-to-r from-purple-900/40 to-pink-900/30 p-5 rounded-2xl flex justify-between items-center backdrop-blur-md hover:scale-[1.03] hover:shadow-2xl transition-all border border-purple-800/30"
-                                        whileHover={{ scale: 1.03 }}
+                                        key={ach.id}
+                                        whileHover={{ scale: 1.05 }}
+                                        className={`rounded-xl p-3 text-center border transition-all ${
+                                            ach.unlocked
+                                                ? 'bg-violet-500/10 border-violet-500/30'
+                                                : 'bg-white/[0.03] border-white/[0.06] opacity-40 grayscale'
+                                        }`}
                                     >
-                                        <div>
-                                            <p className="font-bold text-lg text-white">{dose.medicationName.split(' ')[0]}</p>
-                                            <p className="text-sm text-purple-200">{dose.medicationName.split(' ').slice(1).join(' ')}</p>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <p className="font-bold text-xl text-purple-400 mr-4">{dateUtils.formatTime(dose.time)}</p>
-                                            <button type="button" onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Skipped'); }} title="Skip Dose" className="p-3 bg-red-500/20 text-red-300 rounded-full hover:bg-red-500/40 hover:scale-110 transition-all"><X size={18}/></button>
-                                            <button type="button" onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Taken'); }} title="Take Dose" className="p-3 bg-green-500/20 text-green-300 rounded-full hover:bg-green-500/40 hover:scale-110 transition-all"><Check size={18}/></button>
-                                        </div>
+                                        <div className="text-2xl mb-1">{ach.icon}</div>
+                                        <p className={`text-[9px] font-semibold uppercase tracking-wide 
+                                            ${ach.unlocked ? 'text-violet-300' : 'text-white/30'}`}>
+                                            {ach.label}
+                                        </p>
                                     </motion.div>
                                 ))}
                             </div>
-                        ) : (
-                            <div className="text-center py-10 text-gray-400">
-                                <p>No more upcoming doses for today. Great job!</p>
-                                <motion.button
-                                    onClick={() => navigate('/schedules')}
-                                    className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl flex items-center mx-auto shadow-lg transition-all text-lg"
-                                    whileHover={{ scale: 1.08 }}
-                                    whileTap={{ scale: 0.97 }}
-                                >
-                                    <Plus size={20} className="mr-2" /> View Schedules
-                                </motion.button>
-                            </div>
-                        )}
-                    </motion.div>
-
-                    {/* Missed Doses Section */}
-                    <motion.div
-                        className="panel-glass panel-hover panel-inner-pad shadow-2xl border border-red-900/30 w-full"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.15 }}
-                    >
-                        <h2 className="text-2xl font-extrabold text-red-300 mb-6 tracking-tight">Missed Doses</h2>
-                        {missedDoses.length > 0 ? (
-                            <ul className="space-y-4">
-                                {missedDoses.map(dose => (
-                                    <li key={`${dose.scheduleId}-${dose.time}`} className="flex items-center justify-between text-base bg-red-900/20 rounded-xl px-4 py-3">
-                                        <div>
-                                            <span className="font-semibold text-white">{dose.medicationName}</span>
-                                            <span className="ml-3 text-red-400 font-mono">{dateUtils.formatTime(dose.time)}</span>
-                                        </div>
-                                        <span className="text-red-400 font-bold">Missed</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <div className="text-center py-6 text-gray-400">
-                                <p>No missed doses today. Keep it up!</p>
-                            </div>
-                        )}
-                    </motion.div>
-
-                    {/* Recent Activity Section */}
-                    <motion.div
-                        className="panel-glass panel-hover panel-inner-pad shadow-2xl border border-purple-900/30 w-full"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.2 }}
-                    >
-                        <h2 className="text-2xl font-extrabold text-white mb-6 tracking-tight">Recent Activity</h2>
-                        {summary.recentActivity.length > 0 ? (
-                            <ul className="space-y-4">
-                                {summary.recentActivity.map(log => (
-                                    <motion.li
-                                        key={log._id}
-                                        className="flex items-center justify-between text-base hover:bg-black/10 rounded-xl px-4 py-3 transition-all"
-                                        whileHover={{ scale: 1.025 }}
-                                    >
-                                        <div className="flex items-center">
-                                            {log.status === 'Taken' ? (
-                                                <Check size={18} className="mr-3 text-green-400"/>
-                                            ) : log.status === 'Missed' ? (
-                                                <AlertTriangle size={18} className="mr-3 text-yellow-400"/>
-                                            ) : log.status === 'Skipped' ? (
-                                                <X size={18} className="mr-3 text-red-400"/>
-                                            ) : null}
-                                            <span className="font-semibold text-white">{log.medicationName}</span>
-                                        </div>
-                                        <span className="text-purple-200 font-mono">{new Date(log.actionTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                                    </motion.li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <div className="text-center py-10 text-gray-400">
-                                <p>No recent activity to show.</p>
-                                <p className="text-base mt-2">Doses you take or miss will appear here.</p>
-                            </div>
-                        )}
+                        </div>
                     </motion.div>
                 </div>
             </div>

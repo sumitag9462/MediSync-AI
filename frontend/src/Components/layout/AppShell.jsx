@@ -9,7 +9,7 @@ const AppShell = ({ user, onLogout, currentPage, children }) => {
     
     return (
         <div className="flex h-screen text-white overflow-hidden">
-            <Sidebar currentPage={currentPage} isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <Sidebar user={user} currentPage={currentPage} isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Topbar user={user} onLogout={onLogout} />
                 <main className="flex-1 overflow-y-auto p-8">

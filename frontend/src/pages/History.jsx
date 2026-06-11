@@ -58,7 +58,7 @@ const HistoryPage = () => {
                                     <div className="panel-glass bg-gradient-to-br from-purple-900/40 to-pink-900/30 border border-purple-900/30 shadow-2xl rounded-2xl">
                                         <div className="divide-y divide-purple-900/30">
                                             {logs[date].map(log => (
-                                                <div key={log.logId} className="flex items-center justify-between px-6 py-5 hover:bg.black/20 backdrop-blur-sm rounded-xl transition-all">
+                                                <div key={log._id} className="flex items-center justify-between px-6 py-5 hover:bg.black/20 backdrop-blur-sm rounded-xl transition-all">
                                                     <div className="flex items-center gap-5">
                                                         {log.status === 'Taken' ? (
                                                             <CheckCircle size={28} className="text-green-400" title="Taken"/>

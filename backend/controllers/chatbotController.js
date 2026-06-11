@@ -34,7 +34,7 @@ const sendChatbotMessage = async (req, res) => {
                 parts: [{ text: systemPrompt || 'You are MediSync-AI, a helpful medication management assistant.' }],
             },
         };
-        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
         const response = await axios.post(GEMINI_API_URL, payload, { headers: { 'Content-Type': 'application/json' } });
         const modelMessage = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response.";
         res.json({ reply: modelMessage });

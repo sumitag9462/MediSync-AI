@@ -19,6 +19,23 @@ const Chatbot = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    // Pre-warm Web Speech API voices cache
+    useEffect(() => {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+    }, []);
+
+    // Toggle chatbot event listener
+    useEffect(() => {
+        const handleToggle = () => setIsOpen(prev => !prev);
+        window.addEventListener('toggle-chatbot', handleToggle);
+        return () => window.removeEventListener('toggle-chatbot', handleToggle);
+    }, []);
+
     // Initialize Speech Recognition
     useEffect(() => {
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -35,7 +52,7 @@ const Chatbot = () => {
 
             recognitionRef.current.onerror = (event) => {
                 console.error("SpeechRecognition error:", event.error);
-                if(event.error === "no-speech"){
+                if (event.error === "no-speech") {
                     // restart recognition after short delay
                     recognitionRef.current.stop();
                     setTimeout(() => recognitionRef.current.start(), 300);
@@ -51,7 +68,7 @@ const Chatbot = () => {
                 const transcript = Array.from(event.results)
                     .map(result => result[0].transcript)
                     .join('');
-                if(transcript.trim() !== ''){
+                if (transcript.trim() !== '') {
                     console.log("Heard:", transcript);
                     setInput(transcript);
                     handleSend(transcript); // auto-send after voice input
@@ -70,11 +87,34 @@ const Chatbot = () => {
     };
 
     const speakText = (text) => {
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            window.speechSynthesis.speak(utterance);
+        if (!('speechSynthesis' in window)) return;
+
+        // Cancel any active speech to prevent queuing overlap
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+
+        const voices = window.speechSynthesis.getVoices();
+
+        // Premium natural voice selection
+        const preferredVoice =
+            voices.find(v => v.name.includes('Google US English') && v.lang.startsWith('en')) ||
+            voices.find(v => v.name.includes('Samantha') && v.lang.startsWith('en')) ||
+            voices.find(v => v.name.includes('Alex') && v.lang.startsWith('en')) ||
+            voices.find(v => v.name.includes('Daniel') && v.lang.startsWith('en')) ||
+            voices.find(v => v.lang.startsWith('en-US')) ||
+            voices.find(v => v.lang.startsWith('en'));
+
+        if (preferredVoice) {
+            utterance.voice = preferredVoice;
         }
+
+        // Adjust parameters to make it sound warm, clear, and less robotic
+        utterance.rate = 0.95;  // Slightly slower speed for better pacing
+        utterance.pitch = 1.05; // Slightly higher pitch for a friendly, natural tone
+
+        window.speechSynthesis.speak(utterance);
     };
 
     const handleSend = async (voiceInput) => {
@@ -137,85 +177,76 @@ const Chatbot = () => {
 
     return (
         <>
-        <div className="fixed bottom-6 right-6 z-50 group">
             <motion.button
                 whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full p-4 shadow-lg"
+                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-white text-2xl shadow-[0_0_30px_rgba(139,92,246,0.5)] z-50 focus:outline-none"
             >
-                <AnimatePresence>
-                    {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-                </AnimatePresence>
+                {isOpen ? <X size={24} /> : '💬'}
             </motion.button>
-            {!isOpen && (
-                <div className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    AI Assistant
-                </div>
-            )}
-        </div>
 
-        <AnimatePresence>
-        {isOpen && (
-            <motion.div
-                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                className="fixed bottom-24 right-6 w-96 h-[32rem] panel-glass shadow-2xl flex flex-col z-40 overflow-hidden"
-            >
-                <div className="p-4 bg-gray-900 border-b border-gray-700">
-                    <h3 className="text-lg font-bold text-white">Wellness Assistant</h3>
-                </div>
-                <div className="flex-1 p-4 overflow-y-auto space-y-4">
-                    {messages.map((msg, index) => (
-                        <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm ${msg.role === 'user'
-                                    ? 'bg-purple-600 text-white rounded-br-none'
-                                    : 'bg-gray-700 text-gray-200 rounded-bl-none'
-                                }`}>
-                                {msg.parts[0].text}
-                            </div>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 50, scale: 0.9 }}
+                        className="fixed bottom-24 right-6 w-96 h-[32rem] panel-glass shadow-2xl flex flex-col z-40 overflow-hidden"
+                    >
+                        <div className="p-4 bg-gray-900 border-b border-gray-700">
+                            <h3 className="text-lg font-bold text-white">Wellness Assistant</h3>
                         </div>
-                    ))}
-                    {isLoading && (
-                        <div className="flex justify-start">
-                            <div className="px-4 py-2 rounded-2xl bg-gray-700 text-gray-200 rounded-bl-none">
-                                <div className="flex items-center space-x-1">
-                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-75"></span>
-                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></span>
-                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-300"></span>
+                        <div className="flex-1 p-4 overflow-y-auto space-y-4">
+                            {messages.map((msg, index) => (
+                                <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm ${msg.role === 'user'
+                                        ? 'bg-purple-600 text-white rounded-br-none'
+                                        : 'bg-gray-700 text-gray-200 rounded-bl-none'
+                                        }`}>
+                                        {msg.parts[0].text}
+                                    </div>
                                 </div>
-                            </div>
+                            ))}
+                            {isLoading && (
+                                <div className="flex justify-start">
+                                    <div className="px-4 py-2 rounded-2xl bg-gray-700 text-gray-200 rounded-bl-none">
+                                        <div className="flex items-center space-x-1">
+                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-75"></span>
+                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></span>
+                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-300"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
                         </div>
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-                <div className="p-4 border-t border-gray-700 flex items-center space-x-2">
-                    <textarea
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Ask something..."
-                        className="flex-1 bg-gray-700 border-gray-600 rounded-full py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                        rows="1"
-                    />
-                    <button
-                        onClick={handleVoiceClick}
-                        className={`bg-purple-600 p-2 rounded-full text-white ${isListening ? 'animate-pulse' : ''}`}
-                    >
-                        <Mic size={18} />
-                    </button>
-                    <button
-                        onClick={() => handleSend()}
-                        disabled={isLoading}
-                        className="ml-1 bg-purple-600 p-2 rounded-full text-white disabled:bg-purple-800 disabled:cursor-not-allowed"
-                    >
-                        <Send size={18} />
-                    </button>
-                </div>
-            </motion.div>
-        )}
-        </AnimatePresence>
+                        <div className="p-4 border-t border-gray-700 flex items-center space-x-2">
+                            <textarea
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                placeholder="Ask something..."
+                                className="flex-1 bg-gray-700 border-gray-600 rounded-full py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                                rows="1"
+                            />
+                            <button
+                                onClick={handleVoiceClick}
+                                className={`bg-purple-600 p-2 rounded-full text-white ${isListening ? 'animate-pulse' : ''}`}
+                            >
+                                <Mic size={18} />
+                            </button>
+                            <button
+                                onClick={() => handleSend()}
+                                disabled={isLoading}
+                                className="ml-1 bg-purple-600 p-2 rounded-full text-white disabled:bg-purple-800 disabled:cursor-not-allowed"
+                            >
+                                <Send size={18} />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </>
     );
 };

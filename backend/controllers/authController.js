@@ -19,13 +19,18 @@ const requestEmailOtp = async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await OTP.create({ email, otp });
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            await transporter.sendMail({
-                from: `MediSync-AI <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: 'Your MediSync-AI Verification Code',
-                text: `Your OTP for MediSync-AI registration is: ${otp}. It will expire in 5 minutes.`,
-                html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Verification</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold;letter-spacing:5px;margin:20px 0;background:#f0f0f0;padding:10px;border-radius:5px">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
-            });
+            try {
+                await transporter.sendMail({
+                    from: `MediSync-AI <${process.env.EMAIL_USER}>`,
+                    to: email,
+                    subject: 'Your MediSync-AI Verification Code',
+                    text: `Your OTP for MediSync-AI registration is: ${otp}. It will expire in 5 minutes.`,
+                    html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Verification</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold;letter-spacing:5px;margin:20px 0;background:#f0f0f0;padding:10px;border-radius:5px">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
+                });
+            } catch (mailError) {
+                console.error('SMTP Mail error, falling back to console log:', mailError.message);
+                console.log(`\n==================================================\n⚠️  EMAIL SENDING FAILED (SMTP error)!\n🔑  Local Dev OTP for ${email}: ${otp}\n==================================================\n`);
+            }
         } else {
             console.log(`\n==================================================\n⚠️  EMAIL_USER/EMAIL_PASS not configured in .env!\n🔑  Local Dev OTP for ${email}: ${otp}\n==================================================\n`);
         }
@@ -82,12 +87,17 @@ const requestPasswordResetOtp = async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await OTP.create({ email, otp });
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            await transporter.sendMail({
-                from: `MediSync-AI <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: 'Your MediSync-AI Password Reset Code',
-                html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Password Reset</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
-            });
+            try {
+                await transporter.sendMail({
+                    from: `MediSync-AI <${process.env.EMAIL_USER}>`,
+                    to: email,
+                    subject: 'Your MediSync-AI Password Reset Code',
+                    html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Password Reset</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
+                });
+            } catch (mailError) {
+                console.error('SMTP Mail error, falling back to console log:', mailError.message);
+                console.log(`\n==================================================\n⚠️  EMAIL SENDING FAILED (SMTP error)!\n🔑  Local Dev Password Reset OTP for ${email}: ${otp}\n==================================================\n`);
+            }
         } else {
             console.log(`\n==================================================\n⚠️  EMAIL_USER/EMAIL_PASS not configured in .env!\n🔑  Local Dev Password Reset OTP for ${email}: ${otp}\n==================================================\n`);
         }
