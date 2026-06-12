@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const TokenBlocklist = require('../models/TokenBlocklist');
 require('dotenv').config();
 
 const protect = async (req, res, next) => {
@@ -8,6 +9,12 @@ const protect = async (req, res, next) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
+      
+      const isBlocked = await TokenBlocklist.findOne({ token });
+      if (isBlocked) {
+          return res.status(401).json({ message: 'Not authorized, token revoked' });
+      }
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.userId).select('-password');
       if (!req.user) {

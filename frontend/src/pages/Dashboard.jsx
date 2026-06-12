@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { Clock, BarChart2, Zap, Plus, Check, X, AlertTriangle, Activity, Pill, BrainCircuit, ArrowRight, ChevronDown } from 'lucide-react';
+import { Clock, BarChart2, Zap, Plus, Check, X, AlertTriangle, Activity, Pill, BrainCircuit, ArrowRight, ChevronDown, HeartPulse } from 'lucide-react';
 import { dateUtils } from '../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
 import { otherApi } from '../api/otherApi';

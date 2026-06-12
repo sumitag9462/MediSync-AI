@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 import { authApi } from '../api/authApi.js';
 import { googleCalendarApi } from '../services/googleCalendarApi.js';
 import { notificationService } from '../services/notificationService.js';
@@ -7,6 +8,7 @@ import { motion } from 'framer-motion';
 
 const SettingsPage = () => {
     const { user } = useAuth();
+    const { addToast } = useToast();
     const [isCalendarEnabled, setIsCalendarEnabled] = useState(googleCalendarApi.isCalendarEnabled());
     const [notificationPermission, setNotificationPermission] = useState(
         typeof Notification !== 'undefined' ? Notification.permission : 'default'
@@ -27,7 +29,7 @@ const SettingsPage = () => {
         .catch(err => {
             console.error("Calendar sign-in error", err);
             const errMsg = typeof err === 'string' ? err : (err.message || JSON.stringify(err));
-            alert(`Google Calendar Error: ${errMsg}\n\n(If you see popup_closed, ensure your browser allows popups and third-party cookies for accounts.google.com)`);
+            addToast(`Google Calendar Error: ${errMsg}`, 'error');
         });
     };
 

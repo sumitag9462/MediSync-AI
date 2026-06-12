@@ -3,13 +3,31 @@ import apiClient from './apiClient';
 export const authApi = {
     login: async (email, password) => {
         try {
-            // Make a REAL API call to the backend login route
             const response = await apiClient.post('/auth/login', { email, password });
-            // The backend returns { success: true, token, user }
             return response.data; 
         } catch (error) {
             console.error("Login failed:", error.response?.data?.message || error.message);
             return { success: false, message: error.response?.data?.message || "Invalid credentials" };
+        }
+    },
+
+    googleLogin: async (token) => {
+        try {
+            const response = await apiClient.post('/auth/google', { token });
+            return response.data;
+        } catch (error) {
+            console.error("Google login failed:", error.response?.data?.message || error.message);
+            return { success: false, message: error.response?.data?.message || "Google Login failed" };
+        }
+    },
+
+    appleLogin: async (identityToken, user) => {
+        try {
+            const response = await apiClient.post('/auth/apple', { identityToken, user });
+            return response.data;
+        } catch (error) {
+            console.error("Apple login failed:", error.response?.data?.message || error.message);
+            return { success: false, message: error.response?.data?.message || "Apple Login failed" };
         }
     },
 

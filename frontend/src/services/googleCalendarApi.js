@@ -1,4 +1,4 @@
-const CLIENT_ID = '1003751011571-lluivo48hngofq2o3sa4qug88uti3rrf.apps.googleusercontent.com';
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1003751011571-lluivo48hngofq2o3sa4qug88uti3rrf.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyALt_y21Wkpd0XfoTpI_E4mtdT6jwrdsjY';
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 const SCOPES = "https://www.googleapis.com/auth/calendar.events";
@@ -148,7 +148,9 @@ export const googleCalendarApi = {
                 console.error('Error creating calendar event:', error);
                 if (error.code === 401) {
                     googleCalendarApi.handleSignoutClick();
-                    alert("Your connection to Google expired. Please go to Settings and connect again.");
+                    window.dispatchEvent(new CustomEvent('toast', { 
+                        detail: { message: "Your connection to Google expired. Please go to Settings and connect again.", type: 'error' } 
+                    }));
                 }
             }
         }

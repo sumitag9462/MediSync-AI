@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import { googleCalendarApi } from './services/googleCalendarApi';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Import Pages
 import LandingPage from './pages/Landing';
@@ -56,41 +58,45 @@ const AppLayout = () => {
 // ✅ Main App
 function App() {
     return (
-        <AuthProvider>
-            <BrowserRouter>
-                <AuroraBackground>
-                    <div className="font-sans">
-                        <Routes>
-                            {/* 🌍 Public Routes */}
-                            <Route path="/" element={<LandingPage />} />
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/register" element={<RegisterPage />} />
-                            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-                            <Route path="/buy-coffee" element={<BuyCoffee />} /> 
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "placeholder-client-id"}>
+            <AuthProvider>
+                <ToastProvider>
+                <BrowserRouter>
+                    <AuroraBackground>
+                        <div className="font-sans">
+                            <Routes>
+                                {/* 🌍 Public Routes */}
+                                <Route path="/" element={<LandingPage />} />
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route path="/register" element={<RegisterPage />} />
+                                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                                <Route path="/buy-coffee" element={<BuyCoffee />} /> 
 
-                            {/* 🔐 Private Routes Layout */}
-                            <Route element={<PrivateRoute />}>
-                                <Route element={<AppLayout />}>
-                                    <Route path="/dashboard" element={<DashboardPage />} />
-                                    <Route path="/schedules" element={<SchedulesPage />} />
-                                    <Route path="/history" element={<HistoryPage />} />
-                                    <Route path="/analytics" element={<AnalyticsPage />} />
-                                    <Route path="/settings" element={<SettingsPage />} />
-                                    <Route path="/nearbyclinic" element={<NearbyClinic />} />
+                                {/* 🔐 Private Routes Layout */}
+                                <Route element={<PrivateRoute />}>
+                                    <Route element={<AppLayout />}>
+                                        <Route path="/dashboard" element={<DashboardPage />} />
+                                        <Route path="/schedules" element={<SchedulesPage />} />
+                                        <Route path="/history" element={<HistoryPage />} />
+                                        <Route path="/analytics" element={<AnalyticsPage />} />
+                                        <Route path="/settings" element={<SettingsPage />} />
+                                        <Route path="/nearbyclinic" element={<NearbyClinic />} />
 
-                                    {/* 🆕 Secret Medicine Info Route */}
-                                    <Route path="/medicine-secret" element={<MedicineSecretPage />} />
+                                        {/* 🆕 Secret Medicine Info Route */}
+                                        <Route path="/medicine-secret" element={<MedicineSecretPage />} />
 
-                                    {/* Redirect unknown routes to dashboard */}
-                                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                                        {/* Redirect unknown routes to dashboard */}
+                                        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                                    </Route>
                                 </Route>
-                            </Route>
-                        </Routes>
-                    </div>
-                </AuroraBackground>
-            </BrowserRouter>
+                            </Routes>
+                        </div>
+                    </AuroraBackground>
+                </BrowserRouter>
+            </ToastProvider>
         </AuthProvider>
+        </GoogleOAuthProvider>
     );
 }
 

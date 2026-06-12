@@ -5,6 +5,9 @@ const {
     requestEmailOtp,
     verifyEmailOtp,
     loginUser,
+    googleLogin,
+    appleLogin,
+    logoutUser,
     requestPasswordResetOtp,
     verifyPasswordResetOtp,
     resetPassword,
@@ -20,6 +23,9 @@ router.post('/verify-otp', verifyEmailOtp);
 router.post('/verify-email-otp', verifyEmailOtp); // Frontend alias
 
 router.post('/login', loginUser);
+router.post('/google', googleLogin);
+router.post('/apple', appleLogin);
+router.post('/logout', logoutUser);
 
 router.post('/forgot-password', requestPasswordResetOtp);
 router.post('/request-password-reset-otp', requestPasswordResetOtp); // Frontend alias

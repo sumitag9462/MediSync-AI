@@ -1,10 +1,11 @@
 const twilio = require('twilio');
+const crypto = require('crypto');
 const otpStore = {};
 const getClient = () => twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 const sendOtp = async (req, res) => {
     const { phone } = req.body;
     if (!phone) return res.status(400).json({ success: false, message: 'Phone number is required' });
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 999999).toString();
     otpStore[phone] = otp;
     try {
         await getClient().messages.create({ body: `Your MediSync-AI OTP is ${otp}`, from: process.env.TWILIO_PHONE_NUMBER, to: phone });

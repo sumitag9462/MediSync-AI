@@ -25,9 +25,8 @@ export const AuthProvider = ({ children }) => {
             const newAuthData = { user: res.user, isAuthenticated: true, token: res.token };
             localStorage.setItem('medisync_auth', JSON.stringify(newAuthData));
             setAuthData(newAuthData);
-            return true;
         }
-        return false;
+        return res;
     };
 
     const register = async (name, email, password) => {
@@ -38,9 +37,8 @@ export const AuthProvider = ({ children }) => {
             const newAuthData = { user: res.user, isAuthenticated: true, token: res.token };
             localStorage.setItem('medisync_auth', JSON.stringify(newAuthData));
             setAuthData(newAuthData);
-            return true;
         }
-        return false;
+        return res;
     };
 
     // Update local user profile data without changing auth state

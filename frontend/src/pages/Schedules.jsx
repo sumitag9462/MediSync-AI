@@ -4,6 +4,8 @@ import { medicineApi } from '../api/medicineApi';
 import { dateUtils } from '../utils/dateUtils';
 import { Plus, Pill, Edit, Trash2 } from 'lucide-react';
 import { googleCalendarApi } from '../services/googleCalendarApi';
+import SkeletonLoader from '../components/ui/SkeletonLoader';
+import EmptyState from '../components/ui/EmptyState';
 
 const ScheduleForm = ({ onSave, onCancel, existingSchedule }) => {
     const [formData, setFormData] = useState({
@@ -240,9 +242,8 @@ const SchedulesPage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center p-20">
-                        <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4" />
-                        <p className="text-slate-500 font-medium">Loading your schedules...</p>
+                    <div className="w-full mt-8">
+                        <SkeletonLoader type="card" count={6} />
                     </div>
                 ) : schedules.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
@@ -258,14 +259,14 @@ const SchedulesPage = () => {
                                     className="bg-white/80 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl rounded-[2rem] hover:shadow-[0_20px_40px_rgba(139,92,246,0.1)] hover:border-purple-200 hover:-translate-y-1 transition-all overflow-hidden flex flex-col group"
                                 >
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl pointer-events-none -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500" />
-                                    
+
                                     <div className="p-8 pb-6 flex-1 relative z-10">
                                         <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shadow-inner mb-5">
                                             <Pill size={24} />
                                         </div>
                                         <h2 className="text-2xl font-extrabold text-slate-900 mb-1 tracking-tight">{schedule.name}</h2>
                                         <p className="text-purple-600 font-bold text-lg mb-4">{schedule.dosage}</p>
-                                        
+
                                         <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-5">
                                             <p className="text-slate-600 text-sm font-medium mb-1">
                                                 <span className="text-slate-400 font-normal">Duration:</span> {schedule.duration}
@@ -283,7 +284,7 @@ const SchedulesPage = () => {
                                                 </span>
                                             ))}
                                         </div>
-                                        
+
                                         {schedule.weeklyDays && schedule.weeklyDays.length > 0 && (
                                             <div className="mt-3 flex flex-wrap gap-1.5">
                                                 {schedule.weeklyDays.map(day => (
@@ -312,16 +313,15 @@ const SchedulesPage = () => {
                         })}
                     </div>
                 ) : (
-                    <div className="text-center p-16 md:p-24 rounded-[3rem] bg-white/60 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl w-full max-w-4xl mx-auto">
-                        <div className="w-24 h-24 bg-purple-50 text-purple-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                            <Pill size={48} />
-                        </div>
-                        <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">No Schedules Found</h3>
-                        <p className="text-slate-500 mt-4 text-lg font-medium max-w-md mx-auto">Get started by adding your first medication to your schedule. We'll remind you when it's time.</p>
-                        <button onClick={handleOpenNewModal} className="mt-10 bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-[0_8px_20px_rgba(168,85,247,0.3)] hover:-translate-y-1 text-white font-bold py-4 px-8 rounded-2xl flex items-center mx-auto shadow-lg transition-all text-lg">
-                            <Plus size={24} className="mr-2" /> Create First Schedule
+                    <EmptyState
+                        icon={Pill}
+                        title="No Schedules Found"
+                        description="Get started by adding your first medication to your schedule. We'll remind you when it's time."
+                    >
+                        <button onClick={handleOpenNewModal} className="bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-[0_8px_20px_rgba(168,85,247,0.3)] hover:-translate-y-1 text-white font-bold py-3 px-6 rounded-2xl flex items-center shadow-lg transition-all text-sm">
+                            <Plus size={20} className="mr-2" /> Create First Schedule
                         </button>
-                    </div>
+                    </EmptyState>
                 )}
             </div>
 

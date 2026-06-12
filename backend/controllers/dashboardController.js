@@ -47,17 +47,30 @@ const getDashboardSummary = async (req, res) => {
         const adherenceWeekly = weekLogs.length > 0 ? Math.round((takenInWeek / weekLogs.length) * 100) : 0;
 
         let currentStreak = 0;
+        
+        // Optimize: Pre-group logs by date string (YYYY-MM-DD)
+        const logsByDate = {};
+        for (const log of doseLogs) {
+            const dateStr = log.actionTime.toISOString().split('T')[0];
+            if (!logsByDate[dateStr]) logsByDate[dateStr] = [];
+            logsByDate[dateStr].push(log);
+        }
+
         for (let i = 0; i < 365; i++) {
             const date = new Date();
             date.setDate(date.getDate() - (i + 1));
             const dayStart = new Date(date.setHours(0, 0, 0, 0));
-            const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+            const dateStr = dayStart.toISOString().split('T')[0];
+            
             const schedulesForDay = schedules.filter(s => s.startDate <= dayStart);
             if (schedulesForDay.length === 0) continue;
+            
             const totalDosesScheduled = schedulesForDay.reduce((acc, s) => acc + s.times.length, 0);
-            const logsForDay = doseLogs.filter(log => log.actionTime >= dayStart && log.actionTime <= dayEnd);
+            
+            const logsForDay = logsByDate[dateStr] || [];
             const takenLogsForDay = logsForDay.filter(l => l.status === 'Taken');
             const missedOrSkipped = logsForDay.some(l => l.status === 'Missed' || l.status === 'Skipped');
+            
             if (totalDosesScheduled > 0 && takenLogsForDay.length >= totalDosesScheduled && !missedOrSkipped) {
                 currentStreak++;
             } else if (totalDosesScheduled > 0) {

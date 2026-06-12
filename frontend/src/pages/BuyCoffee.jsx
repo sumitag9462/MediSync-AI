@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import { Coffee, ShieldCheck, Heart, ArrowRight, Lock, CreditCard, Wallet } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 const BuyCoffee = () => {
+  const { addToast } = useToast();
+  const [step, setStep] = useState(1);
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,13 +61,13 @@ const BuyCoffee = () => {
     } catch (err) {
       console.error(err);
       setLoading(false);
-      alert("Failed to send OTP. Try again.");
+      addToast("Failed to send OTP. Try again.");
     }
   };
 
   // Verify OTP
   const verifyOtp = async () => {
-    if (!otp) return alert("Please enter OTP");
+    if (!otp) return addToast("Please enter OTP");
     try {
       setLoading(true);
       const response = await axios.post("/api/otp/verify", { 
@@ -75,13 +79,13 @@ const BuyCoffee = () => {
         setPaymentStatus("success");
         resetAllFields();
       } else {
-        alert("OTP incorrect. Try again.");
+        addToast("OTP incorrect. Try again.");
       }
       setLoading(false);
     } catch (err) {
       console.error(err);
       setLoading(false);
-      alert("OTP verification failed.");
+      addToast("OTP verification failed.");
     }
   };
 
@@ -110,19 +114,19 @@ const BuyCoffee = () => {
 
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
-    if (!amount || amount < 100) return alert("Minimum donation is ₹100 💸");
+    if (!amount || amount < 100) return addToast("Minimum donation is ₹100 💸");
 
     if (paymentType === "card") {
       const { holderName, phone, accountNumber, cvv, expiry } = cardData;
       if (!holderName || !phone || !accountNumber || !cvv || !expiry)
-        return alert("Please complete all card fields!");
+        return addToast("Please complete all card fields!");
       sendOtp(phone);
     }
 
     if (paymentType === "wallet") {
       const { upiId, holderName, phone } = walletData;
       if (!upiId || !holderName || !phone)
-        return alert("Please complete all wallet fields!");
+        return addToast("Please complete all wallet fields!");
       sendOtp(phone);
     }
   };

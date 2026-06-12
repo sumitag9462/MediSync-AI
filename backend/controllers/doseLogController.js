@@ -1,6 +1,11 @@
 const DoseLog = require('../models/DoseLog');
 const getDoseLogs = async (req, res) => {
-    try { res.json(await DoseLog.find({ user: req.user._id }).sort({ actionTime: -1 })); }
+    try { 
+        // Only fetch logs from the last 90 days to prevent huge payloads
+        const ninetyDaysAgo = new Date();
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        res.json(await DoseLog.find({ user: req.user._id, actionTime: { $gte: ninetyDaysAgo } }).sort({ actionTime: -1 })); 
+    }
     catch (error) { console.error(error); res.status(500).json({ message: 'Server Error' }); }
 };
 const createDoseLog = async (req, res) => {

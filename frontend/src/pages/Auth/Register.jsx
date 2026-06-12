@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
 import AuthLayout from './AuthLayout';
 import { FloatingInput, MagneticButton, OtpInput, OAuthButton } from './AuthComponents';
+import { useToast } from '../../context/ToastContext';
+import { useGoogleLogin } from '@react-oauth/google';
+import AppleSignin from 'react-apple-signin-auth';
+import { authApi } from '../../api/authApi';
 
 const RegisterPage = () => {
     const [step, setStep] = useState(1);
@@ -17,6 +21,53 @@ const RegisterPage = () => {
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { showToast } = useToast();
+
+    const googleLoginFlow = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setIsLoading(true);
+            const result = await authApi.googleLogin(tokenResponse.credential || tokenResponse.access_token);
+            setIsLoading(false);
+            if (result.token) {
+                localStorage.setItem('token', result.token);
+                localStorage.setItem('user', JSON.stringify({ name: result.name, email: result.email, _id: result._id, photo: result.photo }));
+                window.location.href = '/dashboard';
+            } else {
+                showToast(result.message || 'Google Login Failed', 'error');
+            }
+        },
+        onError: () => {
+            showToast('Google login failed or was cancelled', 'error');
+        }
+    });
+
+    const handleAppleLogin = async () => {
+        try {
+            const response = await AppleSignin.signIn({
+                authOptions: {
+                    clientId: import.meta.env.VITE_APPLE_CLIENT_ID || "placeholder-client-id",
+                    scope: 'email name',
+                    redirectURI: window.location.origin,
+                    state: 'state',
+                    nonce: 'nonce',
+                    usePopup: true
+                }
+            });
+            setIsLoading(true);
+            const result = await authApi.appleLogin(response.authorization.id_token, response.user ? JSON.stringify(response.user) : null);
+            setIsLoading(false);
+            if (result.token) {
+                localStorage.setItem('token', result.token);
+                localStorage.setItem('user', JSON.stringify({ name: result.name, email: result.email, _id: result._id, photo: result.photo }));
+                window.location.href = '/dashboard';
+            } else {
+                showToast(result.message || 'Apple Login Failed', 'error');
+            }
+        } catch (error) {
+            console.log(error);
+            showToast('Apple login failed or was cancelled', 'error');
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -175,8 +226,8 @@ const RegisterPage = () => {
                         </div>
                         
                         <div className="auth-stagger space-y-3">
-                            <OAuthButton provider="Google" icon={Chrome} onClick={() => {}} />
-                            <OAuthButton provider="Apple" icon={Apple} onClick={() => {}} />
+                            <OAuthButton provider="Google" icon={Chrome} onClick={() => googleLoginFlow()} />
+                            <OAuthButton provider="Apple" icon={Apple} onClick={handleAppleLogin} />
                         </div>
                     </motion.form>
                 )}

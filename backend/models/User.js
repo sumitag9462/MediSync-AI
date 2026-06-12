@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
     name:     { type: String, required: true },
     email:    { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String }, // Optional for OAuth users
+    googleId: { type: String },
+    appleId:  { type: String },
     mobile:   { type: String },
     place:    { type: String },
     timezone: { type: String, default: () => Intl.DateTimeFormat().resolvedOptions().timeZone },
@@ -20,7 +22,7 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 userSchema.pre('save', async function () {
-    if (!this.isModified('password')) return;
+    if (!this.isModified('password') || !this.password) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });

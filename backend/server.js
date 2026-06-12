@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
+const mongoSanitize = require('express-mongo-sanitize');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // Connect to MongoDB
@@ -12,6 +14,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(mongoSanitize()); // Prevent NoSQL injection
 
 // Serve avatar static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -21,7 +24,14 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/schedules', require('./routes/scheduleRoutes'));
 app.use('/api/doselogs', require('./routes/doseLogRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
-app.use('/api/chatbot', require('./routes/chatbotRoutes'));
+const chatLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 20, // Limit each IP to 20 requests per `window`
+    message: 'Too many chat requests from this IP, please try again after a minute',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api/chatbot', chatLimiter, require('./routes/chatbotRoutes'));
 app.use('/api/medicines', require('./routes/medicineRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/otp', require('./routes/otpRoutes'));

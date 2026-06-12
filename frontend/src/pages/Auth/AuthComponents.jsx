@@ -39,7 +39,7 @@ export const FloatingInput = ({ label, type = "text", value, onChange, name, pla
           e.target.style.borderColor = 'var(--border-input)';
           e.target.style.boxShadow = 'none';
         }}
-        placeholder={placeholder || label}
+        placeholder=" "
       />
       <label className="absolute left-5 top-4 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-purple-600 peer-valid:top-1.5 peer-valid:text-[11px] pointer-events-none uppercase tracking-wide font-bold">
         {label}
