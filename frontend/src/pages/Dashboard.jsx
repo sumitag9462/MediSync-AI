@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { Clock, BarChart2, Zap, Plus, Check, X, AlertTriangle } from 'lucide-react';
+import { Clock, BarChart2, Zap, Plus, Check, X, AlertTriangle, Activity } from 'lucide-react';
 import { dateUtils } from '../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
 import { otherApi } from '../api/otherApi';
@@ -10,95 +10,98 @@ import { predictionService } from '../services/predictionService';
 import { notificationService } from '../services/notificationService';
 
 function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
 }
 
 function useCountUp(target, duration = 1200) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!target) {
-      setCount(0);
-      return;
-    }
-    let start = 0;
-    const increment = target / (duration / 16);
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
-    return () => clearInterval(timer);
-  }, [target, duration]);
-  return count;
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        if (!target) {
+            setCount(0);
+            return;
+        }
+        let start = 0;
+        const increment = target / (duration / 16);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= target) {
+                setCount(target);
+                clearInterval(timer);
+            } else {
+                setCount(Math.floor(start));
+            }
+        }, 16);
+        return () => clearInterval(timer);
+    }, [target, duration]);
+    return count;
 }
 
 const KPICard = ({ label, value, icon, trend, gradientFromTo, isPercentage }) => {
-  const animatedValue = useCountUp(value);
-  return (
-    <motion.div
-      whileHover={{ scale: 1.02, y: -2 }}
-      className="relative overflow-hidden rounded-2xl p-5 bg-white/[0.04] border border-white/[0.08] hover:border-violet-500/30 transition-all cursor-pointer group"
-    >
-      {/* Top accent line - unique color per card */}
-      <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradientFromTo} rounded-t-2xl`} />
-      
-      {/* Icon */}
-      <div className="w-9 h-9 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg mb-3 text-violet-300">
-        {icon}
-      </div>
-      
-      {/* Label */}
-      <p className="text-[10px] uppercase tracking-widest text-white/40 font-semibold mb-1">
-        {label}
-      </p>
-      
-      {/* Animated counter value */}
-      <p className="text-3xl font-black text-white">
-        {isPercentage ? `${animatedValue}%` : animatedValue}
-      </p>
-      
-      {/* Trend chip */}
-      <p className={`text-xs mt-1 font-medium ${trend > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-        {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}% vs last week
-      </p>
-    </motion.div>
-  );
+    const animatedValue = useCountUp(value);
+    return (
+        <motion.div
+            whileHover={{ scale: 1.02, y: -2 }}
+            className="relative overflow-hidden rounded-[2rem] p-6 bg-white/70 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl hover:shadow-[0_20px_40px_rgba(139,92,246,0.1)] hover:border-purple-200 transition-all cursor-pointer group"
+        >
+            {/* Top accent line */}
+            <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradientFromTo}`} />
+
+            {/* Icon */}
+            <div className="w-12 h-12 rounded-2xl bg-slate-50/80 shadow-sm border border-white flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                {icon}
+            </div>
+
+            {/* Label */}
+            <p className="text-[11px] uppercase tracking-wider text-slate-500 font-bold mb-1">
+                {label}
+            </p>
+
+            {/* Animated counter value */}
+            <p className="text-4xl font-extrabold text-slate-900 tracking-tight">
+                {isPercentage ? `${animatedValue}%` : animatedValue}
+            </p>
+
+            {/* Trend chip */}
+            <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md mt-3 text-xs font-semibold ${trend > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                <span>{trend > 0 ? '↑' : '↓'}</span>
+                <span>{Math.abs(trend)}% vs last week</span>
+            </div>
+            
+            <div className={`absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br ${gradientFromTo} opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-opacity`} />
+        </motion.div>
+    );
 };
 
 const getUniqueColor = (name) => {
-  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const colors = [
-    { bg: 'bg-violet-400', shadow: 'shadow-[0_0_8px_rgba(167,139,250,0.8)]' },
-    { bg: 'bg-pink-400', shadow: 'shadow-[0_0_8px_rgba(244,114,182,0.8)]' },
-    { bg: 'bg-cyan-400', shadow: 'shadow-[0_0_8px_rgba(34,211,238,0.8)]' },
-    { bg: 'bg-teal-400', shadow: 'shadow-[0_0_8px_rgba(45,212,191,0.8)]' },
-    { bg: 'bg-amber-400', shadow: 'shadow-[0_0_8px_rgba(251,191,36,0.8)]' }
-  ];
-  return colors[hash % colors.length];
+    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const colors = [
+        { bg: 'bg-violet-400', shadow: 'shadow-[0_0_8px_rgba(167,139,250,0.8)]' },
+        { bg: 'bg-pink-400', shadow: 'shadow-[0_0_8px_rgba(244,114,182,0.8)]' },
+        { bg: 'bg-cyan-400', shadow: 'shadow-[0_0_8px_rgba(34,211,238,0.8)]' },
+        { bg: 'bg-teal-400', shadow: 'shadow-[0_0_8px_rgba(45,212,191,0.8)]' },
+        { bg: 'bg-amber-400', shadow: 'shadow-[0_0_8px_rgba(251,191,36,0.8)]' }
+    ];
+    return colors[hash % colors.length];
 };
 
 const ALL_ACHIEVEMENTS = [
-  { id: 'streak-7', label: '7-Day Streak', icon: '🔥' },
-  { id: 'streak-30', label: '30-Day Streak', icon: '🏆' },
-  { id: 'consistency-star', label: 'Consistency Star', icon: '⭐' },
-  { id: 'active-week', label: 'Active Week', icon: '📈' },
+    { id: 'streak-7', label: '7-Day Streak', icon: '🔥' },
+    { id: 'streak-30', label: '30-Day Streak', icon: '🏆' },
+    { id: 'consistency-star', label: 'Consistency Star', icon: '⭐' },
+    { id: 'active-week', label: 'Active Week', icon: '📈' },
 ];
 
 const containerVariants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.07 } }
+    hidden: {},
+    show: { transition: { staggerChildren: 0.07 } }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0 }
 };
 
 const DashboardPage = () => {
@@ -246,7 +249,7 @@ const DashboardPage = () => {
 
     const actedTodayKeys = new Set(
         (doseLogsData || [])
-            .filter(l => ['Taken','Skipped','Missed'].includes(l.status) && l.actionTime && new Date(l.actionTime) >= startOfToday)
+            .filter(l => ['Taken', 'Skipped', 'Missed'].includes(l.status) && l.actionTime && new Date(l.actionTime) >= startOfToday)
             .map(l => {
                 const hhmm = toHHmm(l.scheduledTime, l.time);
                 return `${String(l.scheduleId)}-${hhmm}`;
@@ -265,7 +268,7 @@ const DashboardPage = () => {
         missedDoses.forEach(async (dose) => {
             const key = `${dose.scheduleId}-${dose.time}`;
             const alreadyLogged = (summary?.recentActivity || []).some(
-                log => log.scheduleId === dose.scheduleId && log.time === dose.time && ['Taken','Skipped','Missed'].includes(log.status)
+                log => log.scheduleId === dose.scheduleId && log.time === dose.time && ['Taken', 'Skipped', 'Missed'].includes(log.status)
             );
             if (!alreadyLogged && !missedLoggedRef.current[key]) {
                 missedLoggedRef.current[key] = true;
@@ -286,14 +289,19 @@ const DashboardPage = () => {
     const totalAchievements = achievementsList.length;
 
     return (
-        <div className="relative min-h-screen flex flex-col bg-[#08081a] text-white">
-            {/* Animated background orb */}
-            <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-gradient-to-r from-purple-500/20 via-pink-400/10 to-purple-500/20 rounded-full blur-3xl opacity-60 pointer-events-none z-0" />
+        <div className="relative min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans overflow-hidden selection:bg-purple-500/20">
+            {/* Animated Background System - Light Theme */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-300/40 rounded-full blur-[120px] animate-blob mix-blend-multiply" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-300/30 rounded-full blur-[140px] animate-blob mix-blend-multiply" style={{ animationDelay: '2s' }} />
+                <div className="absolute top-[30%] left-[50%] w-[40%] h-[40%] bg-cyan-200/40 rounded-full blur-[100px] animate-blob mix-blend-multiply" style={{ animationDelay: '4s' }} />
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-[60px]" />
+            </div>
 
             {/* Confetti / emoji burst UI */}
             {celebrate && (
                 <div className="fixed inset-0 z-50 pointer-events-none flex items-start justify-center pt-24">
-                    <div className="text-6xl animate-burst">
+                    <div className="text-6xl animate-burst drop-shadow-2xl">
                         🎉✨🏅
                     </div>
                     <style>{`
@@ -309,36 +317,39 @@ const DashboardPage = () => {
                 </div>
             )}
 
-            <div className="flex-1 flex flex-col space-y-8 z-10 relative w-full max-w-5xl mx-auto px-4 md:px-8 py-8">
+            <div className="flex-1 flex flex-col space-y-8 z-10 relative w-full max-w-6xl mx-auto px-4 md:px-8 py-8 pb-24">
                 {/* Greeting & Quick Actions */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0 }}
+                    className="flex flex-col md:flex-row md:items-end justify-between gap-4"
                 >
-                    <p className="text-xs text-white/35 font-medium tracking-wide uppercase">
-                        {getGreeting()} — {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </p>
-                    <h1 className="text-2xl font-extrabold text-white mt-1">
-                        Welcome back, <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">{user?.name ? user.name.split(' ')[0] : 'Sumit'}</span> 👋
-                    </h1>
-                    
-                    <div className="flex gap-2 mt-3 flex-wrap">
+                    <div>
+                        <p className="text-sm text-slate-500 font-semibold tracking-wide uppercase mb-1">
+                            {getGreeting()} — {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+                        </p>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                            Welcome back, <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">{user?.name ? user.name.split(' ')[0] : 'Sumit'}</span> 👋
+                        </h1>
+                    </div>
+
+                    <div className="flex gap-3 flex-wrap">
                         <button
                             onClick={() => navigate('/schedules')}
-                            className="text-xs px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 hover:bg-violet-500/20 transition-all"
+                            className="text-sm px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 hover:border-purple-300 hover:text-purple-700 shadow-sm transition-all"
                         >
                             + Log a dose
                         </button>
                         <button
                             onClick={() => navigate('/schedules')}
-                            className="text-xs px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 hover:bg-violet-500/20 transition-all"
+                            className="text-sm px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 hover:border-purple-300 hover:text-purple-700 shadow-sm transition-all"
                         >
-                            View today's schedule
+                            Today's schedule
                         </button>
                         <button
                             onClick={() => window.dispatchEvent(new CustomEvent('toggle-chatbot'))}
-                            className="text-xs px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-300 hover:bg-violet-500/20 transition-all"
+                            className="text-sm px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-[0_8px_20px_rgba(168,85,247,0.3)] hover:-translate-y-0.5 transition-all"
                         >
                             Ask AI assistant
                         </button>
@@ -351,12 +362,15 @@ const DashboardPage = () => {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.1 }}
-                        className="rounded-2xl p-4 bg-amber-500/10 border border-amber-500/25 flex items-start gap-3 mb-4"
+                        className="rounded-2xl p-5 bg-white/70 border border-amber-200 shadow-lg backdrop-blur-xl flex items-start gap-4 mb-4 relative overflow-hidden"
                     >
-                        <span className="text-xl">🤖</span>
+                        <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-400" />
+                        <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xl shadow-inner border border-amber-200 shrink-0">
+                            🤖
+                        </div>
                         <div>
-                            <p className="text-sm font-semibold text-amber-300">AI Nudge</p>
-                            <p className="text-xs text-amber-200/70 mt-0.5">{prediction}</p>
+                            <p className="text-base font-bold text-slate-800">AI Health Insight</p>
+                            <p className="text-sm text-slate-600 mt-1 leading-relaxed">{prediction}</p>
                         </div>
                     </motion.div>
                 )}
@@ -371,162 +385,194 @@ const DashboardPage = () => {
                     <KPICard
                         label="Upcoming Doses Today"
                         value={upcomingDoses.length}
-                        icon={<Clock size={20}/>}
+                        icon={<Clock className="text-purple-600" size={24} />}
                         trend={12}
-                        gradientFromTo="from-violet-500 to-purple-400"
+                        gradientFromTo="from-purple-500 to-pink-500"
                         isPercentage={false}
                     />
                     <KPICard
                         label="Adherence Rate (7d)"
                         value={summary.kpis.adherenceWeekly}
-                        icon={<BarChart2 size={20}/>}
+                        icon={<BarChart2 className="text-blue-500" size={24} />}
                         trend={5}
-                        gradientFromTo="from-cyan-400 to-violet-500"
+                        gradientFromTo="from-blue-400 to-cyan-400"
                         isPercentage={true}
                     />
                     <KPICard
                         label="Current Streak"
                         value={summary.kpis.currentStreak}
-                        icon={<Zap size={20}/>}
+                        icon={<Zap className="text-amber-500" size={24} />}
                         trend={20}
-                        gradientFromTo="from-pink-500 to-violet-500"
+                        gradientFromTo="from-amber-400 to-orange-500"
                         isPercentage={false}
                     />
                 </motion.div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
                     {/* Left/Middle Column (Doses lists & Activity) */}
-                    <div className="md:col-span-2 space-y-8">
+                    <div className="lg:col-span-2 space-y-8">
                         {/* Upcoming Doses */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5"
+                            className="rounded-[2rem] bg-white/60 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl p-6 md:p-8 relative overflow-hidden"
                         >
-                            <h2 className="text-sm font-semibold text-white/60 mb-6 flex items-center gap-2">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-200/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+                            
+                            <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                <span className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                    <Clock size={16} />
+                                </span>
                                 Upcoming Doses
-                                <span className="h-px flex-1 bg-white/[0.06]"></span>
+                                <span className="h-px flex-1 bg-slate-200 ml-4"></span>
                             </h2>
+                            
                             {upcomingDoses.length > 0 ? (
                                 <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4">
                                     {upcomingDoses.map(dose => {
                                         const name = dose.medicationName.split(' ')[0];
                                         const dosage = dose.medicationName.split(' ').slice(1).join(' ');
-                                        const colorInfo = getUniqueColor(name);
-                                        
+
                                         return (
                                             <motion.div
                                                 variants={itemVariants}
                                                 key={`${dose.scheduleId}-${dose.time}`}
-                                                className="flex items-center gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-violet-500/20 transition-all"
+                                                className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 rounded-2xl bg-white border border-slate-100 hover:border-purple-200 hover:shadow-lg transition-all group relative overflow-hidden z-10"
                                             >
-                                                {/* Glowing dot with unique color per medication */}
-                                                <div className={`w-2 h-2 rounded-full ${colorInfo.bg} ${colorInfo.shadow}`} />
+                                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 
-                                                <span className="text-sm font-medium text-white flex-1">{name} {dosage}</span>
-                                                <span className="text-xs text-white/35">{dateUtils.formatTime(dose.time)}</span>
-                                                
+                                                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shadow-inner shrink-0">
+                                                    <span className="font-bold text-lg">{name.charAt(0)}</span>
+                                                </div>
+
+                                                <div className="flex-1">
+                                                    <p className="text-base font-bold text-slate-900">{name} <span className="text-slate-500 font-normal">{dosage}</span></p>
+                                                    <p className="text-sm font-medium text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                                        <Clock size={14} className="text-purple-400" />
+                                                        {dateUtils.formatTime(dose.time)}
+                                                    </p>
+                                                </div>
+
                                                 {/* Action buttons */}
-                                                <button
-                                                    onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Taken'); }}
-                                                    className="text-xs px-3 py-1.5 rounded-lg font-semibold text-white bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-500 hover:to-violet-400 shadow-[0_0_12px_rgba(139,92,246,0.3)] transition-all"
-                                                >
-                                                    Take
-                                                </button>
-                                                <button
-                                                    onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Skipped'); }}
-                                                    className="text-xs px-3 py-1.5 rounded-lg text-white/40 bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] transition-all"
-                                                >
-                                                    Skip
-                                                </button>
+                                                <div className="flex gap-2 w-full sm:w-auto relative z-20">
+                                                    <button
+                                                        onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Taken'); }}
+                                                        className="flex-1 sm:flex-none text-sm px-5 py-2.5 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-[0_8px_20px_rgba(168,85,247,0.3)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                                                    >
+                                                        <Check size={16} /> Take
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => { e.preventDefault(); handleLogDose(dose, 'Skipped'); }}
+                                                        className="flex-1 sm:flex-none text-sm px-5 py-2.5 rounded-xl text-slate-600 bg-slate-100 border border-slate-200 hover:bg-slate-200 hover:text-slate-800 transition-all flex items-center justify-center gap-2"
+                                                    >
+                                                        <X size={16} /> Skip
+                                                    </button>
+                                                </div>
                                             </motion.div>
                                         );
                                     })}
                                 </motion.div>
                             ) : (
-                                <div className="text-center py-8">
-                                    <div className="text-4xl mb-3">✅</div>
-                                    <p className="text-white/60 font-semibold">All caught up for today!</p>
-                                    <p className="text-white/30 text-sm mt-1">No more doses remaining</p>
+                                <div className="text-center py-12 bg-white/50 rounded-2xl border border-slate-100 border-dashed relative z-10">
+                                    <div className="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                                        <Check size={40} />
+                                    </div>
+                                    <p className="text-xl text-slate-800 font-bold mb-2">All caught up for today!</p>
+                                    <p className="text-slate-500 text-base mb-6">No more doses remaining on your schedule.</p>
                                     <motion.button
                                         onClick={() => navigate('/schedules')}
-                                        className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2.5 px-6 rounded-xl flex items-center mx-auto shadow-lg transition-all text-sm"
-                                        whileHover={{ scale: 1.08 }}
-                                        whileTap={{ scale: 0.97 }}
+                                        className="bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-700 text-slate-700 font-bold py-3 px-6 rounded-xl inline-flex items-center shadow-sm transition-all text-sm"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                     >
-                                        <Plus size={16} className="mr-2" /> View Schedules
+                                        <Plus size={18} className="mr-2" /> View Full Schedule
                                     </motion.button>
                                 </div>
                             )}
                         </motion.div>
 
                         {/* Missed Doses */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
-                            className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5"
-                        >
-                            <h2 className="text-sm font-semibold text-red-300 mb-6 flex items-center gap-2">
-                                Missed Doses
-                                <span className="h-px flex-1 bg-white/[0.06]"></span>
-                            </h2>
-                            {missedDoses.length > 0 ? (
+                        {missedDoses.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                                className="rounded-[2rem] bg-white/60 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl p-6 md:p-8"
+                            >
+                                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                    <span className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500">
+                                        <AlertTriangle size={16} />
+                                    </span>
+                                    Missed Doses
+                                    <span className="h-px flex-1 bg-slate-200 ml-4"></span>
+                                </h2>
                                 <div className="space-y-4">
                                     {missedDoses.map(dose => (
-                                        <div key={`${dose.scheduleId}-${dose.time}`} className="flex items-center justify-between text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                                        <div key={`${dose.scheduleId}-${dose.time}`} className="flex items-center justify-between bg-red-50/50 border border-red-100 rounded-2xl px-5 py-4 hover:shadow-md transition-shadow">
                                             <div>
-                                                <span className="font-semibold text-white">{dose.medicationName}</span>
-                                                <span className="ml-3 text-red-400 font-mono">{dateUtils.formatTime(dose.time)}</span>
+                                                <span className="font-bold text-slate-800">{dose.medicationName}</span>
+                                                <span className="ml-3 text-red-500 font-medium bg-red-100 px-2 py-0.5 rounded-md text-xs">{dateUtils.formatTime(dose.time)}</span>
                                             </div>
-                                            <span className="text-red-400 font-bold">Missed</span>
+                                            <span className="text-red-500 font-bold bg-red-100 px-3 py-1 rounded-full text-xs">Missed</span>
                                         </div>
                                     ))}
                                 </div>
-                            ) : (
-                                <div className="text-center py-6 text-white/30 text-sm">
-                                    <p>No missed doses today. Keep it up!</p>
-                                </div>
-                            )}
-                        </motion.div>
+                            </motion.div>
+                        )}
 
                         {/* Recent Activity */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5"
+                            className="rounded-[2rem] bg-white/60 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl p-6 md:p-8"
                         >
-                            <h2 className="text-sm font-semibold text-white/60 mb-6 flex items-center gap-2">
+                            <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
+                                    <Activity size={16} />
+                                </span>
                                 Recent Activity
-                                <span className="h-px flex-1 bg-white/[0.06]"></span>
+                                <span className="h-px flex-1 bg-slate-200 ml-4"></span>
                             </h2>
                             {summary.recentActivity.length > 0 ? (
                                 <div className="space-y-4">
                                     {summary.recentActivity.map(log => (
                                         <div
                                             key={log._id}
-                                            className="flex items-center justify-between text-sm bg-white/[0.02] border border-white/[0.04] rounded-xl px-4 py-3"
+                                            className="flex items-center justify-between bg-white border border-slate-100 rounded-2xl px-5 py-4 hover:shadow-sm hover:border-slate-200 transition-all"
                                         >
-                                            <div className="flex items-center">
-                                                {log.status === 'Taken' ? (
-                                                    <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] mr-3" />
-                                                ) : log.status === 'Missed' ? (
-                                                    <span className="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)] mr-3" />
-                                                ) : (
-                                                    <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)] mr-3" />
-                                                )}
-                                                <span className="font-semibold text-white">{log.medicationName}</span>
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-inner ${
+                                                    log.status === 'Taken' ? 'bg-emerald-50 text-emerald-500' : 
+                                                    log.status === 'Missed' ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-500'
+                                                }`}>
+                                                    {log.status === 'Taken' ? <Check size={18} /> : 
+                                                     log.status === 'Missed' ? <X size={18} /> : <span className="font-bold">-</span>}
+                                                </div>
+                                                <div>
+                                                    <span className="font-bold text-slate-800 block">{log.medicationName}</span>
+                                                    <span className="text-xs font-semibold uppercase tracking-wider mt-1 block">
+                                                        {log.status === 'Taken' ? (
+                                                            <span className="text-emerald-600">Taken</span>
+                                                        ) : log.status === 'Missed' ? (
+                                                            <span className="text-red-600">Missed</span>
+                                                        ) : (
+                                                            <span className="text-amber-600">Skipped</span>
+                                                        )}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <span className="text-white/40 font-mono text-xs">{new Date(log.actionTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                            <span className="text-slate-500 font-medium text-sm bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
+                                                {new Date(log.actionTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-6 text-white/30 text-sm">
-                                    <p>No recent activity to show.</p>
+                                <div className="text-center py-8 bg-white/50 rounded-2xl border border-slate-100 border-dashed text-slate-500 font-medium">
+                                    <p>No recent activity today.</p>
                                 </div>
                             )}
                         </motion.div>
@@ -539,26 +585,28 @@ const DashboardPage = () => {
                         transition={{ delay: 0.6 }}
                         className="space-y-8"
                     >
-                        <div className="rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5">
-                            <h2 className="text-sm font-semibold text-white/60 mb-4 flex items-center gap-2">
-                                Achievements 
-                                <span className="h-px flex-1 bg-white/[0.06]"></span>
-                                <span className="text-xs text-violet-400">{unlockedCount}/{totalAchievements} unlocked</span>
+                        <div className="rounded-[2rem] bg-white/60 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl p-6 md:p-8 sticky top-24">
+                            <h2 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-3">
+                                Achievements
                             </h2>
-                            <div className="grid grid-cols-4 gap-3">
+                            <p className="text-sm text-slate-500 mb-6 font-medium">
+                                <span className="text-purple-600 font-bold">{unlockedCount}</span> of <span className="text-slate-800 font-bold">{totalAchievements}</span> unlocked
+                            </p>
+                            
+                            <div className="grid grid-cols-2 gap-4">
                                 {achievementsList.map(ach => (
                                     <motion.div
                                         key={ach.id}
                                         whileHover={{ scale: 1.05 }}
-                                        className={`rounded-xl p-3 text-center border transition-all ${
+                                        className={`rounded-2xl p-4 text-center border transition-all ${
                                             ach.unlocked
-                                                ? 'bg-violet-500/10 border-violet-500/30'
-                                                : 'bg-white/[0.03] border-white/[0.06] opacity-40 grayscale'
-                                        }`}
+                                                ? 'bg-white border-purple-200 shadow-md shadow-purple-500/5'
+                                                : 'bg-slate-50/50 border-slate-100 opacity-60 grayscale'
+                                            }`}
                                     >
-                                        <div className="text-2xl mb-1">{ach.icon}</div>
-                                        <p className={`text-[9px] font-semibold uppercase tracking-wide 
-                                            ${ach.unlocked ? 'text-violet-300' : 'text-white/30'}`}>
+                                        <div className="text-4xl mb-3 drop-shadow-sm">{ach.icon}</div>
+                                        <p className={`text-xs font-bold uppercase tracking-wide 
+                                            ${ach.unlocked ? 'text-slate-800' : 'text-slate-400'}`}>
                                             {ach.label}
                                         </p>
                                     </motion.div>

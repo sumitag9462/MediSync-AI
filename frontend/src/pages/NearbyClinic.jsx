@@ -104,46 +104,74 @@ const NearbyClinic = () => {
   }
 
   return (
-    <div className="flex flex-col w-full p-4 bg-gray-850 rounded-lg shadow space-y-4">
-      <h2 className="text-2xl font-bold text-white">Nearby Clinic</h2>
-      <div ref={mapRef} className="w-full h-64 rounded-lg border shadow" />
-      <div className="flex flex-col md:flex-row items-center gap-4">
-        <div className="flex flex-col md:flex-row items-center gap-2">
-          <label className="text-white font-medium">Search Radius: {radius} km</label>
-          <input
-            type="range"
-            min={1} max={50}
-            value={radius}
-            onChange={(e) => setRadius(Number(e.target.value))}
-            className="w-full md:w-48"
-          />
+    <div className="relative min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans overflow-hidden selection:bg-purple-500/20 w-full">
+        {/* Animated Background System - Light Theme */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-300/40 rounded-full blur-[120px] animate-blob mix-blend-multiply" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-300/30 rounded-full blur-[140px] animate-blob mix-blend-multiply" style={{ animationDelay: '2s' }} />
+            <div className="absolute top-[30%] left-[50%] w-[40%] h-[40%] bg-cyan-200/40 rounded-full blur-[100px] animate-blob mix-blend-multiply" style={{ animationDelay: '4s' }} />
+            <div className="absolute inset-0 bg-white/40 backdrop-blur-[60px]" />
         </div>
-        <button
-          onClick={handleSearch}
-          disabled={!location || loading}
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-        >
-          {loading ? "Searching..." : "Search"}
-        </button>
-      </div>
-      {error && <div className="text-red-400">{error}</div>}
-      {hospitals.length > 0 && (
-        <div className="bg-gray-800 p-4 rounded-lg shadow space-y-2">
-          {hospitals.map((h) => (
-            <div key={h.place_id} className="flex justify-between text-white">
-              <div>
-                <strong>{h.name}</strong>
-                <div className="text-gray-400 text-sm">{h.vicinity}</div>
-              </div>
-              <div className="text-gray-300 text-sm">
-                {location
-                  ? `${getDistance(location.lat, location.lng, h.geometry.location.lat(), h.geometry.location.lng()).toFixed(2)} km`
-                  : ""}
-              </div>
+
+      <div className="flex-1 flex flex-col space-y-6 w-full max-w-4xl mx-auto z-10 relative px-4 md:px-8 py-12 pb-24">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">Nearby <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Clinics</span></h1>
+            <p className="text-slate-500 mt-2 text-lg font-medium">Locate nearby medical centers and clinics instantly.</p>
+          </div>
+        </div>
+
+        {/* Map panel */}
+        <div className="rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-white/60 bg-white/80 backdrop-blur-xl group">
+          <div ref={mapRef} className="w-full h-96 bg-slate-100" />
+        </div>
+
+        {/* Control bar */}
+        <div className="rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 bg-white/70 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl hover:shadow-[0_20px_40px_rgba(139,92,246,0.1)] hover:border-purple-200 transition-all">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
+            <span className="text-base font-bold text-slate-900">Search Radius: <span className="text-purple-600">{radius} km</span></span>
+            <input
+              type="range"
+              min={1} max={50}
+              value={radius}
+              onChange={(e) => setRadius(Number(e.target.value))}
+              className="w-full sm:w-48 h-2 rounded-lg appearance-none cursor-pointer accent-purple-600 bg-purple-100"
+            />
+          </div>
+
+          <button
+            onClick={handleSearch}
+            disabled={!location || loading}
+            className="w-full md:w-auto text-base font-bold py-3.5 px-8 rounded-xl text-white transition-all hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 bg-gradient-to-r from-purple-600 to-pink-500 shadow-md shrink-0"
+          >
+            {loading ? "Searching..." : "Locate Clinics"}
+          </button>
+        </div>
+
+        {error && <div className="text-base font-bold text-red-500 text-center bg-red-50 p-4 rounded-xl border border-red-100">{error}</div>}
+
+        {/* Results List */}
+        {hospitals.length > 0 && (
+          <div className="rounded-[2rem] p-6 md:p-8 space-y-4 bg-white/70 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">Found Locations</h3>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              {hospitals.map((h) => (
+                <div key={h.place_id} className="flex justify-between items-start p-5 rounded-2xl transition-all hover:bg-slate-50 border border-transparent hover:border-purple-100 group">
+                  <div>
+                    <strong className="text-lg font-extrabold text-slate-900 group-hover:text-purple-700 transition-colors">{h.name}</strong>
+                    <div className="text-sm mt-1 text-slate-500 font-medium">{h.vicinity}</div>
+                  </div>
+                  <div className="text-sm font-mono font-bold px-4 py-1.5 rounded-full flex-shrink-0 bg-purple-50 text-purple-700 border border-purple-100">
+                    {location
+                      ? `${getDistance(location.lat, location.lng, h.geometry.location.lat(), h.geometry.location.lng()).toFixed(2)} km`
+                      : ""}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

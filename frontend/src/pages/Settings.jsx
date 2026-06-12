@@ -42,42 +42,57 @@ const SettingsPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-purple-900 py-8">
-            <div className="w-full max-w-2xl mx-auto px-4">
-                <h1 className="text-3xl font-bold text-white mb-8 text-center">Settings</h1>
+        <div className="relative min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans overflow-hidden selection:bg-purple-500/20 w-full">
+            {/* Animated Background System - Light Theme */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-300/40 rounded-full blur-[120px] animate-blob mix-blend-multiply" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-300/30 rounded-full blur-[140px] animate-blob mix-blend-multiply" style={{ animationDelay: '2s' }} />
+                <div className="absolute top-[30%] left-[50%] w-[40%] h-[40%] bg-cyan-200/40 rounded-full blur-[100px] animate-blob mix-blend-multiply" style={{ animationDelay: '4s' }} />
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-[60px]" />
+            </div>
+
+            <div className="flex-1 flex flex-col space-y-8 w-full max-w-4xl mx-auto z-10 relative px-4 md:px-8 py-12 pb-24">
+                <div className="mb-2 text-center md:text-left">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">Account <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Settings</span></h1>
+                    <p className="text-slate-500 mt-2 text-lg font-medium">Manage your profile, preferences, and integrations.</p>
+                </div>
+                
                 <div className="flex flex-col gap-8">
-                    <div className="rounded-2xl shadow-2xl border border-white/10 bg-white/10 p-8 flex flex-col items-center">
-                        <h2 className="text-xl font-semibold text-white mb-6 text-center">Your Profile</h2>
+                    {/* Profile Card Section */}
+                    <div className="rounded-[2.5rem] p-8 md:p-10 flex flex-col items-center bg-white/70 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl hover:shadow-[0_20px_40px_rgba(139,92,246,0.1)] hover:border-purple-200 transition-all">
+                        <h2 className="text-2xl font-extrabold text-slate-900 mb-8 self-start tracking-tight">Your Profile</h2>
                         <ProfileCard />
                     </div>
-                    <div className="rounded-2xl shadow-2xl border border-white/10 bg-white/10 p-8 flex flex-col items-center">
-                        <h2 className="text-xl font-semibold text-white mb-6 text-center">Integrations & Notifications</h2>
+
+                    {/* Integrations Section */}
+                    <div className="rounded-[2.5rem] p-8 md:p-10 flex flex-col bg-white/70 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl hover:shadow-[0_20px_40px_rgba(139,92,246,0.1)] hover:border-purple-200 transition-all">
+                        <h2 className="text-2xl font-extrabold text-slate-900 mb-8 tracking-tight">Integrations & Notifications</h2>
                         <div className="space-y-6 w-full">
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
                                 <div>
-                                    <h3 className="font-medium text-white">Google Calendar Sync</h3>
-                                    <p className="text-sm text-gray-300">Automatically sync your medication schedules.</p>
+                                    <h3 className="text-base font-bold text-slate-900 tracking-tight">Google Calendar Sync</h3>
+                                    <p className="text-sm text-slate-500 font-medium">Automatically sync your medication schedules.</p>
                                 </div>
                                 {isCalendarEnabled ? (
-                                    <button onClick={handleCalendarSignOut} className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg">
+                                    <button onClick={handleCalendarSignOut} className="text-sm font-bold py-2.5 px-6 rounded-xl text-red-600 bg-red-50 hover:bg-red-100 transition-all border border-red-100 shadow-sm shrink-0">
                                         Disconnect
                                     </button>
                                 ) : (
-                                    <button onClick={handleCalendarSignIn} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">
-                                        Connect
+                                    <button onClick={handleCalendarSignIn} className="text-sm font-bold py-2.5 px-6 rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-md hover:-translate-y-0.5 transition-all shadow-sm shrink-0">
+                                        Connect Calendar
                                     </button>
                                 )}
                             </div>
 
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
                                 <div>
-                                    <h3 className="font-medium text-white">Browser Notifications</h3>
-                                    <p className="text-sm text-gray-300">
-                                        Status: <span className="font-semibold capitalize">{notificationPermission}</span>
+                                    <h3 className="text-base font-bold text-slate-900 tracking-tight">Browser Notifications</h3>
+                                    <p className="text-sm text-slate-500 font-medium">
+                                        Status: <span className={`font-extrabold uppercase tracking-wider text-xs px-2 py-1 rounded-md ml-1 ${notificationPermission === 'granted' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{notificationPermission}</span>
                                     </p>
                                 </div>
                                 {notificationPermission !== 'granted' && (
-                                    <button onClick={setReminderPermission} className="bg-gray-600 hover:bg-gray-500 text-white font-medium py-2 px-4 rounded-lg">
+                                    <button onClick={setReminderPermission} className="text-sm font-bold py-2.5 px-6 rounded-xl text-slate-700 bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 transition-all shadow-sm shrink-0">
                                         Request Permission
                                     </button>
                                 )}
@@ -242,103 +257,104 @@ const ProfileCard = () => {
         }
     };
 
-    if (loading) return <div className="text-center text-white">Loading profile...</div>;
+    if (loading) return <div className="text-center font-bold text-sm text-slate-400">Loading profile...</div>;
 
     return (
         <form className="w-full flex flex-col items-center gap-6" onSubmit={e => { e.preventDefault(); saveProfile(); }}>
-            <div className="flex flex-col items-center gap-3">
-                <div className="relative w-28 h-28 rounded-full overflow-hidden ring-2 ring-white/15 shadow-lg flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4 mb-4">
+                <div className="relative w-28 h-28 rounded-full overflow-hidden ring-4 ring-white shadow-lg flex items-center justify-center bg-slate-50">
                     {photoPreview ? (
                         <img src={photoPreview} alt="" className="w-full h-full object-cover rounded-full" />
                     ) : (
-                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Placeholder" className="w-full h-full object-cover rounded-full opacity-80" />
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Placeholder" className="w-full h-full object-cover rounded-full opacity-60" />
                     )}
                 </div>
                 <div className="flex gap-3">
                     <input id="avatarInput" type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" disabled={uploading} />
-                    <label htmlFor="avatarInput" className={`cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm ${uploading ? 'bg-gray-600 text-gray-200' : 'bg-purple-600 hover:bg-purple-700 text-white'} shadow`}>
+                    <label htmlFor="avatarInput" className={`cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:shadow-md hover:-translate-y-0.5 ${uploading ? 'bg-slate-200 text-slate-500' : 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-sm'}`}>
                         {uploading ? 'Uploading…' : 'Change Photo'}
                     </label>
 
-                    {/* ✅ New Remove Button */}
                     <button
                         type="button"
                         onClick={handleRemovePhoto}
                         disabled={uploading || !photoPreview}
-                        className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-md shadow disabled:opacity-50"
+                        className="bg-white border border-red-200 hover:bg-red-50 hover:border-red-300 text-red-600 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-50"
                     >
-                        Remove Photo
+                        Remove
                     </button>
                 </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
                 <div>
-                    <label className="block text-sm text-purple-200 mb-1">Name</label>
-                    <input name="name" value={form.name} onChange={onChange} className="w-full px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-slate-500">Name</label>
+                    <input name="name" value={form.name} onChange={onChange} className="w-full rounded-xl p-3 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-inner" />
                 </div>
                 <div>
-                    <label className="block text-sm text-purple-200 mb-1">Email (read-only)</label>
-                    <input name="email" value={form.email} disabled className="w-full px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-slate-500">Email <span className="lowercase font-medium">(read-only)</span></label>
+                    <input name="email" value={form.email} disabled className="w-full rounded-xl p-3 text-sm font-bold text-slate-500 bg-slate-100 border border-slate-200 opacity-70" />
                 </div>
                 <div>
-                    <label className="block text-sm text-purple-200 mb-1">Mobile</label>
-                    <input name="mobile" value={form.mobile} onChange={onChange} className="w-full px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-slate-500">Mobile</label>
+                    <input name="mobile" value={form.mobile} onChange={onChange} className="w-full rounded-xl p-3 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-inner" />
                 </div>
                 <div>
-                    <label className="block text-sm text-purple-200 mb-1">Place</label>
-                    <input name="place" value={form.place} onChange={onChange} className="w-full px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-slate-500">Place</label>
+                    <input name="place" value={form.place} onChange={onChange} className="w-full rounded-xl p-3 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-inner" />
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="block text-sm text-purple-200 mb-2">Timezone</label>
-                    <input name="timezone" value={form.timezone} onChange={onChange} className="w-full px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-slate-500">Timezone</label>
+                    <input name="timezone" value={form.timezone} onChange={onChange} className="w-full rounded-xl p-3 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-inner" />
                 </div>
 
                 {/* Reminder Section */}
-                <div className="md:col-span-2">
-                    <label className="block text-sm text-purple-200 mb-2">Reminders</label>
-                    <div className="flex flex-col gap-3">
-                        <label className="flex items-center gap-2">
-                            <input type="checkbox" name="notifications.remindersEnabled" checked={!!form.notifications?.remindersEnabled} onChange={onChange} />
-                            <span className="text-white">Enable reminders</span>
+                <div className="md:col-span-2 pt-6 mt-2 border-t border-slate-100">
+                    <label className="block text-sm font-extrabold tracking-tight mb-4 text-slate-900">Reminders Configuration</label>
+                    <div className="flex flex-col gap-5 bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+                        <label className="flex items-center gap-3 cursor-pointer group w-fit">
+                            <input type="checkbox" name="notifications.remindersEnabled" checked={!!form.notifications?.remindersEnabled} onChange={onChange} className="w-5 h-5 rounded-md border-slate-300 text-purple-600 focus:ring-purple-500 shadow-sm" />
+                            <span className="text-base font-bold text-slate-700 group-hover:text-purple-600 transition-colors">Enable reminders</span>
                         </label>
 
-                        <div className="flex flex-wrap gap-4 items-center">
-                            <div className="flex items-center gap-2">
-                                <span className="text-purple-200">Lead time (minutes)</span>
-                                <input type="number" min="0" name="notifications.reminderLeadMinutes" value={form.notifications?.reminderLeadMinutes} onChange={onChange} className="w-24 px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                            <div>
+                                <span className="block text-xs font-bold mb-1.5 text-slate-500">Lead time (minutes)</span>
+                                <input type="number" min="0" name="notifications.reminderLeadMinutes" value={form.notifications?.reminderLeadMinutes} onChange={onChange} className="w-full rounded-xl p-3 text-sm font-bold text-slate-900 bg-white border border-slate-200 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-sm" />
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <span className="text-purple-200">Snooze (minutes)</span>
-                                <input type="number" min="0" name="notifications.snoozeMinutes" value={form.notifications?.snoozeMinutes} onChange={onChange} className="w-24 px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
+                            <div>
+                                <span className="block text-xs font-bold mb-1.5 text-slate-500">Snooze (minutes)</span>
+                                <input type="number" min="0" name="notifications.snoozeMinutes" value={form.notifications?.snoozeMinutes} onChange={onChange} className="w-full rounded-xl p-3 text-sm font-bold text-slate-900 bg-white border border-slate-200 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-sm" />
                             </div>
 
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" name="notifications.sound" checked={!!form.notifications?.sound} onChange={onChange} />
-                                <span className="text-white">Sound alert</span>
+                            <div>
+                                <span className="block text-xs font-bold mb-1.5 text-slate-500">Location (lat,lng)</span>
+                                <input type="text" name="notifications.location" placeholder="28.5,77.2" value={form.notifications.location?.join(',') || ''} onChange={onChange} className="w-full rounded-xl p-3 text-sm font-bold text-slate-900 bg-white border border-slate-200 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-sm" />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-8 mt-2">
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="notifications.sound" checked={!!form.notifications?.sound} onChange={onChange} className="w-5 h-5 rounded-md border-slate-300 text-purple-600 focus:ring-purple-500 shadow-sm" />
+                                <span className="text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">Sound Alert</span>
                             </label>
 
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" name="notifications.vibration" checked={!!form.notifications?.vibration} onChange={onChange} />
-                                <span className="text-white">Vibration</span>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="notifications.vibration" checked={!!form.notifications?.vibration} onChange={onChange} className="w-5 h-5 rounded-md border-slate-300 text-purple-600 focus:ring-purple-500 shadow-sm" />
+                                <span className="text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">Vibration</span>
                             </label>
-
-                            <div className="flex items-center gap-2">
-                                <span className="text-purple-200">Location (optional, lat,lng)</span>
-                                <input type="text" name="notifications.location" placeholder="28.5,77.2" value={form.notifications.location?.join(',') || ''} onChange={onChange} className="w-40 px-3 py-2 rounded-lg bg-black/30 text-white border border-white/10" />
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="w-full flex justify-end gap-3 mt-4">
-                <button type="submit" disabled={saving} className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-5 rounded-lg">
+            <div className="w-full flex items-center justify-between gap-4 mt-8 pt-6 border-t border-slate-100">
+                {message && <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">{message}</span>}
+                <button type="submit" disabled={saving} className="ml-auto text-base font-bold py-3.5 px-8 rounded-xl text-white transition-all hover:shadow-lg hover:-translate-y-0.5 bg-gradient-to-r from-purple-600 to-pink-500 shadow-md">
                     {saving ? 'Saving...' : 'Save Changes'}
                 </button>
-                {message && <span className="text-sm text-gray-300">{message}</span>}
             </div>
         </form>
     );

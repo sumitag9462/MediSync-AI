@@ -161,17 +161,17 @@ const RegisterPage = () => {
                         onSubmit={handleVerifyAndRegister} 
                         className="space-y-6"
                     >
-                        <p className="text-gray-300 text-sm text-center auth-stagger">
+                        <p className="text-slate-600 text-sm text-center auth-stagger">
                             Enter the 6-digit verification code sent to <br/>
-                            <span className="font-bold text-white text-base">{formData.email}</span>
+                            <span className="font-extrabold text-slate-800 text-base">{formData.email}</span>
                         </p>
                         
                         <div className="auth-stagger py-4">
                             <OtpInput length={6} value={otp} onChange={setOtp} />
                         </div>
 
-                        {message && <div className="auth-stagger p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-xs text-center">{message}</div>}
-                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs text-center">{error}</div>}
+                        {message && <div className="auth-stagger p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600 text-xs text-center">{message}</div>}
+                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 text-xs text-center">{error}</div>}
 
                         <div className="auth-stagger">
                             <MagneticButton type="submit" isLoading={isLoading}>
@@ -180,7 +180,7 @@ const RegisterPage = () => {
                         </div>
                         
                         <div className="auth-stagger flex justify-center mt-4">
-                            <button type="button" onClick={() => setStep(1)} disabled={isLoading} className="text-sm text-gray-500 hover:text-white transition-colors">
+                            <button type="button" onClick={() => setStep(1)} disabled={isLoading} className="text-sm text-slate-500 hover:text-slate-850 transition-colors">
                                 Edit details
                             </button>
                         </div>

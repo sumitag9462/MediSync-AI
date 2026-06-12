@@ -108,16 +108,16 @@ const ForgotPasswordPage = () => {
                         onSubmit={handleVerifyOtp} 
                         className="space-y-6"
                     >
-                        <p className="text-gray-300 text-sm text-center auth-stagger">
+                        <p className="text-slate-600 text-sm text-center auth-stagger">
                             Enter the 6-digit recovery code sent to <br/>
-                            <span className="font-bold text-white text-base">{email}</span>
+                            <span className="font-extrabold text-slate-800 text-base">{email}</span>
                         </p>
                         
                         <div className="auth-stagger py-4">
                             <OtpInput length={6} value={otp} onChange={setOtp} />
                         </div>
 
-                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs text-center">{error}</div>}
+                        {error && <div className="auth-stagger p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 text-xs text-center">{error}</div>}
 
                         <div className="auth-stagger">
                             <MagneticButton type="submit" isLoading={isLoading}>
@@ -126,7 +126,7 @@ const ForgotPasswordPage = () => {
                         </div>
 
                         <div className="auth-stagger flex justify-center mt-4">
-                            <button type="button" onClick={() => setStep(1)} disabled={isLoading} className="text-sm text-gray-500 hover:text-white transition-colors">
+                            <button type="button" onClick={() => setStep(1)} disabled={isLoading} className="text-sm text-slate-500 hover:text-slate-800 transition-colors">
                                 Change Email
                             </button>
                         </div>

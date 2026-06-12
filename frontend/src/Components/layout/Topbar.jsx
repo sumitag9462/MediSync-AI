@@ -54,7 +54,7 @@ const Topbar = ({ user, onLogout }) => {
       const today = new Date().toDateString();
 
       const filteredUpcoming = (summaryData.upcomingDoses || []).filter(dose => {
-        return !doseLogs.some(log => 
+        return !doseLogs.some(log =>
           log.scheduleId === dose.scheduleId &&
           log.time === dose.time &&
           ['Taken', 'Skipped'].includes(log.status) &&
@@ -107,17 +107,23 @@ const Topbar = ({ user, onLogout }) => {
       <div
         style={{
           position: "absolute",
-          top: dropdownPosition.top,
+          top: dropdownPosition.top + 6,
           left: dropdownPosition.left,
           width: dropdownPosition.width,
           zIndex: 9999,
+          background: 'rgba(255, 255, 255, 0.94)',
+          backdropFilter: 'blur(24px)',
+          border: '1px solid rgba(139, 92, 246, 0.15)',
+          borderRadius: '16px',
+          boxShadow: '0 12px 36px rgba(139,92,246,0.1)',
         }}
-        className="bg-black/70 backdrop-blur-lg border border-white/10 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+        className="max-h-48 overflow-y-auto p-1.5 hide-scrollbar"
       >
         {suggestions.map((med, i) => (
           <button
             key={i}
-            className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-purple-700/50"
+            className="block w-full text-left px-3.5 py-2 text-sm font-bold rounded-xl transition-all hover:bg-purple-50"
+            style={{ color: '#1e293b' }}
             onClick={() => handleSelectMedicine(med)}
           >
             {med.name}
@@ -132,45 +138,50 @@ const Topbar = ({ user, onLogout }) => {
   const BellDropdownPortal = () => {
     if (!showBellDropdown || !upcomingDoses.length) return null;
 
-    // Fit dropdown inside screen
     const dropdownLeft = bellDropdownPosition.left;
-    const availableWidth = window.innerWidth - dropdownLeft - 10; // 10px padding from right
+    const availableWidth = window.innerWidth - dropdownLeft - 10;
     const dropdownWidth = Math.min(bellDropdownPosition.width, availableWidth);
 
     return ReactDOM.createPortal(
       <div
         style={{
           position: "absolute",
-          top: bellDropdownPosition.top,
-          left: dropdownLeft,
-          width: dropdownWidth,
+          top: bellDropdownPosition.top + 6,
+          left: dropdownLeft - 160,
+          width: 320,
           zIndex: 9999,
+          background: 'rgba(255, 255, 255, 0.94)',
+          backdropFilter: 'blur(24px)',
+          border: '1px solid rgba(139, 92, 246, 0.15)',
+          borderRadius: '18px',
+          boxShadow: '0 12px 36px rgba(139,92,246,0.12)',
         }}
-        className="bg-black/90 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg max-h-64 overflow-y-auto p-2"
+        className="max-h-64 overflow-y-auto p-2.5 hide-scrollbar"
       >
+        <p className="text-[10px] font-extrabold uppercase tracking-widest px-2 mb-2" style={{ color: '#94a3b8' }}>Upcoming Doses</p>
         {upcomingDoses.map((dose, i) => (
-          <div key={i} className="flex justify-between items-center px-2 py-1 hover:bg-purple-700/20 rounded-md">
+          <div key={i} className="flex justify-between items-center px-2 py-2 hover:bg-purple-50/50 rounded-xl transition-all">
             <div>
-              <p className="text-white font-semibold">{dose.medicationName}</p>
-              <p className="text-gray-300 text-sm">{dose.time}</p>
+              <p className="font-extrabold text-xs" style={{ color: '#1e293b' }}>{dose.medicationName}</p>
+              <p className="text-[10px] font-bold" style={{ color: '#94a3b8' }}>{dose.time}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <button
                 onClick={() => handleDoseAction(dose, "Taken")}
-                className="bg-green-500/20 text-green-300 p-1 rounded hover:bg-green-500/40"
+                className="p-1 rounded-lg hover:scale-105 transition-all text-emerald-600 hover:bg-emerald-50 border border-emerald-100"
               >
-                <Check size={16} />
+                <Check size={14} />
               </button>
               <button
                 onClick={() => handleDoseAction(dose, "Skipped")}
-                className="bg-red-500/20 text-red-300 p-1 rounded hover:bg-red-500/40"
+                className="p-1 rounded-lg hover:scale-105 transition-all text-red-500 hover:bg-red-50 border border-red-100"
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             </div>
           </div>
         ))}
-        {upcomingDoses.length === 0 && <p className="text-gray-400 text-center py-2">No upcoming doses</p>}
+        {upcomingDoses.length === 0 && <p className="text-slate-400 text-center py-2 text-xs">No upcoming doses</p>}
       </div>,
       document.body
     );
@@ -185,33 +196,34 @@ const Topbar = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="h-16 glass-card flex items-center justify-between px-6 relative">
+    <div className="h-16 flex items-center justify-between px-6 relative border-b" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
       {/* Search input */}
       <div className="relative w-full max-w-xs">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search className="text-gray-400" size={20} />
+          <Search className="text-slate-400" size={16} />
         </div>
         <input
           ref={inputRef}
           type="text"
           placeholder="Search medicines..."
-          className="w-full bg-transparent border border-transparent rounded-lg py-2 pl-10 pr-4 text-white focus:outline-none focus-accent"
+          className="w-full rounded-xl py-2 pl-9 pr-4 text-xs font-semibold focus:outline-none transition-all"
+          style={{ background: 'rgba(139,92,246,0.05)', border: '1px solid rgba(139,92,246,0.12)', color: '#1e293b' }}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
 
       {/* Right section */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-5">
         {/* Bell */}
         <div className="relative" ref={bellRef}>
           <button
-            className="text-gray-400 hover:text-white relative"
+            className="text-slate-500 hover:text-slate-800 relative p-1 rounded-xl transition-all"
             onClick={handleBellClick}
           >
-            <Bell size={22} />
+            <Bell size={18} />
             {upcomingDoses.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-sm">
                 {upcomingDoses.length}
               </span>
             )}
@@ -219,8 +231,8 @@ const Topbar = ({ user, onLogout }) => {
         </div>
 
         {/* User */}
-        <div className="flex items-center space-x-2">
-          <div className="h-9 w-9 rounded-full overflow-hidden bg-gradient-to-tr from-purple-600 to-pink-500 shadow-md flex items-center justify-center">
+        <div className="flex items-center space-x-2.5">
+          <div className="h-8 w-8 rounded-full overflow-hidden bg-gradient-to-tr from-purple-600 to-pink-500 shadow-sm flex items-center justify-center">
             {user?.photo ? (
               <img
                 className="h-full w-full object-cover"
@@ -236,17 +248,17 @@ const Topbar = ({ user, onLogout }) => {
               />
             )}
           </div>
-          <div>
-            <span className="text-white font-medium">{user?.name}</span>
-            <p className="text-xs text-gray-400">Patient</p>
+          <div className="hidden sm:block text-left">
+            <span className="text-xs font-extrabold block leading-tight" style={{ color: '#1e293b' }}>{user?.name}</span>
+            <p className="text-[10px] text-slate-400 font-bold">Patient</p>
           </div>
         </div>
 
         <button
           onClick={onLogout}
-          className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-700"
+          className="text-slate-400 hover:text-red-500 p-1.5 rounded-xl hover:bg-red-50/50 transition-all"
         >
-          <LogOut size={22} />
+          <LogOut size={16} />
         </button>
       </div>
 

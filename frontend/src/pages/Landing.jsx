@@ -65,10 +65,12 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="relative p-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl max-w-2xl mx-auto overflow-hidden group">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-      <h3 className="text-3xl font-extrabold mb-3 text-white text-center tracking-tight">Get in Touch</h3>
-      <p className="text-gray-400 mb-8 text-center">Have a question? Fill out the form below and we'll get back to you.</p>
+    <div className="relative p-10 rounded-3xl overflow-hidden group text-left"
+      style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 12px 32px rgba(139,92,246,0.06)' }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <h3 className="text-3xl font-extrabold mb-2 tracking-tight" style={{ color: '#0f172a' }}>Get in Touch</h3>
+      <p className="text-sm mb-8" style={{ color: '#64748b' }}>Have a question? Fill out the form below and we'll get back to you.</p>
       <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {['name', 'email', 'phone', 'place'].map((field) => (
@@ -76,11 +78,12 @@ const ContactForm = () => {
               <input
                 type={field === 'email' ? 'email' : 'text'}
                 name={field}
-                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all peer"
+                className="w-full rounded-xl p-4 text-sm font-semibold focus:outline-none transition-all peer"
+                style={{ background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.12)', color: '#1e293b' }}
                 placeholder=" "
                 required
               />
-              <label className="absolute left-4 top-4 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:top-1 peer-focus:text-xs peer-focus:text-purple-400 peer-valid:top-1 peer-valid:text-xs capitalize pointer-events-none">
+              <label className="absolute left-4 top-4 text-slate-400 text-xs transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-600 peer-valid:top-1.5 peer-valid:text-[10px] pointer-events-none font-bold uppercase tracking-wider">
                 {field === 'place' ? 'Location' : field}
               </label>
             </div>
@@ -90,24 +93,25 @@ const ContactForm = () => {
           <textarea
             name="message"
             rows="4"
-            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all peer"
+            className="w-full rounded-xl p-4 text-sm font-semibold focus:outline-none transition-all peer"
+            style={{ background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.12)', color: '#1e293b' }}
             placeholder=" "
             required
           ></textarea>
-          <label className="absolute left-4 top-4 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:top-1 peer-focus:text-xs peer-focus:text-purple-400 peer-valid:top-1 peer-valid:text-xs pointer-events-none">
+          <label className="absolute left-4 top-4 text-slate-400 text-xs transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-600 peer-valid:top-1.5 peer-valid:text-[10px] pointer-events-none font-bold uppercase tracking-wider">
             Your Query
           </label>
         </div>
         <div className="flex justify-center pt-2">
           <button
             type="submit"
-            className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-transparent rounded-full hover:bg-white/5 border border-white/10 hover:border-purple-500 overflow-hidden"
+            className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-purple-600 hover:bg-purple-700 rounded-full shadow-md overflow-hidden hover:scale-105"
+            style={{ background: 'linear-gradient(135deg,#8b5cf6,#ec4899)' }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-20 transition-opacity" />
             <span className="relative flex items-center gap-2">Send Message <Send size={18} className="group-hover:translate-x-1 transition-transform" /></span>
           </button>
         </div>
-        {status && <p className="text-center text-sm text-purple-300 mt-4 animate-fade-in">{status}</p>}
+        {status && <p className="text-center text-sm font-bold text-purple-600 mt-4 animate-fade-in">{status}</p>}
       </form>
     </div>
   );
@@ -143,16 +147,19 @@ const FeatureCard3D = ({ icon, title, children, index }) => {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="feature-card-anim opacity-0 translate-y-10 relative p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-lg overflow-hidden group cursor-pointer"
+      className="feature-card-anim opacity-0 translate-y-10 relative p-8 rounded-3xl overflow-hidden group cursor-pointer text-left"
+      style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 16px rgba(139,92,246,0.06)' }}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="absolute -right-10 -top-10 w-32 h-32 bg-purple-500/20 blur-[50px] rounded-full pointer-events-none group-hover:bg-pink-500/20 transition-colors" />
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute -right-10 -top-10 w-32 h-32 bg-purple-500/10 blur-[50px] rounded-full pointer-events-none group-hover:bg-pink-500/10 transition-colors" />
       <div className="relative z-10">
-        <div className="w-14 h-14 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center mb-6 text-purple-400 group-hover:text-pink-400 transition-colors group-hover:scale-110 duration-300">
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 text-purple-600 group-hover:text-pink-600 transition-colors group-hover:scale-110 duration-300"
+          style={{ background: 'linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.08))' }}
+        >
           {icon}
         </div>
-        <h3 className="text-xl font-bold text-white mb-3 tracking-tight">{title}</h3>
-        <p className="text-gray-400 leading-relaxed text-sm">{children}</p>
+        <h3 className="text-lg font-extrabold mb-2.5 tracking-tight" style={{ color: '#1e293b' }}>{title}</h3>
+        <p className="leading-relaxed text-xs" style={{ color: '#64748b' }}>{children}</p>
       </div>
     </div>
   );
@@ -175,10 +182,10 @@ const LandingPage = () => {
     const handleScroll = () => {
       const nav = document.getElementById('navbar');
       if (window.scrollY > 50) {
-        nav.classList.add('bg-black/60', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'py-4');
+        nav.classList.add('bg-white/70', 'backdrop-blur-xl', 'border-b', 'border-slate-200/50', 'py-4');
         nav.classList.remove('py-6', 'bg-transparent');
       } else {
-        nav.classList.remove('bg-black/60', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'py-4');
+        nav.classList.remove('bg-white/70', 'backdrop-blur-xl', 'border-b', 'border-slate-200/50', 'py-4');
         nav.classList.add('py-6', 'bg-transparent');
       }
     };
@@ -277,43 +284,45 @@ const LandingPage = () => {
 
   return (
     <SmoothScroll>
-      <div className="bg-[#030305] text-white min-h-screen font-sans overflow-x-hidden selection:bg-purple-500/30">
+      <div className="bg-[#f8f9ff] text-slate-800 min-h-screen font-sans overflow-x-hidden relative">
         
-        {/* Animated Background System */}
+        {/* Animated Background System - Light Theme */}
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] animate-blob" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-600/10 rounded-full blur-[150px] animate-blob" style={{ animationDelay: '2s' }} />
-          <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] bg-blue-600/10 rounded-full blur-[100px] animate-blob" style={{ animationDelay: '4s' }} />
-          <div className="noise-bg absolute inset-0" />
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-300/30 rounded-full blur-[120px] animate-blob" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[55%] h-[55%] bg-pink-300/20 rounded-full blur-[140px] animate-blob" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-[45%] left-[55%] w-[45%] h-[45%] bg-cyan-200/35 rounded-full blur-[100px] animate-blob" style={{ animationDelay: '4s' }} />
+          <div className="noise-bg absolute inset-0 opacity-40" />
         </div>
 
         {/* Navigation */}
         <nav id="navbar" className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-6 px-6 lg:px-12">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all">
                 <Pill size={24} className="text-white" />
               </div>
-              <span className="text-xl font-bold tracking-tight">MediSync<span className="text-purple-400">-AI</span></span>
+              <span className="text-xl font-extrabold tracking-tight text-slate-900">MediSync<span className="text-purple-600">-AI</span></span>
             </div>
             
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-              <a href="#features" className="hover:text-white transition-colors">Features</a>
-              <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
-              <a href="#ai" className="hover:text-white transition-colors">AI Engine</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            <div className="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
+              <a href="#features" className="hover:text-slate-800 transition-colors">Features</a>
+              <a href="#how-it-works" className="hover:text-slate-800 transition-colors">How it works</a>
+              <a href="#ai" className="hover:text-slate-800 transition-colors">AI Engine</a>
+              <a href="#contact" className="hover:text-slate-800 transition-colors">Contact</a>
             </div>
 
             <div className="hidden md:flex items-center gap-4">
-              <button onClick={() => navigate('/login')} className="text-sm font-semibold hover:text-purple-400 transition-colors">Log in</button>
-              <button onClick={() => navigate('/register')} className="text-sm font-semibold bg-white text-black px-5 py-2.5 rounded-full hover:scale-105 hover:bg-gray-100 transition-all">
+              <button onClick={() => navigate('/login')} className="text-sm font-bold text-slate-600 hover:text-purple-600 transition-colors">Log in</button>
+              <button onClick={() => navigate('/register')} className="text-sm font-bold text-white px-5 py-2.5 rounded-full hover:scale-105 transition-all"
+                style={{ background: 'linear-gradient(135deg,#8b5cf6,#ec4899)', boxShadow: '0 4px 12px rgba(139,92,246,0.3)' }}
+              >
                 Get Started
               </button>
             </div>
 
             {/* Mobile Menu Toggle */}
-            <button className="md:hidden text-gray-300 hover:text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <button className="md:hidden text-slate-600 hover:text-slate-900" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
@@ -321,14 +330,14 @@ const LandingPage = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-3xl pt-24 px-6 md:hidden flex flex-col gap-6">
-            <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">Features</a>
-            <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">How it works</a>
-            <a href="#ai" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">AI Engine</a>
-            <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-gray-300 hover:text-white">Contact</a>
-            <div className="h-px w-full bg-white/10 my-4" />
-            <button onClick={() => { setIsMobileMenuOpen(false); navigate('/login'); }} className="text-xl font-bold text-left">Log in</button>
-            <button onClick={() => { setIsMobileMenuOpen(false); navigate('/register'); }} className="text-xl font-bold bg-white text-black text-center py-4 rounded-2xl mt-4">Get Started</button>
+          <div className="fixed inset-0 z-40 bg-white/95 backdrop-blur-3xl pt-24 px-6 md:hidden flex flex-col gap-6">
+            <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-slate-600 hover:text-slate-900">Features</a>
+            <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-slate-600 hover:text-slate-900">How it works</a>
+            <a href="#ai" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-slate-600 hover:text-slate-900">AI Engine</a>
+            <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-slate-600 hover:text-slate-900">Contact</a>
+            <div className="h-px w-full bg-slate-200/50 my-4" />
+            <button onClick={() => { setIsMobileMenuOpen(false); navigate('/login'); }} className="text-xl font-bold text-left text-slate-700">Log in</button>
+            <button onClick={() => { setIsMobileMenuOpen(false); navigate('/register'); }} className="text-xl font-bold text-white text-center py-4 rounded-2xl mt-4" style={{ background: 'linear-gradient(135deg,#8b5cf6,#ec4899)' }}>Get Started</button>
           </div>
         )}
 
@@ -338,23 +347,25 @@ const LandingPage = () => {
           {/* Hero Section */}
           <section ref={heroRef} className="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 lg:px-12 overflow-hidden">
             <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-              <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 hero-float">
-                  <span className="flex h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-                  <span className="text-sm font-medium text-gray-300">MediSync AI 2.0 is now live</span>
+              <div className="max-w-2xl text-left">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/5 border border-purple-500/10 mb-8 hero-float">
+                  <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-sm font-bold text-purple-700">MediSync AI 2.0 is now live</span>
                 </div>
                 
-                <h1 ref={headlineRef} className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-[1.05] mb-6">
-                  Intelligent <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 animate-gradient-x">Health</span> Routing.
+                <h1 ref={headlineRef} className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-[1.05] mb-6 text-slate-900">
+                  Intelligent <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 animate-gradient-x">Health</span> Routing.
                 </h1>
                 
-                <p ref={typeRef} className="text-lg md:text-xl text-gray-400 mb-10 min-h-[80px] md:min-h-[60px] leading-relaxed"></p>
+                <p ref={typeRef} className="text-lg md:text-xl text-slate-500 mb-10 min-h-[80px] md:min-h-[60px] leading-relaxed"></p>
                 
                 <div className="flex flex-wrap items-center gap-4">
-                  <button onClick={() => navigate('/register')} className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-black transition-all duration-200 bg-white rounded-full hover:scale-105 overflow-hidden">
+                  <button onClick={() => navigate('/register')} className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 rounded-full hover:scale-105 overflow-hidden shadow-md"
+                    style={{ background: 'linear-gradient(135deg,#8b5cf6,#ec4899)' }}
+                  >
                     <span className="relative flex items-center gap-2">Start for free <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></span>
                   </button>
-                  <button onClick={() => document.getElementById('ai').scrollIntoView({behavior: 'smooth'})} className="inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-white/5 border border-white/10 rounded-full hover:bg-white/10">
+                  <button onClick={() => document.getElementById('ai').scrollIntoView({behavior: 'smooth'})} className="inline-flex items-center justify-center px-8 py-4 font-bold text-slate-700 transition-all duration-200 bg-slate-100 border border-slate-200/50 rounded-full hover:bg-slate-200/80">
                     See AI in action
                   </button>
                 </div>
@@ -362,33 +373,38 @@ const LandingPage = () => {
 
               {/* Hero Visual */}
               <div className="relative h-[500px] w-full flex items-center justify-center lg:justify-end">
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-pink-500/20 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-pink-500/10 blur-[100px] rounded-full pointer-events-none" />
                 
                 {/* 3D Mockup Container */}
-                <div className="relative w-full max-w-md aspect-[3/4] bg-black/40 border border-white/10 rounded-[40px] shadow-2xl backdrop-blur-xl overflow-hidden hero-float animate-float-complex">
+                <div className="relative w-full max-w-md aspect-[3/4] border rounded-[40px] shadow-xl overflow-hidden hero-float animate-float-complex"
+                  style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(20px)', borderColor: 'rgba(255,255,255,0.8)' }}
+                >
                   {/* Mockup Top Bar */}
-                  <div className="h-12 border-b border-white/10 flex items-center justify-center gap-2">
-                    <div className="w-16 h-1.5 bg-white/20 rounded-full" />
+                  <div className="h-12 border-b flex items-center justify-center gap-2" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
+                    <div className="w-16 h-1.5 bg-slate-300 rounded-full" />
                   </div>
                   {/* Mockup Content */}
                   <div className="p-6 flex flex-col gap-4 h-full relative">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 pointer-events-none mix-blend-overlay" />
-                    <img src={heroImg} alt="App mockup" className="w-full h-auto object-contain rounded-2xl drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]" />
+                    <img src={heroImg} alt="App mockup" className="w-full h-auto object-contain rounded-2xl drop-shadow-[0_0_30px_rgba(168,85,247,0.25)]" />
                     
                     {/* Floating UI Elements inside mockup */}
-                    <div className="absolute top-20 -left-6 bg-white/10 border border-white/10 backdrop-blur-md p-3 rounded-2xl shadow-xl flex items-center gap-3 animate-float-complex" style={{animationDelay: '1s'}}>
-                      <div className="bg-green-500/20 text-green-400 p-2 rounded-lg"><CheckCircle2 size={20} /></div>
-                      <div>
-                        <p className="text-xs text-gray-400">Status</p>
-                        <p className="text-sm font-bold text-white">Dose Taken</p>
+                    <div className="absolute top-20 -left-6 border backdrop-blur-md p-3 rounded-2xl shadow-lg flex items-center gap-3 animate-float-complex"
+                      style={{ background: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(139,92,246,0.1)', animationDelay: '1s' }}
+                    >
+                      <div className="bg-emerald-100 text-emerald-600 p-2 rounded-lg"><CheckCircle2 size={20} /></div>
+                      <div className="text-left">
+                        <p className="text-[10px] font-bold text-slate-400">Status</p>
+                        <p className="text-xs font-extrabold text-slate-800">Dose Taken</p>
                       </div>
                     </div>
                     
-                    <div className="absolute bottom-32 -right-6 bg-white/10 border border-white/10 backdrop-blur-md p-3 rounded-2xl shadow-xl flex items-center gap-3 animate-float-complex" style={{animationDelay: '2s'}}>
-                      <div className="bg-purple-500/20 text-purple-400 p-2 rounded-lg"><BrainCircuit size={20} /></div>
-                      <div>
-                        <p className="text-xs text-gray-400">AI Suggestion</p>
-                        <p className="text-sm font-bold text-white">Optimal Time: 9 AM</p>
+                    <div className="absolute bottom-32 -right-6 border backdrop-blur-md p-3 rounded-2xl shadow-lg flex items-center gap-3 animate-float-complex"
+                      style={{ background: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(139,92,246,0.1)', animationDelay: '2s' }}
+                    >
+                      <div className="bg-purple-100 text-purple-600 p-2 rounded-lg"><BrainCircuit size={20} /></div>
+                      <div className="text-left">
+                        <p className="text-[10px] font-bold text-slate-400">AI Suggestion</p>
+                        <p className="text-xs font-extrabold text-slate-800">Optimal Time: 9 AM</p>
                       </div>
                     </div>
                   </div>
@@ -398,7 +414,7 @@ const LandingPage = () => {
           </section>
 
           {/* Stats Section */}
-          <section ref={statsRef} className="py-20 border-y border-white/5 bg-white/[0.02]">
+          <section ref={statsRef} className="py-20 border-y" style={{ borderColor: 'rgba(139,92,246,0.06)', background: 'rgba(255,255,255,0.45)' }}>
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
               {[
                 { label: "Active Users", value: "25", suffix: "k+" },
@@ -407,11 +423,11 @@ const LandingPage = () => {
                 { label: "Uptime", value: "99.9", suffix: "%" }
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col gap-2">
-                  <div className="text-4xl md:text-5xl font-extrabold text-white tracking-tighter">
+                  <div className="text-4xl md:text-5xl font-extrabold tracking-tighter" style={{ color: '#1e293b' }}>
                     <span className="stat-number" data-target={stat.value}>0</span>
-                    <span className="text-purple-400">{stat.suffix}</span>
+                    <span className="text-purple-600">{stat.suffix}</span>
                   </div>
-                  <p className="text-sm font-medium text-gray-500 uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#94a3b8' }}>{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -421,8 +437,8 @@ const LandingPage = () => {
           <section id="features" className="py-32 px-6 lg:px-12 relative">
             <div className="max-w-7xl mx-auto">
               <div className="text-center max-w-3xl mx-auto mb-20">
-                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Everything you need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">stay healthy.</span></h2>
-                <p className="text-lg text-gray-400">A complete toolset designed for individuals who want precision, reliability, and intelligence in their daily routine.</p>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight" style={{ color: '#0f172a' }}>Everything you need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">stay healthy.</span></h2>
+                <p className="text-lg text-slate-500">A complete toolset designed for individuals who want precision, reliability, and intelligence in their daily routine.</p>
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -449,15 +465,16 @@ const LandingPage = () => {
           </section>
 
           {/* AI Showcase Section */}
-          <section id="ai" className="py-32 px-6 lg:px-12 relative overflow-hidden bg-black/40 border-y border-white/5">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none mix-blend-overlay" />
+          <section id="ai" className="py-32 px-6 lg:px-12 relative overflow-hidden border-y text-left" style={{ borderColor: 'rgba(139,92,246,0.06)', background: 'rgba(255,255,255,0.4)' }}>
             <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-6 text-sm font-semibold">
-                  <MessageSquare size={16} /> MediSync AI Engine
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-purple-600 mb-6 text-xs font-bold uppercase tracking-wider"
+                  style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.15)' }}
+                >
+                  <MessageSquare size={14} /> MediSync AI Engine
                 </div>
-                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Talk to your data naturally.</h2>
-                <p className="text-lg text-gray-400 mb-8 leading-relaxed">
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight" style={{ color: '#0f172a' }}>Talk to your data naturally.</h2>
+                <p className="text-lg mb-8 leading-relaxed" style={{ color: '#64748b' }}>
                   Stop navigating through complex menus. Just ask our AI assistant anything about your schedule, side effects, or health history, and get instant, accurate answers.
                 </p>
                 <ul className="space-y-4">
@@ -466,34 +483,42 @@ const LandingPage = () => {
                     "Can I take Ibuprofen with Megaflam?",
                     "Reschedule my 9 AM dose to 10 AM today."
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-gray-300 bg-white/5 border border-white/10 p-4 rounded-xl">
-                      <ArrowRight size={18} className="text-pink-400" /> "{text}"
+                    <li key={i} className="flex items-center gap-3 text-slate-700 bg-white/60 border p-4 rounded-2xl text-sm font-semibold" style={{ borderColor: 'rgba(139,92,246,0.08)' }}>
+                      <ArrowRight size={16} className="text-pink-500" /> "{text}"
                     </li>
                   ))}
                 </ul>
               </div>
               
-              <div className="relative rounded-3xl bg-[#0a0a0f] border border-white/10 shadow-2xl overflow-hidden aspect-square md:aspect-video lg:aspect-square flex flex-col">
-                <div className="h-14 border-b border-white/10 flex items-center px-6 gap-3 bg-white/[0.02]">
-                  <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/50" />
-                  <span className="ml-4 text-xs font-mono text-gray-500">AI Assistant</span>
+              <div className="relative rounded-3xl border shadow-xl overflow-hidden aspect-square md:aspect-video lg:aspect-square flex flex-col"
+                style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(20px)', borderColor: 'rgba(255,255,255,0.8)' }}
+              >
+                <div className="h-14 border-b flex items-center px-6 gap-3 bg-slate-50/50" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-450" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                  <span className="ml-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">AI Assistant</span>
                 </div>
                 <div className="flex-1 p-6 flex flex-col gap-4 overflow-hidden relative">
-                  <div className="self-end bg-purple-600 text-white px-5 py-3 rounded-2xl rounded-tr-sm max-w-[80%] shadow-lg">
-                    <p className="text-sm">I have a headache. Can I take aspirin right now?</p>
+                  <div className="self-end text-white px-5 py-3 rounded-2xl rounded-tr-sm max-w-[80%] shadow-md text-sm font-semibold"
+                    style={{ background: 'linear-gradient(135deg,#8b5cf6,#7c3aed)' }}
+                  >
+                    <p>I have a headache. Can I take aspirin right now?</p>
                   </div>
-                  <div className="self-start bg-white/10 border border-white/10 text-gray-200 px-5 py-4 rounded-2xl rounded-tl-sm max-w-[85%] shadow-lg backdrop-blur-md">
+                  <div className="self-start text-slate-800 px-5 py-4 rounded-2xl rounded-tl-sm max-w-[85%] shadow-md text-sm font-semibold"
+                    style={{ background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.1)' }}
+                  >
                     <div className="flex items-center gap-2 mb-2">
-                      <BrainCircuit size={16} className="text-pink-400" />
-                      <span className="text-xs font-bold text-pink-400">MediSync AI</span>
+                      <BrainCircuit size={16} className="text-purple-600" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600">MediSync AI</span>
                     </div>
-                    <p className="text-sm leading-relaxed">Looking at your logs, you took Megaflam 15mg at 9:00 AM. It is generally not recommended to mix Aspirin with NSAIDs like Megaflam as it increases the risk of side effects. Please consult your doctor first.</p>
+                    <p className="leading-relaxed text-xs" style={{ color: '#475569' }}>Looking at your logs, you took Megaflam 15mg at 9:00 AM. It is generally not recommended to mix Aspirin with NSAIDs like Megaflam as it increases the risk of side effects. Please consult your doctor first.</p>
                   </div>
                 </div>
-                <div className="h-16 border-t border-white/10 bg-white/[0.02] flex items-center px-4">
-                  <div className="w-full h-10 bg-black/50 border border-white/10 rounded-xl px-4 flex items-center text-sm text-gray-500">
+                <div className="h-16 border-t bg-slate-50/50 flex items-center px-4" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
+                  <div className="w-full h-10 border rounded-xl px-4 flex items-center text-xs font-semibold text-slate-400"
+                    style={{ background: 'rgba(139,92,246,0.04)', borderColor: 'rgba(139,92,246,0.12)' }}
+                  >
                     Ask AI anything...
                   </div>
                 </div>
@@ -504,15 +529,15 @@ const LandingPage = () => {
           {/* How It Works Timeline */}
           <section id="how-it-works" className="py-32 px-6 lg:px-12">
             <div className="max-w-3xl mx-auto text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">How MediSync works.</h2>
-              <p className="text-lg text-gray-400">A frictionless experience from onboarding to daily mastery.</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight" style={{ color: '#0f172a' }}>How MediSync works.</h2>
+              <p className="text-lg text-slate-500">A frictionless experience from onboarding to daily mastery.</p>
             </div>
 
             <div ref={timelineRef} className="max-w-4xl mx-auto relative pb-10">
               {/* Background Line */}
-              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-white/10 transform md:-translate-x-1/2" />
+              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-slate-200 transform md:-translate-x-1/2" />
               {/* Animated Progress Line */}
-              <div className="timeline-progress absolute left-8 md:left-1/2 top-0 w-[3px] bg-gradient-to-b from-purple-500 via-pink-500 to-purple-500 transform md:-translate-x-1/2 h-0 shadow-[0_0_15px_rgba(168,85,247,0.6)]" />
+              <div className="timeline-progress absolute left-8 md:left-1/2 top-0 w-[3px] bg-gradient-to-b from-purple-500 via-pink-500 to-purple-500 transform md:-translate-x-1/2 h-0 shadow-[0_0_15px_rgba(168,85,247,0.4)]" />
 
               {[
                 { title: "Create Your Profile", desc: "Sign up securely in seconds. No complex setups or endless forms." },
@@ -521,12 +546,14 @@ const LandingPage = () => {
                 { title: "Track & Optimize", desc: "View detailed analytics and let AI suggest improvements to your routine." }
               ].map((step, i) => (
                 <div key={i} className={`timeline-node relative flex items-center mb-20 md:mb-32 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                  <div className="absolute left-8 md:left-1/2 w-6 h-6 rounded-full bg-[#030305] border-4 border-purple-500 transform -translate-x-1/2 z-10 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                  <div className="absolute left-8 md:left-1/2 w-6 h-6 rounded-full bg-[#f8f9ff] border-4 border-purple-500 transform -translate-x-1/2 z-10 shadow-[0_0_10px_rgba(168,85,247,0.3)]" />
                   <div className={`ml-20 md:ml-0 w-full md:w-1/2 ${i % 2 === 0 ? 'md:pl-16' : 'md:pr-16 text-left md:text-right'}`}>
-                    <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors">
-                      <span className="text-purple-400 font-mono font-bold mb-2 block">Step 0{i+1}</span>
-                      <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">{step.title}</h3>
-                      <p className="text-gray-400">{step.desc}</p>
+                    <div className="p-8 rounded-3xl transition-colors text-left"
+                      style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 16px rgba(139,92,246,0.06)' }}
+                    >
+                      <span className="text-purple-600 font-mono font-bold mb-2 block text-xs">Step 0{i+1}</span>
+                      <h3 className="text-xl font-extrabold mb-3 tracking-tight" style={{ color: '#1e293b' }}>{step.title}</h3>
+                      <p className="text-xs leading-relaxed" style={{ color: '#64748b' }}>{step.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -535,29 +562,31 @@ const LandingPage = () => {
           </section>
 
           {/* Testimonials Marquee */}
-          <section className="py-20 border-y border-white/5 bg-white/[0.02] overflow-hidden flex flex-col gap-6">
+          <section className="py-20 border-y" style={{ borderColor: 'rgba(139,92,246,0.06)', background: 'rgba(255,255,255,0.45)' }}>
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-extrabold tracking-tight">Loved by thousands.</h2>
+              <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: '#0f172a' }}>Loved by thousands.</h2>
             </div>
             
             <div className="relative w-full flex overflow-hidden group">
-              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#030305] to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#030305] to-transparent z-10 pointer-events-none" />
+              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#f8f9ff] to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#f8f9ff] to-transparent z-10 pointer-events-none" />
               
               <div className="flex animate-marquee group-hover:[animation-play-state:paused] whitespace-nowrap">
                 {[1,2,3,4,5,6].map((_, i) => (
-                  <div key={i} className="inline-block w-[350px] md:w-[450px] mx-4 p-6 rounded-3xl bg-white/5 border border-white/10 whitespace-normal">
+                  <div key={i} className="inline-block w-[350px] md:w-[450px] mx-4 p-6 rounded-3xl whitespace-normal text-left"
+                    style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 16px rgba(139,92,246,0.06)' }}
+                  >
                     <div className="flex items-center gap-1 mb-4 text-yellow-500">
                       {[1,2,3,4,5].map(s => <span key={s}>★</span>)}
                     </div>
-                    <p className="text-gray-300 mb-6 text-lg">"Absolutely life-changing app. The AI predictions saved me from mixing incompatible meds. The UI is gorgeous and perfectly smooth."</p>
+                    <p className="text-slate-600 mb-6 text-sm leading-relaxed">"Absolutely life-changing app. The AI predictions saved me from mixing incompatible meds. The UI is gorgeous and perfectly smooth."</p>
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
-                        {String.fromCharCode(65 + i)}
+                         {String.fromCharCode(65 + i)}
                       </div>
                       <div>
-                        <p className="font-bold text-white">Verified User</p>
-                        <p className="text-xs text-gray-500">Patient</p>
+                        <p className="font-bold text-slate-800 text-sm">Verified User</p>
+                        <p className="text-xs text-slate-400 font-bold">Patient</p>
                       </div>
                     </div>
                   </div>
@@ -568,7 +597,7 @@ const LandingPage = () => {
 
           {/* FAQ Section */}
           <section className="py-32 px-6 lg:px-12 max-w-4xl mx-auto">
-            <h2 className="text-4xl font-extrabold mb-12 text-center tracking-tight">Frequently Asked Questions</h2>
+            <h2 className="text-4xl font-extrabold mb-12 text-center tracking-tight" style={{ color: '#0f172a' }}>Frequently Asked Questions</h2>
             <div className="space-y-4">
               {[
                 { q: "Is MediSync-AI completely free?", a: "Yes! Our core tracking and AI assistant features are currently free to use." },
@@ -576,16 +605,18 @@ const LandingPage = () => {
                 { q: "Does it sync with Google Calendar?", a: "Yes, you can easily connect your Google Calendar in the dashboard to mirror your schedule." },
                 { q: "What if I miss a dose?", a: "The system logs it as missed and the AI adapts your adherence score, optionally offering advice on next steps." }
               ].map((faq, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300">
+                <div key={i} className="rounded-2xl overflow-hidden transition-all duration-300 text-left"
+                  style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 16px rgba(139,92,246,0.06)' }}
+                >
                   <button 
                     onClick={() => toggleFaq(i)}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
                   >
-                    <span className="font-bold text-lg">{faq.q}</span>
-                    <ChevronDown size={20} className={`transform transition-transform duration-300 ${activeFaq === i ? 'rotate-180 text-purple-400' : 'text-gray-500'}`} />
+                    <span className="font-extrabold text-slate-800 text-base">{faq.q}</span>
+                    <ChevronDown size={20} className={`transform transition-transform duration-300 ${activeFaq === i ? 'rotate-180 text-purple-600' : 'text-slate-400'}`} />
                   </button>
                   <div className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${activeFaq === i ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <p className="text-gray-400">{faq.a}</p>
+                    <p className="text-slate-650 text-sm leading-relaxed">{faq.a}</p>
                   </div>
                 </div>
               ))}
@@ -593,14 +624,15 @@ const LandingPage = () => {
           </section>
 
           {/* CTA & Contact */}
-          <section id="contact" className="py-32 relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-900/20 pointer-events-none" />
+          <section id="contact" className="py-32 relative text-left">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
               <div className="grid lg:grid-cols-2 gap-16 items-center">
                 <div>
-                  <h2 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tighter">Ready to sync your <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">health routine?</span></h2>
-                  <p className="text-xl text-gray-400 mb-10">Join thousands of users who have transformed their medical adherence with our intelligent platform.</p>
-                  <button onClick={() => navigate('/register')} className="group relative inline-flex items-center justify-center px-10 py-5 font-bold text-black transition-all duration-200 bg-white rounded-full hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+                  <h2 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tighter text-slate-900">Ready to sync your <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">health routine?</span></h2>
+                  <p className="text-xl text-slate-550 mb-10">Join thousands of users who have transformed their medical adherence with our intelligent platform.</p>
+                  <button onClick={() => navigate('/register')} className="group relative inline-flex items-center justify-center px-10 py-5 font-bold text-white transition-all duration-200 rounded-full hover:scale-105 shadow-md"
+                    style={{ background: 'linear-gradient(135deg,#8b5cf6,#ec4899)', boxShadow: '0 8px 24px rgba(139,92,246,0.3)' }}
+                  >
                     <span className="relative flex items-center gap-2 text-lg">Create Free Account <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></span>
                   </button>
                 </div>
@@ -613,20 +645,20 @@ const LandingPage = () => {
         </main>
 
         {/* Minimal Premium Footer */}
-        <footer className="border-t border-white/10 bg-[#020203] pt-16 pb-8 px-6 lg:px-12 relative z-10">
+        <footer className="pt-16 pb-8 px-6 lg:px-12 relative z-10 border-t" style={{ borderColor: 'rgba(139,92,246,0.06)', background: 'rgba(255,255,255,0.45)' }}>
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <Pill size={20} className="text-purple-400" />
-              <span className="text-lg font-bold tracking-tight">MediSync-AI</span>
+              <Pill size={20} className="text-purple-600" />
+              <span className="text-lg font-bold tracking-tight text-slate-900">MediSync-AI</span>
             </div>
             
-            <div className="flex gap-6 text-sm text-gray-500 font-medium">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-              <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
+            <div className="flex gap-6 text-sm text-slate-500 font-medium">
+              <a href="#" className="hover:text-purple-600 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-purple-600 transition-colors">Terms of Service</a>
+              <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-purple-600 transition-colors">GitHub</a>
             </div>
             
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-slate-400 font-semibold">
               &copy; {new Date().getFullYear()} MediSync-AI. All rights reserved.
             </div>
           </div>

@@ -192,17 +192,20 @@ const Chatbot = () => {
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                        className="fixed bottom-24 right-6 w-96 h-[32rem] panel-glass shadow-2xl flex flex-col z-40 overflow-hidden"
+                        className="fixed bottom-24 right-6 w-[22rem] sm:w-96 h-[32rem] bg-white/80 border border-white/60 shadow-[0_20px_40px_rgba(0,0,0,0.1)] backdrop-blur-2xl rounded-[2.5rem] flex flex-col z-40 overflow-hidden"
                     >
-                        <div className="p-4 bg-gray-900 border-b border-gray-700">
-                            <h3 className="text-lg font-bold text-white">Wellness Assistant</h3>
+                        <div className="p-5 bg-white/50 border-b border-slate-100 backdrop-blur-md">
+                            <h3 className="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)] animate-pulse"></div>
+                                Wellness Assistant
+                            </h3>
                         </div>
-                        <div className="flex-1 p-4 overflow-y-auto space-y-4">
+                        <div className="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar">
                             {messages.map((msg, index) => (
                                 <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm ${msg.role === 'user'
-                                        ? 'bg-purple-600 text-white rounded-br-none'
-                                        : 'bg-gray-700 text-gray-200 rounded-bl-none'
+                                    <div className={`px-4 py-2.5 rounded-2xl max-w-[85%] text-sm font-medium shadow-sm ${msg.role === 'user'
+                                        ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-br-sm'
+                                        : 'bg-white text-slate-700 border border-slate-100 rounded-bl-sm'
                                         }`}>
                                         {msg.parts[0].text}
                                     </div>
@@ -210,36 +213,36 @@ const Chatbot = () => {
                             ))}
                             {isLoading && (
                                 <div className="flex justify-start">
-                                    <div className="px-4 py-2 rounded-2xl bg-gray-700 text-gray-200 rounded-bl-none">
-                                        <div className="flex items-center space-x-1">
-                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-75"></span>
-                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></span>
-                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-300"></span>
+                                    <div className="px-4 py-3 rounded-2xl bg-white text-slate-700 border border-slate-100 rounded-bl-sm shadow-sm">
+                                        <div className="flex items-center space-x-1.5">
+                                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce"></span>
+                                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
+                                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
                                         </div>
                                     </div>
                                 </div>
                             )}
                             <div ref={messagesEndRef} />
                         </div>
-                        <div className="p-4 border-t border-gray-700 flex items-center space-x-2">
+                        <div className="p-4 bg-white/50 border-t border-slate-100 backdrop-blur-md flex items-center space-x-2">
                             <textarea
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Ask something..."
-                                className="flex-1 bg-gray-700 border-gray-600 rounded-full py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                                className="flex-1 bg-white border border-slate-200 rounded-full py-2.5 px-4 text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none shadow-inner placeholder-slate-400 text-sm font-medium custom-scrollbar"
                                 rows="1"
                             />
                             <button
                                 onClick={handleVoiceClick}
-                                className={`bg-purple-600 p-2 rounded-full text-white ${isListening ? 'animate-pulse' : ''}`}
+                                className={`p-2.5 rounded-full text-white shadow-sm transition-transform hover:scale-105 shrink-0 ${isListening ? 'bg-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-gradient-to-r from-purple-600 to-pink-500'}`}
                             >
                                 <Mic size={18} />
                             </button>
                             <button
                                 onClick={() => handleSend()}
                                 disabled={isLoading}
-                                className="ml-1 bg-purple-600 p-2 rounded-full text-white disabled:bg-purple-800 disabled:cursor-not-allowed"
+                                className="p-2.5 rounded-full text-white shadow-sm transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed bg-gradient-to-r from-purple-600 to-pink-500 shrink-0"
                             >
                                 <Send size={18} />
                             </button>

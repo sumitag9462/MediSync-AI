@@ -40,12 +40,12 @@ const PasswordStrengthMeter = ({ password }) => {
         {[1, 2, 3, 4, 5].map((level) => (
           <div 
             key={level} 
-            className={`flex-1 rounded-full transition-colors duration-500 ${level <= strength ? getColor() : 'bg-white/10'}`} 
+            className={`flex-1 rounded-full transition-colors duration-500 ${level <= strength ? getColor() : 'bg-slate-200'}`} 
           />
         ))}
       </div>
       <div className="flex justify-end mt-1">
-        <span className={`text-xs font-bold ${password.length === 0 ? 'text-gray-500' : 'text-gray-300'}`}>
+        <span className={`text-[10px] font-bold uppercase tracking-wide ${password.length === 0 ? 'text-slate-400' : 'text-slate-500'}`}>
            {getLabel()}
         </span>
       </div>

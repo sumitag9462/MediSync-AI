@@ -24,12 +24,18 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
         <motion.div
             variants={sidebarVariants}
             animate={isSidebarOpen ? "open" : "closed"}
-            className="flex flex-col h-full relative bg-[#0c0c1e] border-r border-white/5"
+            className="flex flex-col h-full relative"
+            style={{
+                background: 'rgba(255, 255, 255, 0.45)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                borderRight: '1px solid rgba(255, 255, 255, 0.5)'
+            }}
         >
-            <div className="flex items-center justify-between p-4 h-16 border-b border-white/5">
+            <div className="flex items-center justify-between p-4 h-16 border-b" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
                 <AnimatePresence>
                     {isSidebarOpen && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
@@ -38,50 +44,52 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
                             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-white text-sm">
                                 <Pill size={14} className="text-white" />
                             </div>
-                            <span className="text-xl font-bold ml-2 text-white">MediSync-AI</span>
+                            <span className="text-lg font-extrabold ml-2" style={{ color: '#0f172a' }}>MediSync-AI</span>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
-            <nav className="flex-1 px-3 py-4 space-y-3">
+            <nav className="flex-1 px-3 py-4 space-y-2">
                 {navItems.map(item => (
                     <a
                         key={item.name}
                         href="#"
                         onClick={(e) => { e.preventDefault(); navigate(`/${item.page}`); }}
-                        className={`flex items-center p-3 transition-all duration-200 relative ${
-                            currentPage === item.page
-                                ? 'bg-gradient-to-r from-violet-500/20 to-pink-500/10 text-violet-300 border border-violet-500/30 rounded-xl'
-                                : 'text-white/40 hover:text-white/70 hover:bg-white/5 rounded-xl'
-                        }`}
-                        style={currentPage === item.page ? { boxShadow: '0 0 12px rgba(139,92,246,0.15)' } : {}}
+                        className={`flex items-center p-3 transition-all duration-200 relative ${currentPage === item.page
+                                ? 'text-violet-600 font-bold'
+                                : 'text-slate-500 hover:text-slate-800'
+                            }`}
+                        style={currentPage === item.page
+                            ? { background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.15)', borderRadius: '14px', boxShadow: '0 4px 12px rgba(139,92,246,0.04)' }
+                            : { borderRadius: '14px' }
+                        }
                         title={item.name}
                     >
                         {currentPage === item.page && (
                             <motion.div
                                 layoutId="activeNav"
-                                className="absolute top-0 left-0 right-0 h-0.5 bg-violet-400 rounded-full"
+                                className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 to-pink-500 rounded-full"
                             />
                         )}
                         {item.icon}
                         <AnimatePresence>
-                        {isSidebarOpen && (
-                            <motion.span 
-                                initial={{ opacity: 0, x: -10 }} 
-                                animate={{ opacity: 1, x: 0, transition: { delay: 0.1 } }} 
-                                exit={{ opacity: 0, x: -10 }} 
-                                className="ml-4 font-medium whitespace-nowrap"
-                            >
-                                {item.name}
-                            </motion.span>
-                        )}
+                            {isSidebarOpen && (
+                                <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0, transition: { delay: 0.1 } }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    className="ml-4 font-medium whitespace-nowrap text-sm"
+                                >
+                                    {item.name}
+                                </motion.span>
+                            )}
                         </AnimatePresence>
                     </a>
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-white/5 flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full overflow-hidden bg-gradient-to-tr from-purple-600 to-pink-500 ring-2 ring-violet-500/50 ring-offset-2 ring-offset-[#0c0c1e] flex-shrink-0">
+            <div className="p-4 border-t flex items-center gap-3" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
+                <div className="h-9 w-9 rounded-full overflow-hidden bg-gradient-to-tr from-purple-600 to-pink-500 ring-2 ring-violet-500/30 flex-shrink-0">
                     {user?.photo ? (
                         <img
                             className="h-full w-full object-cover"
@@ -103,17 +111,18 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
                         animate={{ opacity: 1, x: 0 }}
                         className="flex flex-col text-left overflow-hidden"
                     >
-                        <span className="text-sm font-semibold text-white truncate">{user?.name}</span>
-                        <span className="text-xs text-white/40">Patient</span>
+                        <span className="text-sm font-extrabold text-slate-800 truncate">{user?.name}</span>
+                        <span className="text-xs text-slate-400">Patient</span>
                     </motion.div>
                 )}
             </div>
 
             <button
                 onClick={() => setSidebarOpen(!isSidebarOpen)}
-                className="absolute -right-4 top-16 bg-[#0c0c1e] border border-white/10 text-white p-2 rounded-full shadow-lg shadow-violet-900/20 focus:outline-none"
+                className="absolute -right-3 top-6 p-1.5 rounded-full border shadow-md focus:outline-none transition-transform hover:scale-110"
+                style={{ background: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(139,92,246,0.15)', color: '#7c3aed' }}
             >
-                {isSidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+                {isSidebarOpen ? <ChevronLeft size={13} /> : <ChevronRight size={13} />}
             </button>
         </motion.div>
     );

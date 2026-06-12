@@ -6,7 +6,7 @@ import Topbar from './Topbar.jsx';   // Corrected import path
 // The navigate prop is no longer needed here as Sidebar will handle its own navigation
 const AppShell = ({ user, onLogout, currentPage, children }) => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
-    
+
     return (
         <div className="flex h-screen text-white overflow-hidden">
             <Sidebar user={user} currentPage={currentPage} isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />

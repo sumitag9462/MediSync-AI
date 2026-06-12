@@ -29,69 +29,88 @@ const HistoryPage = () => {
         });
     }, []);
 
-    if (loading) return <div className="text-center p-10">Loading History...</div>;
+    if (loading) return (
+        <div className="relative min-h-screen flex items-center justify-center bg-slate-50 text-slate-900 font-sans">
+            <div className="flex flex-col items-center justify-center p-20">
+                <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4" />
+                <p className="text-slate-500 font-medium text-lg">Loading your history...</p>
+            </div>
+        </div>
+    );
 
     const logGroups = Object.keys(logs);
 
-        return (
-            <div className="relative min-h-screen flex flex-col bg-gray-900 text-white overflow-x-hidden">
-                {/* Animated background orb */}
-                <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-72 bg-gradient-to-r from-purple-500/20 via-pink-400/10 to-purple-500/20 rounded-full blur-3xl opacity-60 pointer-events-none z-0" />
-                {/* Animated divider */}
-                <div className="w-full flex justify-center items-center mb-8 z-10 relative mt-8">
-                    <div className="h-1 w-32 rounded-full bg-gradient-to-r from-purple-500/40 via-pink-400/30 to-purple-500/40 animate-pulse" />
+    return (
+        <div className="relative min-h-screen flex flex-col bg-slate-50 text-slate-900 overflow-x-hidden font-sans selection:bg-purple-500/20">
+            {/* Animated Background System - Light Theme */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-300/40 rounded-full blur-[120px] animate-blob mix-blend-multiply" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-300/30 rounded-full blur-[140px] animate-blob mix-blend-multiply" style={{ animationDelay: '2s' }} />
+                <div className="absolute top-[30%] left-[50%] w-[40%] h-[40%] bg-cyan-200/40 rounded-full blur-[100px] animate-blob mix-blend-multiply" style={{ animationDelay: '4s' }} />
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-[60px]" />
+            </div>
+
+            <div className="flex-1 flex flex-col z-10 relative w-full max-w-4xl mx-auto px-4 md:px-8 py-12 pb-24">
+                <div className="flex flex-col mb-10 gap-2">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                        Dose <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">History</span>
+                    </h1>
+                    <p className="text-slate-500 text-lg font-medium">Review your past medication records.</p>
                 </div>
-                <div className="flex-1 flex flex-col justify-center space-y-10 z-10 relative w-full max-w-4xl mx-auto px-4 md:px-8">
-                    <div className="flex justify-between items-center mb-8">
-                        <h1 className="text-4xl font-extrabold text-white tracking-tight">Dose History</h1>
-                    </div>
-                    {logGroups.length > 0 ? (
-                        <div className="space-y-12">
-                            {logGroups.map(date => (
-                                <div key={date}>
-                                    <h2 className="text-2xl font-extrabold text-purple-200 mb-6 sticky top-0 bg-gray-900/80 backdrop-blur-sm py-3 z-10 rounded-xl shadow-inner px-4">
-                                        {date}
-                                        {new Date(date).toDateString() === new Date().toDateString() && (
-                                            <span className="ml-3 inline-block text-xs px-2 py-1 rounded-full bg-green-900/40 text-green-300 border border-green-700">Today</span>
-                                        )}
-                                    </h2>
-                                    <div className="panel-glass bg-gradient-to-br from-purple-900/40 to-pink-900/30 border border-purple-900/30 shadow-2xl rounded-2xl">
-                                        <div className="divide-y divide-purple-900/30">
-                                            {logs[date].map(log => (
-                                                <div key={log._id} className="flex items-center justify-between px-6 py-5 hover:bg.black/20 backdrop-blur-sm rounded-xl transition-all">
-                                                    <div className="flex items-center gap-5">
+                
+                {logGroups.length > 0 ? (
+                    <div className="space-y-12">
+                        {logGroups.map(date => (
+                            <div key={date}>
+                                <h2 className="text-2xl font-extrabold text-slate-900 mb-6 sticky top-0 py-3 z-20 flex items-center gap-3">
+                                    {date}
+                                    {new Date(date).toDateString() === new Date().toDateString() && (
+                                        <span className="inline-block text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm">Today</span>
+                                    )}
+                                </h2>
+                                <div className="bg-white/80 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl rounded-[2rem] overflow-hidden">
+                                    <div className="divide-y divide-slate-100">
+                                        {logs[date].map(log => (
+                                            <div key={log._id} className="flex items-center justify-between p-6 hover:bg-slate-50/50 transition-colors group">
+                                                <div className="flex items-center gap-5">
+                                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner transition-transform group-hover:scale-110 ${log.status === 'Taken' ? 'bg-emerald-50 text-emerald-500' : log.status === 'Missed' ? 'bg-amber-50 text-amber-500' : 'bg-red-50 text-red-500'}`}>
                                                         {log.status === 'Taken' ? (
-                                                            <CheckCircle size={28} className="text-green-400" title="Taken"/>
+                                                            <CheckCircle size={24} title="Taken" />
                                                         ) : log.status === 'Missed' ? (
-                                                            <AlertTriangle size={28} className="text-yellow-400" title="Missed"/>
+                                                            <AlertTriangle size={24} title="Missed" />
                                                         ) : (
-                                                            <XCircle size={28} className="text-red-400" title="Skipped"/>
+                                                            <XCircle size={24} title="Skipped" />
                                                         )}
-                                                        <div>
-                                                            <p className="font-bold text-lg text.white">{log.medicationName}</p>
-                                                            <p className="text-base text-purple-200">Scheduled for {dateUtils.formatTime(new Date(log.scheduledTime).toTimeString().slice(0,5))}</p>
-                                                        </div>
                                                     </div>
-                                                    <div className="text-right">
-                                                        <p className={`font-bold text-base ${log.status === 'Taken' ? 'text-green-300' : log.status === 'Missed' ? 'text-yellow-300' : 'text-red-300'}`}>{log.status}</p>
-                                                        <p className="text-xs text-purple-200 font-mono mt-1">{new Date(log.actionTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                                                    <div>
+                                                        <p className="font-extrabold text-lg text-slate-900 tracking-tight">{log.medicationName}</p>
+                                                        <p className="text-sm text-slate-500 font-medium">Scheduled for {dateUtils.formatTime(new Date(log.scheduledTime).toTimeString().slice(0, 5))}</p>
                                                     </div>
                                                 </div>
-                                            ))}
-                                        </div>
+                                                <div className="text-right flex flex-col items-end">
+                                                    <span className={`font-bold text-sm px-3 py-1 rounded-lg ${log.status === 'Taken' ? 'bg-emerald-100 text-emerald-700' : log.status === 'Missed' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                                                        {log.status}
+                                                    </span>
+                                                    <p className="text-xs text-slate-400 font-bold mt-2">{new Date(log.actionTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            ))}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center p-16 md:p-24 rounded-[3rem] bg-white/60 border border-white/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-xl w-full">
+                        <div className="w-24 h-24 bg-purple-50 text-purple-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                            <HistoryIcon size={48} />
                         </div>
-                    ) : (
-                        <div className="text-center panel-glass p-16 rounded-2xl bg-gradient-to-br from-purple-900/40 to-pink-900/30 border border-purple-900/30 shadow-2xl">
-                            <HistoryIcon size={56} className="mx-auto text-purple-400"/>
-                            <h3 className="mt-6 text-2xl font-extrabold text-white">No History Yet</h3>
-                            <p className="text-purple-200 mt-3 text-lg">Log your first dose from the dashboard to see your history here.</p>
-                        </div>
-                    )}
-                </div>
+                        <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">No History Yet</h3>
+                        <p className="text-slate-500 mt-4 text-lg font-medium max-w-md mx-auto">Log your first dose from the dashboard to see your medication history here.</p>
+                    </div>
+                )}
             </div>
+        </div>
     );
 };
 export default HistoryPage;
