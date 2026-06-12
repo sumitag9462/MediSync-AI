@@ -8,10 +8,12 @@ import {
   Pill, Activity, Calendar, Award, User, ChevronsRight, 
   BarChart2, BookOpen, Clock, ChevronDown, MessageSquare, 
   Menu, X, ArrowRight, Zap, BrainCircuit, HeartPulse, Send,
-  CheckCircle2, ShieldCheck
+  CheckCircle2, ShieldCheck, Bell
 } from 'lucide-react';
 import heroImg from '../assets/hero-img.png';
 import apiClient from '../api/apiClient';
+import FloatingElements from '../components/ui/FloatingElements';
+import PhoneMockup from '../components/ui/PhoneMockup';
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -345,71 +347,108 @@ const LandingPage = () => {
         <main className="relative z-10">
           
           {/* Hero Section */}
-          <section ref={heroRef} className="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 lg:px-12 overflow-hidden">
-            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-              <div className="max-w-2xl text-left">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/5 border border-purple-500/10 mb-8 hero-float">
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-sm font-bold text-purple-700">MediSync AI 2.0 is now live</span>
+          <section style={{ background: 'var(--bg-hero)', minHeight: '100vh',
+            padding: '0 64px', position: 'relative', overflow: 'hidden' }}>
+
+            <FloatingElements variant="landing" />
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 40, alignItems: 'center', minHeight: '100vh', maxWidth: 1280,
+              margin: '0 auto', paddingTop: 80 }}>
+
+              {/* ── LEFT COLUMN ── */}
+              <div style={{ animation: 'fade-up 0.7s ease both' }}>
+                {/* Badge */}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6,
+                  background: '#EDE8FF', borderRadius: 'var(--radius-pill)',
+                  padding: '6px 14px', marginBottom: 20 }}>
+                  <span style={{ fontSize: '0.75rem' }}>✨</span>
+                  <span style={{ fontSize: '0.8125rem', fontWeight: 600,
+                    color: 'var(--text-purple)' }}>AI-Powered Healthcare Assistant</span>
                 </div>
-                
-                <h1 ref={headlineRef} className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-[1.05] mb-6 text-slate-900">
-                  Intelligent <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 animate-gradient-x">Health</span> Routing.
+
+                {/* Headline */}
+                <h1 style={{ fontSize: 'clamp(2.25rem, 4vw, 3.5rem)', fontWeight: 800,
+                  color: 'var(--text-heading)', lineHeight: 1.15, marginBottom: 20 }}>
+                  Your Health,<br/>
+                  <span className="text-gradient">Intelligently</span><br/>
+                  Managed
                 </h1>
-                
-                <p ref={typeRef} className="text-lg md:text-xl text-slate-500 mb-10 min-h-[80px] md:min-h-[60px] leading-relaxed"></p>
-                
-                <div className="flex flex-wrap items-center gap-4">
-                  <button onClick={() => navigate('/register')} className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 rounded-full hover:scale-105 overflow-hidden shadow-md"
-                    style={{ background: 'linear-gradient(135deg,#8b5cf6,#ec4899)' }}
-                  >
-                    <span className="relative flex items-center gap-2">Start for free <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></span>
+
+                {/* Subtitle */}
+                <p style={{ fontSize: '1rem', color: 'var(--text-body)',
+                  lineHeight: 1.7, marginBottom: 32, maxWidth: 400 }}>
+                  MediSync-AI helps you manage medications, get AI health insights, and stay ahead of your health.
+                </p>
+
+                {/* CTA Row */}
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 36 }}>
+                  <button onClick={() => navigate('/register')} className="btn-primary">
+                    Get Started
                   </button>
-                  <button onClick={() => document.getElementById('ai').scrollIntoView({behavior: 'smooth'})} className="inline-flex items-center justify-center px-8 py-4 font-bold text-slate-700 transition-all duration-200 bg-slate-100 border border-slate-200/50 rounded-full hover:bg-slate-200/80">
-                    See AI in action
+                  <button onClick={() => document.getElementById('ai').scrollIntoView({behavior: 'smooth'})} className="btn-ghost">
+                    Watch Demo
                   </button>
+                </div>
+
+                {/* Social Proof */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ display: 'flex' }}>
+                    {['👤','👤','👤','👤'].map((a, i) => (
+                      <div key={i} style={{ width: 32, height: 32, borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #A78BFA, #8B5CF6)',
+                        border: '2px solid white', marginLeft: i === 0 ? 0 : -8,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.875rem' }}>{a}</div>
+                    ))}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.8125rem', fontWeight: 600,
+                      color: 'var(--text-heading)' }}>
+                      Trusted by 10,000+ users worldwide
+                    </p>
+                    <div style={{ color: '#F59E0B', fontSize: '0.875rem' }}>★★★★★
+                      <span style={{ color: 'var(--text-muted)', marginLeft: 4 }}>4.9/5</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Hero Visual */}
-              <div className="relative h-[500px] w-full flex items-center justify-center lg:justify-end">
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-pink-500/10 blur-[100px] rounded-full pointer-events-none" />
-                
-                {/* 3D Mockup Container */}
-                <div className="relative w-full max-w-md aspect-[3/4] border rounded-[40px] shadow-xl overflow-hidden hero-float animate-float-complex"
-                  style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(20px)', borderColor: 'rgba(255,255,255,0.8)' }}
-                >
-                  {/* Mockup Top Bar */}
-                  <div className="h-12 border-b flex items-center justify-center gap-2" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
-                    <div className="w-16 h-1.5 bg-slate-300 rounded-full" />
-                  </div>
-                  {/* Mockup Content */}
-                  <div className="p-6 flex flex-col gap-4 h-full relative">
-                    <img src={heroImg} alt="App mockup" className="w-full h-auto object-contain rounded-2xl drop-shadow-[0_0_30px_rgba(168,85,247,0.25)]" />
-                    
-                    {/* Floating UI Elements inside mockup */}
-                    <div className="absolute top-20 -left-6 border backdrop-blur-md p-3 rounded-2xl shadow-lg flex items-center gap-3 animate-float-complex"
-                      style={{ background: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(139,92,246,0.1)', animationDelay: '1s' }}
-                    >
-                      <div className="bg-emerald-100 text-emerald-600 p-2 rounded-lg"><CheckCircle2 size={20} /></div>
-                      <div className="text-left">
-                        <p className="text-[10px] font-bold text-slate-400">Status</p>
-                        <p className="text-xs font-extrabold text-slate-800">Dose Taken</p>
-                      </div>
-                    </div>
-                    
-                    <div className="absolute bottom-32 -right-6 border backdrop-blur-md p-3 rounded-2xl shadow-lg flex items-center gap-3 animate-float-complex"
-                      style={{ background: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(139,92,246,0.1)', animationDelay: '2s' }}
-                    >
-                      <div className="bg-purple-100 text-purple-600 p-2 rounded-lg"><BrainCircuit size={20} /></div>
-                      <div className="text-left">
-                        <p className="text-[10px] font-bold text-slate-400">AI Suggestion</p>
-                        <p className="text-xs font-extrabold text-slate-800">Optimal Time: 9 AM</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              {/* ── CENTER COLUMN ── */}
+              <div style={{ display: 'flex', justifyContent: 'center',
+                animation: 'scale-in 0.8s ease 0.2s both' }} className="hidden md:flex">
+                <PhoneMockup />
               </div>
+
+              {/* ── RIGHT COLUMN ── */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12,
+                animation: 'fade-up 0.7s ease 0.3s both' }}>
+                {[
+                  { icon: '🔔', color: '#EDE8FF', iconColor: '#7C3AED',
+                    title: 'Smart Reminders', sub: 'Never miss a dose' },
+                  { icon: '🧠', color: '#E0F2FE', iconColor: '#0891B2',
+                    title: 'AI Health Insights', sub: 'Personalized for you' },
+                  { icon: '💊', color: '#ECFDF5', iconColor: '#059669',
+                    title: 'Medicine Tracking', sub: 'Track with ease' },
+                  { icon: '🔒', color: '#F5F3FF', iconColor: '#7C3AED',
+                    title: 'Secure & Private', sub: 'Your data is safe' },
+                ].map((f) => (
+                  <div key={f.title} className="glass-card" style={{ padding: '16px 20px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <p style={{ fontWeight: 600, fontSize: '0.9375rem',
+                        color: 'var(--text-heading)', marginBottom: 2 }}>{f.title}</p>
+                      <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{f.sub}</p>
+                    </div>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%',
+                      background: f.color, display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', fontSize: '1.375rem', flexShrink: 0 }}>
+                      {f.icon}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
             </div>
           </section>
 

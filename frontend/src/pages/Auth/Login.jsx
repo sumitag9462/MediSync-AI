@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, BrainCircuit } from 'lucide-react';
+import { Mail, BrainCircuit, Chrome, Apple } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
-import { FloatingInput, MagneticButton } from './AuthComponents';
+import { FloatingInput, MagneticButton, OAuthButton } from './AuthComponents';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -78,6 +78,17 @@ const LoginPage = () => {
                     <MagneticButton type="submit" isLoading={isLoading}>
                         Access Dashboard
                     </MagneticButton>
+                </div>
+                
+                <div className="auth-stagger flex items-center justify-between w-full my-6">
+                    <div className="flex-1 h-px bg-slate-200"></div>
+                    <span className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Or</span>
+                    <div className="flex-1 h-px bg-slate-200"></div>
+                </div>
+                
+                <div className="auth-stagger space-y-3">
+                    <OAuthButton provider="Google" icon={Chrome} onClick={() => {}} />
+                    <OAuthButton provider="Apple" icon={Apple} onClick={() => {}} />
                 </div>
             </form>
         </AuthLayout>

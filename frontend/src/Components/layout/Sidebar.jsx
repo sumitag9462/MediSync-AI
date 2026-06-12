@@ -16,7 +16,7 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
     ];
 
     const sidebarVariants = {
-        open: { width: '256px', transition: { type: 'spring', stiffness: 300, damping: 30 } },
+        open: { width: '240px', transition: { type: 'spring', stiffness: 300, damping: 30 } },
         closed: { width: '80px', transition: { type: 'spring', stiffness: 300, damping: 30 } }
     };
 
@@ -24,15 +24,20 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
         <motion.div
             variants={sidebarVariants}
             animate={isSidebarOpen ? "open" : "closed"}
-            className="flex flex-col h-full relative"
             style={{
-                background: 'rgba(255, 255, 255, 0.45)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                borderRight: '1px solid rgba(255, 255, 255, 0.5)'
+                minHeight: '100vh',
+                background: 'var(--bg-sidebar)',
+                boxShadow: 'var(--shadow-sidebar)',
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '24px 12px',
+                position: 'fixed',
+                left: 0, top: 0, bottom: 0,
+                zIndex: 100,
+                borderRight: '1px solid var(--border-card)',
             }}
         >
-            <div className="flex items-center justify-between p-4 h-16 border-b" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0 12px', marginBottom: 32, fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-heading)' }}>
                 <AnimatePresence>
                     {isSidebarOpen && (
                         <motion.div
@@ -41,28 +46,30 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
                             exit={{ opacity: 0, x: -20 }}
                             className="flex items-center"
                         >
-                            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-white text-sm">
-                                <Pill size={14} className="text-white" />
-                            </div>
-                            <span className="text-lg font-extrabold ml-2" style={{ color: '#0f172a' }}>MediSync-AI</span>
+                            <span style={{ color: 'var(--text-heading)' }}>MediSync-</span>
+                            <span style={{ color: 'var(--text-purple)' }}>AI</span>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
-            <nav className="flex-1 px-3 py-4 space-y-2">
+            <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {navItems.map(item => (
                     <a
                         key={item.name}
                         href="#"
                         onClick={(e) => { e.preventDefault(); navigate(`/${item.page}`); }}
-                        className={`flex items-center p-3 transition-all duration-200 relative ${currentPage === item.page
-                                ? 'text-violet-600 font-bold'
-                                : 'text-slate-500 hover:text-slate-800'
-                            }`}
-                        style={currentPage === item.page
-                            ? { background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.15)', borderRadius: '14px', boxShadow: '0 4px 12px rgba(139,92,246,0.04)' }
-                            : { borderRadius: '14px' }
-                        }
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: 12,
+                            padding: '11px 16px', borderRadius: 12,
+                            fontSize: '0.9rem', fontWeight: currentPage === item.page ? 600 : 500,
+                            cursor: 'pointer', textDecoration: 'none',
+                            transition: 'all 0.2s ease', marginBottom: 2,
+                            color: currentPage === item.page ? '#FFFFFF' : 'var(--text-body)',
+                            background: currentPage === item.page ? 'var(--sidebar-active)' : 'transparent',
+                            boxShadow: currentPage === item.page ? '0 4px 12px rgba(139,92,246,0.3)' : 'none',
+                        }}
+                        onMouseEnter={e => { if (currentPage !== item.page) { e.currentTarget.style.background = 'rgba(139,92,246,0.06)'; e.currentTarget.style.color = 'var(--text-purple)'; } }}
+                        onMouseLeave={e => { if (currentPage !== item.page) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-body)'; } }}
                         title={item.name}
                     >
                         {currentPage === item.page && (
@@ -88,8 +95,8 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
                 ))}
             </nav>
 
-            <div className="p-4 border-t flex items-center gap-3" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
-                <div className="h-9 w-9 rounded-full overflow-hidden bg-gradient-to-tr from-purple-600 to-pink-500 ring-2 ring-violet-500/30 flex-shrink-0">
+            <div style={{ marginTop: 'auto', padding: '12px 16px', background: 'rgba(139,92,246,0.04)', borderRadius: 12, border: '1px solid var(--border-card)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
                     {user?.photo ? (
                         <img
                             className="h-full w-full object-cover"

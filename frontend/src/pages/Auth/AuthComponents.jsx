@@ -19,10 +19,29 @@ export const FloatingInput = ({ label, type = "text", value, onChange, name, pla
         title={title}
         readOnly={readOnly}
         autoComplete="new-password"
-        className={`w-full bg-white/60 border border-slate-200 rounded-xl px-4 pt-6 pb-2 text-slate-900 placeholder-transparent focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all peer shadow-sm backdrop-blur-sm ${readOnly ? 'opacity-70 cursor-not-allowed' : ''}`}
+        className={`peer ${readOnly ? 'opacity-70 cursor-not-allowed' : ''}`}
+        style={{
+          background: 'var(--bg-input)',
+          border: '1.5px solid var(--border-input)',
+          borderRadius: 'var(--radius-md)',
+          padding: '24px 20px 8px 20px',
+          fontSize: '1rem',
+          color: 'var(--text-heading)',
+          width: '100%',
+          outline: 'none',
+          transition: 'all 0.2s ease'
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = 'var(--accent-purple)';
+          e.target.style.boxShadow = '0 0 0 4px rgba(139,92,246,0.1)';
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = 'var(--border-input)';
+          e.target.style.boxShadow = 'none';
+        }}
         placeholder={placeholder || label}
       />
-      <label className="absolute left-4 top-4 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-purple-600 peer-valid:top-1.5 peer-valid:text-[11px] pointer-events-none uppercase tracking-wide font-bold">
+      <label className="absolute left-5 top-4 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-[11px] peer-focus:text-purple-600 peer-valid:top-1.5 peer-valid:text-[11px] pointer-events-none uppercase tracking-wide font-bold">
         {label}
       </label>
       
@@ -69,14 +88,34 @@ export const MagneticButton = ({ children, type = "button", onClick, disabled, i
       disabled={disabled || isLoading}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative w-full overflow-hidden group bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-[0_10px_20px_rgba(168,85,247,0.2)] hover:shadow-[0_15px_30px_rgba(236,72,153,0.3)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none ${className}`}
+      className={`btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
-      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
       <span className="relative flex items-center justify-center gap-2 drop-shadow-md">
         {isLoading ? (
           <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
         ) : children}
       </span>
+    </button>
+  );
+};
+
+export const OAuthButton = ({ provider, icon: Icon, onClick }) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        gap: 12, width: '100%', padding: '14px',
+        background: '#FFFFFF', border: '1px solid var(--border-card)',
+        borderRadius: 'var(--radius-md)', fontSize: '0.9375rem',
+        fontWeight: 600, color: 'var(--text-heading)',
+        cursor: 'pointer', boxShadow: 'var(--shadow-sm)'
+      }}
+      className="hover:bg-slate-50 transition-colors"
+    >
+      <Icon size={20} />
+      <span>Continue with {provider}</span>
     </button>
   );
 };
@@ -136,7 +175,7 @@ export const OtpInput = ({ length = 6, value, onChange }) => {
           onChange={(e) => handleChange(e, i)}
           onKeyDown={(e) => handleKeyDown(e, i)}
           onPaste={handlePaste}
-          className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-extrabold bg-white/60 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:shadow-[0_10px_20px_rgba(168,85,247,0.15)] transition-all transform focus:-translate-y-1 shadow-sm"
+          className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-extrabold input-premium focus:shadow-[0_10px_20px_rgba(168,85,247,0.15)] transition-all transform focus:-translate-y-1 shadow-sm"
         />
       ))}
     </div>

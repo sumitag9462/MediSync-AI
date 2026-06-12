@@ -1,5 +1,5 @@
-const CLIENT_ID = '939487517070-9gr88tcbm6qh538ofndldcf0oav6c7kf.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyAF12yC6SPatIYIAYBKTjHv6QXxJbEKsWE';
+const CLIENT_ID = '1003751011571-lluivo48hngofq2o3sa4qug88uti3rrf.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyALt_y21Wkpd0XfoTpI_E4mtdT6jwrdsjY';
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
@@ -26,10 +26,16 @@ export const googleCalendarApi = {
                         await gapi.client.init({ apiKey: API_KEY, discoveryDocs: DISCOVERY_DOCS });
                         gapiInited = true;
                         checkScriptsLoaded(resolve);
-                    } catch (error) { reject(error); }
+                    } catch (error) {
+                        loadingPromise = null;
+                        reject(error);
+                    }
                 });
             };
-            scriptGapi.onerror = () => reject("Failed to load GAPI script.");
+            scriptGapi.onerror = () => {
+                loadingPromise = null;
+                reject("Failed to load GAPI script.");
+            };
             document.body.appendChild(scriptGapi);
 
             const scriptGis = document.createElement('script');
@@ -41,9 +47,15 @@ export const googleCalendarApi = {
                     tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: '' });
                     gisInited = true;
                     checkScriptsLoaded(resolve);
-                } catch (error) { reject(error); }
+                } catch (error) {
+                    loadingPromise = null;
+                    reject(error);
+                }
             };
-            scriptGis.onerror = () => reject("Failed to load GIS script.");
+            scriptGis.onerror = () => {
+                loadingPromise = null;
+                reject("Failed to load GIS script.");
+            };
             document.body.appendChild(scriptGis);
         });
         return loadingPromise;
@@ -51,9 +63,15 @@ export const googleCalendarApi = {
 
     isCalendarEnabled: () => !!localStorage.getItem('gcal-token'),
 
-    handleAuthClick: () => {
+    handleAuthClick: async () => {
+        try {
+            await googleCalendarApi.loadGapiScripts();
+        } catch (e) {
+            console.error("Failed to load scripts:", JSON.stringify(e));
+        }
+
         return new Promise((resolve, reject) => {
-            if (!gisInited || !gapiInited) return reject("Google API scripts not loaded.");
+            if (!gisInited || !gapiInited) return reject("Google API scripts failed to initialize. Check console for details.");
             tokenClient.callback = (resp) => {
                 if (resp.error) return reject(resp.error);
                 localStorage.setItem('gcal-token', JSON.stringify(gapi.client.getToken()));
@@ -68,23 +86,31 @@ export const googleCalendarApi = {
     },
 
     handleSignoutClick: () => {
-        const token = gapi.client.getToken();
-        if (token) {
-            google.accounts.oauth2.revoke(token.access_token);
-            gapi.client.setToken('');
-            localStorage.removeItem('gcal-token');
+        if (typeof gapi !== 'undefined' && gapi.client) {
+            const token = gapi.client.getToken();
+            if (token) {
+                google.accounts.oauth2.revoke(token.access_token);
+                gapi.client.setToken('');
+            }
         }
+        localStorage.removeItem('gcal-token');
     },
-    
+
     addScheduleToCalendar: async (schedule) => {
         if (!googleCalendarApi.isCalendarEnabled()) return null;
+        try {
+            await googleCalendarApi.loadGapiScripts();
+        } catch(e) {
+            console.error("Failed to load Google Calendar scripts", e);
+            return null;
+        }
         const token = JSON.parse(localStorage.getItem('gcal-token'));
         if (!token) return null;
         gapi.client.setToken(token);
 
         const createdEventIds = [];
         for (const time of schedule.times) {
-            
+
             // --- THIS IS THE FIX ---
             // The startDate from the database is a full ISO string (e.g., "2025-10-06T00:00:00.000Z").
             // We only want the date part "2025-10-06" to create a valid new date with the scheduled time.
@@ -93,7 +119,7 @@ export const googleCalendarApi = {
 
             if (isNaN(eventDateTime.getTime())) {
                 console.error(`Could not create a valid date from start: ${schedule.startDate} and time: ${time}`);
-                continue; 
+                continue;
             }
 
             const event = {
@@ -131,6 +157,12 @@ export const googleCalendarApi = {
 
     deleteScheduleFromCalendar: async (eventIds) => {
         if (!googleCalendarApi.isCalendarEnabled() || !eventIds || eventIds.length === 0) return;
+        try {
+            await googleCalendarApi.loadGapiScripts();
+        } catch(e) {
+            console.error("Failed to load Google Calendar scripts", e);
+            return;
+        }
         const token = JSON.parse(localStorage.getItem('gcal-token'));
         if (!token) return;
         gapi.client.setToken(token);

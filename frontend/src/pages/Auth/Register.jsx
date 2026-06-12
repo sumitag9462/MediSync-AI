@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserPlus, Mail, MapPin, Phone, Lock, BrainCircuit, ShieldCheck } from 'lucide-react';
+import { UserPlus, Mail, MapPin, Phone, Lock, BrainCircuit, ShieldCheck, Chrome, Apple } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
 import AuthLayout from './AuthLayout';
-import { FloatingInput, MagneticButton, OtpInput } from './AuthComponents';
+import { FloatingInput, MagneticButton, OtpInput, OAuthButton } from './AuthComponents';
 
 const RegisterPage = () => {
     const [step, setStep] = useState(1);
@@ -87,6 +87,25 @@ const RegisterPage = () => {
             </div>
           }
         >
+            {/* Step Indicator */}
+            <div className="flex items-center justify-between mb-10 relative max-w-xs mx-auto w-full z-10 auth-stagger">
+                <div className="absolute top-4 left-0 w-full h-0.5 bg-slate-100 -z-10" />
+                <div className="absolute top-4 left-0 h-0.5 bg-purple-500 transition-all duration-500 -z-10" style={{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }} />
+                
+                {[
+                    { num: 1, label: 'Personal Info' },
+                    { num: 2, label: 'Verify Email' },
+                    { num: 3, label: 'Complete' }
+                ].map((s) => (
+                    <div key={s.num} className="flex flex-col items-center gap-2">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${step >= s.num ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30' : 'bg-slate-100 text-slate-400'}`}>
+                            {s.num}
+                        </div>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider ${step >= s.num ? 'text-purple-700' : 'text-slate-400'}`}>{s.label}</span>
+                    </div>
+                ))}
+            </div>
+
             <AnimatePresence mode="wait">
                 {step === 1 && (
                     <motion.form 
@@ -147,6 +166,17 @@ const RegisterPage = () => {
                             <MagneticButton type="submit" isLoading={isLoading}>
                                 Send Verification Code
                             </MagneticButton>
+                        </div>
+                        
+                        <div className="auth-stagger flex items-center justify-between w-full my-6">
+                            <div className="flex-1 h-px bg-slate-200"></div>
+                            <span className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Or</span>
+                            <div className="flex-1 h-px bg-slate-200"></div>
+                        </div>
+                        
+                        <div className="auth-stagger space-y-3">
+                            <OAuthButton provider="Google" icon={Chrome} onClick={() => {}} />
+                            <OAuthButton provider="Apple" icon={Apple} onClick={() => {}} />
                         </div>
                     </motion.form>
                 )}

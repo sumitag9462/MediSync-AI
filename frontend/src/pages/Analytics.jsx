@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { medicineApi } from '../api/medicineApi';
-import AdherenceChart from '../Components/charts/AdherenceChart';
-import MissedByHourChart from '../Components/charts/MissedByHourChart';
-import StatCard from '../Components/cards/StatCard';
+import AdherenceChart from '../components/charts/AdherenceChart';
+import MissedByHourChart from '../components/charts/MissedByHourChart';
+import StatCard from '../components/cards/StatCard';
 import { BarChart, CheckCircle, XCircle } from 'lucide-react';
 
 const AnalyticsPage = () => {

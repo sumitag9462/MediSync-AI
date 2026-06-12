@@ -26,7 +26,8 @@ const SettingsPage = () => {
         googleCalendarApi.handleAuthClick().then(() => setIsCalendarEnabled(true))
         .catch(err => {
             console.error("Calendar sign-in error", err);
-            alert("Could not sign in to Google Calendar. Make sure pop-ups are not blocked.");
+            const errMsg = typeof err === 'string' ? err : (err.message || JSON.stringify(err));
+            alert(`Google Calendar Error: ${errMsg}\n\n(If you see popup_closed, ensure your browser allows popups and third-party cookies for accounts.google.com)`);
         });
     };
 

@@ -196,25 +196,52 @@ const Topbar = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="h-16 flex items-center justify-between px-6 relative border-b" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
+    <div style={{
+      background: 'var(--bg-navbar)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      borderBottom: '1px solid var(--border-card)',
+      padding: '14px 32px',
+      display: 'flex', alignItems: 'center',
+      justifyContent: 'space-between',
+      position: 'sticky', top: 0, zIndex: 90,
+      boxShadow: '0 1px 0 rgba(139,92,246,0.06)',
+    }}>
       {/* Search input */}
-      <div className="relative w-full max-w-xs">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <div style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '50%', left: 16, transform: 'translateY(-50%)', pointerEvents: 'none' }}>
           <Search className="text-slate-400" size={16} />
         </div>
         <input
           ref={inputRef}
           type="text"
           placeholder="Search medicines..."
-          className="w-full rounded-xl py-2 pl-9 pr-4 text-xs font-semibold focus:outline-none transition-all"
-          style={{ background: 'rgba(139,92,246,0.05)', border: '1px solid rgba(139,92,246,0.12)', color: '#1e293b' }}
+          style={{
+            background: 'var(--bg-input)',
+            border: '1.5px solid var(--border-input)',
+            borderRadius: 'var(--radius-md)',
+            padding: '10px 16px 10px 42px',
+            fontSize: '0.875rem',
+            color: 'var(--text-heading)',
+            width: 280, outline: 'none',
+            fontFamily: 'inherit',
+          }}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
 
       {/* Right section */}
-      <div className="flex items-center space-x-5">
+      <div className="flex items-center space-x-4 sm:space-x-6">
+        
+        {/* AI Assistant Button */}
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('toggle-chatbot'))}
+          className="btn-primary"
+          style={{ padding: '8px 18px', fontSize: '0.875rem' }}
+        >
+          ✨ AI Assistant
+        </button>
         {/* Bell */}
         <div className="relative" ref={bellRef}>
           <button
