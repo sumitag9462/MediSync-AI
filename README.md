@@ -145,6 +145,24 @@ npm run dev
 
 ---
 
+## 🚀 Production Deployment
+
+This project is fully configured for easy 1-click deployments:
+
+### Frontend (Vercel)
+The frontend includes a `vercel.json` file for proper React Router handling.
+1. Connect your GitHub repository to Vercel.
+2. Add your environment variables (`VITE_GEMINI_API_KEY`, `VITE_GOOGLE_CLIENT_ID`).
+3. Deploy!
+
+### Backend (Render)
+The backend includes a `render.yaml` blueprint.
+1. Connect your GitHub repository to Render and use the Blueprint sync.
+2. Fill in the required environment variables in the Render dashboard.
+3. Deploy!
+
+---
+
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/sumitag9462/MediSync-AI/issues).

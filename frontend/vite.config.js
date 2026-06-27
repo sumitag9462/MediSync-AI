@@ -20,6 +20,18 @@ export default defineConfig({
   },
   // Add this build configuration to fix the error
   build: {
-    target: 'esnext' // This tells Vite to use a modern JS environment that supports import.meta.env
+    target: 'esnext', // This tells Vite to use a modern JS environment that supports import.meta.env
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'vendor-react';
+            if (id.includes('framer-motion') || id.includes('gsap')) return 'vendor-animation';
+            if (id.includes('@google') || id.includes('axios')) return 'vendor-api';
+            return 'vendor';
+          }
+        }
+      }
+    }
   }
 })
