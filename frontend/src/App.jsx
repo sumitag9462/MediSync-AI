@@ -19,12 +19,25 @@ import SettingsPage from './pages/Settings';
 import NearbyClinic from './pages/NearbyClinic';
 import BuyCoffee from './pages/BuyCoffee'; 
 import MedicineSecretPage from './pages/MedicineSecretPage'; // 🆕 Secret Medicine Page
+import OCRUploadPage from './pages/OCRUploadPage';
+import OCRReviewPage from './pages/OCRReviewPage';
+import OCRHistoryPage from './pages/OCRHistoryPage';
+import MedicationSafety from './pages/MedicationSafety';
+import EmergencyQRPage from './pages/EmergencyQRPage';
+import EmergencyCardPublic from './pages/EmergencyCardPublic';
 
 // Import Layout
 import AppShell from './components/layout/AppShell';
 import Chatbot from './components/chatbot/Chatbot';
 import AuroraBackground from './components/ui/AuroraBackground';
 import ErrorBoundary from './components/layout/ErrorBoundary';
+
+// ✅ Register PWA Service Worker
+import { registerSW } from 'virtual:pwa-register';
+
+if ('serviceWorker' in navigator) {
+  registerSW({ immediate: true });
+}
 
 // ✅ Private Route Wrapper
 const PrivateRoute = () => {
@@ -41,6 +54,23 @@ const AppLayout = () => {
 
     useEffect(() => {
         googleCalendarApi.loadGapiScripts();
+
+        // Handle offline/online sync
+        const handleOnline = async () => {
+            console.log('🌐 App is online! Syncing data...');
+            // In a full implementation, we would call getSyncQueue() from db.js and replay API requests
+        };
+        const handleOffline = () => {
+            console.log('🔌 App is offline. Using IndexedDB cache.');
+        };
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
     }, []);
 
     const handleLogout = () => {
@@ -75,6 +105,9 @@ function App() {
                                     <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
                                     <Route path="/buy-coffee" element={<BuyCoffee />} /> 
 
+                                    {/* 🆕 Public Emergency QR Card — NO AUTH */}
+                                    <Route path="/emergency/:slug" element={<EmergencyCardPublic />} />
+
                                     {/* 🔐 Private Routes Layout */}
                                     <Route element={<PrivateRoute />}>
                                         <Route element={<AppLayout />}>
@@ -87,6 +120,17 @@ function App() {
 
                                             {/* 🆕 Secret Medicine Info Route */}
                                             <Route path="/medicine-secret" element={<MedicineSecretPage />} />
+
+                                            {/* 🆕 OCR Routes */}
+                                            <Route path="/ocr-upload" element={<OCRUploadPage />} />
+                                            <Route path="/ocr-review" element={<OCRReviewPage />} />
+                                            <Route path="/ocr-history" element={<OCRHistoryPage />} />
+
+                                            {/* 🆕 Safety Intelligence Routes */}
+                                            <Route path="/safety-dashboard" element={<MedicationSafety />} />
+
+                                            {/* 🆕 Emergency QR Health Card */}
+                                            <Route path="/emergency-card" element={<EmergencyQRPage />} />
 
                                             {/* Redirect unknown routes to dashboard */}
                                             <Route path="*" element={<Navigate to="/dashboard" replace />} />

@@ -6,6 +6,8 @@ const medicineSchema = new mongoose.Schema({
     dosage:    { type: String, required: true },
     times:     [{ type: String }],
     frequency: { type: String, required: true, default: 'daily' },
+    rxCui:     { type: String }, // Links to RxNorm
+    drugProfile: { type: mongoose.Schema.Types.ObjectId, ref: 'DrugProfile' }, // Cached drug intel
     history: [{
         date:   { type: Date, default: Date.now },
         status: { type: String, enum: ['taken', 'missed', 'snoozed'], required: true },

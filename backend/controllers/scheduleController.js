@@ -1,5 +1,7 @@
 const Schedule = require('../models/Schedule');
 const DoseLog = require('../models/DoseLog');
+const { addReminderJob, removeJobsForSchedule } = require('../queues/reminderQueue');
+const { scheduleNextReminders, rescheduleReminders } = require('../services/reminderSchedulerService');
 
 const calculateEndDate = (startDate, duration) => {
     const start = new Date(startDate);
@@ -29,6 +31,10 @@ const createSchedule = async (req, res) => {
             return res.status(400).json({ message: 'All fields are required.' });
         const endDate = calculateEndDate(startDate, duration);
         const created = await new Schedule({ user: req.user._id, name, dosage, times, startDate, duration, endDate }).save();
+        
+        // Enqueue to BullMQ
+        await scheduleNextReminders(created);
+        
         res.status(201).json(created);
     } catch (error) { console.error(error); res.status(500).json({ message: 'Server Error' }); }
 };
@@ -39,6 +45,7 @@ const updateSchedule = async (req, res) => {
         const schedule = await Schedule.findById(req.params.id);
         if (!schedule || schedule.user.toString() !== req.user._id.toString())
             return res.status(404).json({ message: 'Schedule not found or user not authorized' });
+        
         schedule.name = name ?? schedule.name;
         schedule.dosage = dosage ?? schedule.dosage;
         schedule.times = times ?? schedule.times;
@@ -47,7 +54,13 @@ const updateSchedule = async (req, res) => {
         schedule.isActive = isActive ?? schedule.isActive;
         schedule.googleEventIds = googleEventIds ?? schedule.googleEventIds;
         if (startDate || duration) schedule.endDate = calculateEndDate(schedule.startDate, schedule.duration);
-        res.json(await schedule.save());
+        
+        const updated = await schedule.save();
+
+        // Re-queue
+        await rescheduleReminders(updated);
+
+        res.json(updated);
     } catch (error) { console.error(error); res.status(500).json({ message: 'Server Error' }); }
 };
 
@@ -56,6 +69,9 @@ const deleteSchedule = async (req, res) => {
         const schedule = await Schedule.findById(req.params.id);
         if (!schedule || schedule.user.toString() !== req.user._id.toString())
             return res.status(404).json({ message: 'Schedule not found or user not authorized' });
+        
+        await removeJobsForSchedule(schedule._id);
+        
         await schedule.deleteOne();
         await DoseLog.deleteMany({ scheduleId: req.params.id });
         res.json({ message: 'Schedule removed successfully' });

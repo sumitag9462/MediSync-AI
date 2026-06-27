@@ -54,17 +54,44 @@ app.use('/api/medicines', require('./routes/medicineRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/otp', require('./routes/otpRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
+app.use('/api/intelligence', require('./routes/intelligenceRoutes'));
+app.use('/api/ocr', require('./routes/ocrRoutes'));
+app.use('/api/push', require('./routes/pushRoutes'));
+app.use('/api/adherence', require('./routes/adherenceRoutes'));
+app.use('/api/emergency', require('./routes/emergencyRoutes'));
+app.use('/api/interactions', require('./routes/interactionRoutes'));
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'MediSync-AI API',
+            version: '2.0.0',
+            description: 'Enterprise API Documentation for MediSync-AI Platform',
+        },
+        servers: [{ url: `http://localhost:${process.env.PORT || 5000}` }],
+    },
+    apis: ['./routes/*.js'],
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'OK', timestamp: new Date() });
-});
+app.get('/health', (req, res) => res.json({ status: 'ok', message: 'MediSync-AI is running seamlessly!' }));
 
 // Error Handling Middlewares
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const SocketService = require('./services/SocketService');
+const server = app.listen(PORT, () => {
     console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
+
+// Initialize Socket.io
+SocketService.init(server);

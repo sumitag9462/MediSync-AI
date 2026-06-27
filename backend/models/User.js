@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
         reminderLeadMinutes: { type: Number, default: 10 },
     },
     photo: { type: String, default: '' },
+    role:  { type: String, enum: ['patient', 'caregiver', 'doctor', 'admin'], default: 'patient' }
 }, { timestamps: true });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {

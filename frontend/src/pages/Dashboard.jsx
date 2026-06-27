@@ -11,6 +11,7 @@ import { notificationService } from '../services/notificationService';
 import StatCard from '../components/ui/StatCard';
 import GlassCard from '../components/ui/GlassCard';
 import RobotIllustration from '../components/ui/RobotIllustration';
+import AdherenceHeatmap from '../components/AdherenceHeatmap';
 
 function getGreeting() {
     const h = new Date().getHours();
@@ -516,6 +517,10 @@ const DashboardPage = () => {
                         </GlassCard>
                     </motion.div>
                 </div>
+            </div>
+            {/* Adherence Heatmap */}
+            <div style={{ marginTop: 24 }}>
+                <AdherenceHeatmap />
             </div>
         </div>
         </div>

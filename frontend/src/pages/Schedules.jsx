@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { medicineApi } from '../api/medicineApi';
 import { dateUtils } from '../utils/dateUtils';
-import { Plus, Pill, Edit, Trash2 } from 'lucide-react';
+import { Plus, Pill, Edit, Trash2, ShieldCheck } from 'lucide-react';
 import { googleCalendarApi } from '../services/googleCalendarApi';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
 import EmptyState from '../components/ui/EmptyState';
+import DrugInteractionAlert from '../components/DrugInteractionAlert';
+import { interactionService } from '../services/interactionService';
 
 const ScheduleForm = ({ onSave, onCancel, existingSchedule }) => {
     const [formData, setFormData] = useState({
@@ -16,6 +18,8 @@ const ScheduleForm = ({ onSave, onCancel, existingSchedule }) => {
         duration: '1 Week',
         weeklyDays: [],
     });
+    const [interactionResult, setInteractionResult] = useState(null);
+    const [interactionLoading, setInteractionLoading] = useState(false);
 
     useEffect(() => {
         if (existingSchedule) {
@@ -33,6 +37,22 @@ const ScheduleForm = ({ onSave, onCancel, existingSchedule }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        // Clear interaction alert when name changes
+        if (name === 'name') setInteractionResult(null);
+    };
+
+    const handleNameBlur = async () => {
+        const medicineName = formData.name.trim();
+        if (!medicineName || existingSchedule) return; // skip on edit
+        setInteractionLoading(true);
+        try {
+            const result = await interactionService.checkNewMedicine(medicineName);
+            setInteractionResult(result.data);
+        } catch (err) {
+            console.error('Interaction check failed:', err);
+        } finally {
+            setInteractionLoading(false);
+        }
     };
 
     const handleTimeChange = (index, value) => {
@@ -68,7 +88,23 @@ const ScheduleForm = ({ onSave, onCancel, existingSchedule }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
                 <label className="text-sm font-bold text-slate-700 block mb-1">Medicine Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all shadow-inner" placeholder="e.g., Ibuprofen" />
+                <input
+                    type="text" name="name" value={formData.name}
+                    onChange={handleInputChange}
+                    onBlur={handleNameBlur}
+                    required
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all shadow-inner"
+                    placeholder="e.g., Ibuprofen"
+                />
+                {/* Drug Interaction Alert — appears after name onBlur */}
+                {(interactionLoading || interactionResult) && (
+                    <DrugInteractionAlert
+                        interactions={interactionResult?.interactions || []}
+                        safe={interactionResult?.safe ?? true}
+                        summary={interactionResult?.summary || ''}
+                        loading={interactionLoading}
+                    />
+                )}
             </div>
 
             <div>
@@ -166,6 +202,23 @@ const SchedulesPage = () => {
     const [editingSchedule, setEditingSchedule] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
 
+    const [fullCheckResult, setFullCheckResult] = useState(null);
+    const [fullCheckLoading, setFullCheckLoading] = useState(false);
+    const [isFullCheckModalOpen, setIsFullCheckModalOpen] = useState(false);
+
+    const runFullSafetyCheck = async () => {
+        setIsFullCheckModalOpen(true);
+        setFullCheckLoading(true);
+        try {
+            const res = await interactionService.checkFullList();
+            setFullCheckResult(res.data);
+        } catch (e) {
+            console.error('Full safety check failed:', e);
+        } finally {
+            setFullCheckLoading(false);
+        }
+    };
+
     const fetchData = useCallback(() => {
         setLoading(true);
         medicineApi.getSchedules().then(data => {
@@ -236,9 +289,14 @@ const SchedulesPage = () => {
                         </h1>
                         <p className="text-slate-500 mt-2 text-lg font-medium">Manage and track all your prescriptions.</p>
                     </div>
-                    <button onClick={handleOpenNewModal} className="bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-[0_8px_20px_rgba(168,85,247,0.3)] hover:-translate-y-0.5 text-white font-bold py-3.5 px-6 rounded-xl flex items-center shadow-lg transition-all text-base shrink-0">
-                        <Plus size={20} className="mr-2" /> Add Medicine
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <button onClick={runFullSafetyCheck} className="bg-white border border-purple-200 hover:border-purple-300 hover:bg-purple-50 text-purple-700 font-bold py-3.5 px-6 rounded-xl flex items-center shadow-sm transition-all text-base shrink-0">
+                            <ShieldCheck size={20} className="mr-2 text-purple-600" /> Run Safety Check
+                        </button>
+                        <button onClick={handleOpenNewModal} className="bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-[0_8px_20px_rgba(168,85,247,0.3)] hover:-translate-y-0.5 text-white font-bold py-3.5 px-6 rounded-xl flex items-center shadow-lg transition-all text-base shrink-0">
+                            <Plus size={20} className="mr-2" /> Add Medicine
+                        </button>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -355,6 +413,35 @@ const SchedulesPage = () => {
                             <div className="flex justify-center gap-4 mt-8">
                                 <button onClick={() => setShowDeleteConfirm(null)} className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold py-3 px-8 rounded-xl text-base transition-all flex-1">Cancel</button>
                                 <button onClick={confirmDelete} className="bg-red-500 hover:bg-red-600 text-white shadow-md shadow-red-500/20 hover:shadow-lg hover:-translate-y-0.5 font-bold py-3 px-8 rounded-xl text-base transition-all flex-1">Delete</button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Full Safety Check Modal */}
+            <AnimatePresence>
+                {isFullCheckModalOpen && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+                        <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl overflow-hidden relative">
+                            <h2 className="text-2xl font-extrabold text-slate-900 mb-2 flex items-center gap-2">
+                                <ShieldCheck size={28} className="text-purple-600" /> Full Safety Check
+                            </h2>
+                            <p className="text-slate-500 mb-6 text-sm font-medium">Analyzing your current medications for interactions...</p>
+                            
+                            <div className="max-h-[60vh] overflow-y-auto pr-2 pb-2">
+                                <DrugInteractionAlert
+                                    interactions={fullCheckResult?.interactions || []}
+                                    safe={fullCheckResult?.safe ?? true}
+                                    summary={fullCheckResult?.summary || ''}
+                                    loading={fullCheckLoading}
+                                />
+                            </div>
+
+                            <div className="flex justify-end pt-5 border-t border-slate-100 mt-6">
+                                <button onClick={() => setIsFullCheckModalOpen(false)} className="bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl transition-all">
+                                    Close
+                                </button>
                             </div>
                         </motion.div>
                     </motion.div>

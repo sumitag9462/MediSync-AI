@@ -1,92 +1,48 @@
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const logger = require('../utils/logger');
+const { successResponse, errorResponse } = require('../utils/response');
+const AuthService = require('../services/AuthService');
 const User = require('../models/User');
 const OTP = require('../models/OTP');
-const TokenBlocklist = require('../models/TokenBlocklist');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const appleSignin = require('apple-signin-auth');
 const upload = require('../middleware/uploadMiddleware');
 const axios = require('axios');
+const env = require('../config/env');
+const jwt = require('jsonwebtoken');
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-require('dotenv').config();
-
-const generateToken = (userId, name) => {
-    return jwt.sign({ userId, name }, process.env.JWT_SECRET, { expiresIn: '30d' });
-};
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-});
+const googleClient = new OAuth2Client(env.GOOGLE.CLIENT_ID);
 
 const requestEmailOtp = async (req, res) => {
     try {
         const { email } = req.body;
-        if (!email) return res.status(400).json({ message: 'Email is required.' });
-        const userExists = await User.findOne({ email });
-        if (userExists) return res.status(400).json({ message: 'User with this email already exists.' });
-        const otp = crypto.randomInt(100000, 999999).toString();
-        await OTP.create({ email, otp });
-        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            try {
-                await transporter.sendMail({
-                    from: `MediSync-AI <${process.env.EMAIL_USER}>`,
-                    to: email,
-                    subject: 'Your MediSync-AI Verification Code',
-                    text: `Your OTP for MediSync-AI registration is: ${otp}. It will expire in 5 minutes.`,
-                    html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Verification</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold;letter-spacing:5px;margin:20px 0;background:#f0f0f0;padding:10px;border-radius:5px">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
-                });
-            } catch (mailError) {
-                console.error('SMTP Mail error, falling back to console log:', mailError.message);
-                console.log(`\n==================================================\n⚠️  EMAIL SENDING FAILED (SMTP error)!\n🔑  Local Dev OTP for ${email}: ${otp}\n==================================================\n`);
-            }
-        } else {
-            console.log(`\n==================================================\n⚠️  EMAIL_USER/EMAIL_PASS not configured in .env!\n🔑  Local Dev OTP for ${email}: ${otp}\n==================================================\n`);
-        }
-        res.status(200).json({ message: 'Verification code generated.' });
+        if (!email) return errorResponse(res, 400, 'Email is required.');
+        const result = await AuthService.generateAndSendOtp(email);
+        return successResponse(res, 200, result.message);
     } catch (error) {
-        console.error('Error sending OTP:', error);
-        res.status(500).json({ message: 'Error sending verification code.' });
+        logger.error('Error sending OTP:', error);
+        return errorResponse(res, 400, error.message || 'Error sending verification code.');
     }
 };
 
 const verifyEmailOtp = async (req, res) => {
     try {
-        const { name, email, password, mobile, place, otp } = req.body;
-        if (!password || password.length < 8) return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
-        const otpRecord = await OTP.findOne({ email, otp }).sort({ createdAt: -1 });
-        if (!otpRecord) return res.status(400).json({ message: 'Invalid or expired verification code.' });
-        const newUser = await User.create({ name, email, password, mobile, place });
-        await OTP.deleteMany({ email });
-        if (newUser) {
-            res.status(201).json({ success: true, message: 'Registration successful! Please log in.' });
-        } else {
-            res.status(400).json({ success: false, message: 'Invalid user data' });
-        }
+        const result = await AuthService.verifyOtpAndRegister(req.body);
+        return successResponse(res, 201, result.message, result);
     } catch (error) {
-        console.error('Error verifying OTP:', error);
-        res.status(500).json({ message: 'Server error during registration.' });
+        logger.error('Error verifying OTP:', error);
+        return errorResponse(res, 400, error.message || 'Server error during registration.');
     }
 };
 
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
-        if (user && (await user.matchPassword(password))) {
-            res.json({
-                success: true,
-                token: jwt.sign({ userId: user._id, name: user.name }, process.env.JWT_SECRET, { expiresIn: '30d' }),
-                user: { id: user._id, name: user.name, email: user.email, photo: user.photo || '' },
-            });
-        } else {
-            res.status(401).json({ success: false, message: 'Invalid email or password' });
-        }
+        const result = await AuthService.login(email, password);
+        return res.json(result); // preserving original format for backward compatibility
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error during login.' });
+        logger.error('Login error:', error);
+        return errorResponse(res, 401, error.message || 'Server error during login.');
     }
 };
 
@@ -94,28 +50,18 @@ const requestPasswordResetOtp = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(200).json({ message: 'If an account with this email exists, a verification code has been sent.' });
+        if (!user) return successResponse(res, 200, 'If an account with this email exists, a verification code has been sent.');
+        
         const otp = crypto.randomInt(100000, 999999).toString();
         await OTP.create({ email, otp });
-        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            try {
-                await transporter.sendMail({
-                    from: `MediSync-AI <${process.env.EMAIL_USER}>`,
-                    to: email,
-                    subject: 'Your MediSync-AI Password Reset Code',
-                    html: `<div style="font-family:sans-serif;text-align:center;padding:20px"><h2>MediSync-AI Password Reset</h2><p>Your one-time password is:</p><p style="font-size:24px;font-weight:bold">${otp}</p><p>This code will expire in 5 minutes.</p></div>`,
-                });
-            } catch (mailError) {
-                console.error('SMTP Mail error, falling back to console log:', mailError.message);
-                console.log(`\n==================================================\n⚠️  EMAIL SENDING FAILED (SMTP error)!\n🔑  Local Dev Password Reset OTP for ${email}: ${otp}\n==================================================\n`);
-            }
-        } else {
-            console.log(`\n==================================================\n⚠️  EMAIL_USER/EMAIL_PASS not configured in .env!\n🔑  Local Dev Password Reset OTP for ${email}: ${otp}\n==================================================\n`);
-        }
-        res.status(200).json({ message: 'A verification code has been generated.' });
+        
+        const NotificationService = require('../services/NotificationService');
+        await NotificationService.sendEmailOtp(email, otp); // Reusing standard OTP email logic
+        
+        return successResponse(res, 200, 'A verification code has been generated.');
     } catch (error) {
-        console.error('Password reset OTP error:', error);
-        res.status(500).json({ message: 'Error sending verification code.' });
+        logger.error('Password reset OTP error:', error);
+        return errorResponse(res, 500, 'Error sending verification code.');
     }
 };
 

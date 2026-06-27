@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Calendar, Settings, BarChart2, ChevronLeft, ChevronRight, Pill, History as HistoryIcon, MapPin } from 'lucide-react';
+import { Home, Calendar, Settings, BarChart2, ChevronLeft, ChevronRight, Pill, History as HistoryIcon, MapPin, Camera, FileText, Shield, QrCode } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
@@ -8,10 +8,14 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
 
     const navItems = [
         { name: 'Dashboard', icon: <Home size={20} />, page: 'dashboard' },
+        { name: 'Safety', icon: <Shield size={20} />, page: 'safety-dashboard' },
+        { name: 'Scan Rx', icon: <Camera size={20} />, page: 'ocr-upload' },
         { name: 'Schedules', icon: <Calendar size={20} />, page: 'schedules' },
+        { name: 'OCR History', icon: <FileText size={20} />, page: 'ocr-history' },
         { name: 'History', icon: <HistoryIcon size={20} />, page: 'history' },
         { name: 'Analytics', icon: <BarChart2 size={20} />, page: 'analytics' },
         { name: 'Nearby Clinic', icon: <MapPin size={20} />, page: 'nearbyclinic' },
+        { name: 'Emergency QR', icon: <QrCode size={20} />, page: 'emergency-card' },
         { name: 'Settings', icon: <Settings size={20} />, page: 'settings' },
     ];
 
