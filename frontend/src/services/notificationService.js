@@ -1,18 +1,68 @@
-// 💊 Smart Notification Service — handles medication reminders cleanly
+import { pushApi } from '../api/pushApi';
+
+// Helper to convert VAPID key
+const urlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+};
 
 const scheduledNotifications = new Set();
 
 export const notificationService = {
   requestPermission: async () => {
-    if (!("Notification" in window)) {
-      console.log("This browser does not support desktop notification");
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+      console.log("This browser does not support desktop notification or service workers");
       return;
     }
-    if (Notification.permission !== "granted") {
+    
+    try {
       const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
+      if (permission === "granted") {
+        console.log("Notification permission granted.");
+        await notificationService.subscribeToPush();
+      } else {
         console.log("Notification permission not granted.");
       }
+    } catch (error) {
+      console.error("Error requesting permission:", error);
+    }
+  },
+
+  subscribeToPush: async () => {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      
+      // Check if already subscribed
+      let subscription = await registration.pushManager.getSubscription();
+      if (subscription) {
+        // Send existing subscription to server just in case
+        await pushApi.subscribe(subscription);
+        return;
+      }
+
+      // Fetch VAPID Key from backend
+      const { publicKey } = await pushApi.getVapidPublicKey();
+      
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey)
+      });
+
+      // Send new subscription to backend
+      await pushApi.subscribe(subscription);
+      console.log("Successfully subscribed to Web Push.");
+    } catch (error) {
+      console.error("Web Push Subscription failed:", error);
     }
   },
 

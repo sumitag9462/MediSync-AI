@@ -25,6 +25,8 @@ import OCRHistoryPage from './pages/OCRHistoryPage';
 import MedicationSafety from './pages/MedicationSafety';
 import EmergencyQRPage from './pages/EmergencyQRPage';
 import EmergencyCardPublic from './pages/EmergencyCardPublic';
+import JournalPage from './pages/Journal';
+import CollaborationPage from './pages/Collaboration';
 
 // Import Layout
 import AppShell from './components/layout/AppShell';
@@ -117,6 +119,8 @@ function App() {
                                             <Route path="/analytics" element={<AnalyticsPage />} />
                                             <Route path="/settings" element={<SettingsPage />} />
                                             <Route path="/nearbyclinic" element={<NearbyClinic />} />
+                                            <Route path="/journal" element={<JournalPage />} />
+                                            <Route path="/collaboration" element={<CollaborationPage />} />
 
                                             {/* 🆕 Secret Medicine Info Route */}
                                             <Route path="/medicine-secret" element={<MedicineSecretPage />} />

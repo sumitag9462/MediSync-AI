@@ -4,6 +4,7 @@ const { normalizeMedicines } = require('../services/medicationNormalizer');
 const OCRHistory = require('../models/OCRHistory');
 const Schedule = require('../models/Schedule');
 const Medicine = require('../models/Medicine');
+const { scheduleNextReminders } = require('../services/reminderSchedulerService');
 const fs = require('fs');
 
 /**
@@ -97,6 +98,9 @@ const saveOCRSchedule = async (req, res) => {
             });
             const savedSched = await newSchedule.save();
             savedSchedules.push(savedSched);
+
+            // Enqueue Reminders
+            await scheduleNextReminders(savedSched);
         }
 
         // Update History to approved

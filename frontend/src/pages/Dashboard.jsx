@@ -12,6 +12,9 @@ import StatCard from '../components/ui/StatCard';
 import GlassCard from '../components/ui/GlassCard';
 import RobotIllustration from '../components/ui/RobotIllustration';
 import AdherenceHeatmap from '../components/AdherenceHeatmap';
+import SymptomLogger from '../components/SymptomLogger';
+import HealthInsightsPanel from '../components/HealthInsightsPanel';
+import PredictionAlert from '../components/PredictionAlert';
 
 function getGreeting() {
     const h = new Date().getHours();
@@ -129,6 +132,12 @@ const DashboardPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [summary, setSummary] = useState(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    const triggerRefresh = useCallback(() => {
+        setRefreshTrigger(prev => prev + 1);
+    }, []);
+
     const [loading, setLoading] = useState(true);
     const [prediction, setPrediction] = useState(null);
     const [doseLogsData, setDoseLogsData] = useState([]);
@@ -458,23 +467,16 @@ const DashboardPage = () => {
 
                     {/* Right Column */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, flex: '2 1 0%' }}>
-                        {/* Column 2: AI Health Insight */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                        >
-                            <GlassCard hover={false}>
-                                <div style={{ display: 'flex', gap: 16 }}>
-                                    <RobotIllustration size={64} />
-                                    <div>
-                                        <h4 style={{ fontWeight: 700, marginBottom: 8, color: 'var(--text-heading)' }}>AI Health Insight</h4>
-                                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                                            {prediction || "Your adherence rate is 98% this week. Keep taking your medications on time."}
-                                        </p>
-                                    </div>
-                                </div>
-                            </GlassCard>
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                            <PredictionAlert />
+                        </motion.div>
+                        
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+                            <HealthInsightsPanel refreshTrigger={refreshTrigger} />
+                        </motion.div>
+
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+                            <SymptomLogger onLogSuccess={triggerRefresh} />
                         </motion.div>
 
                     {/* Column 3: Upcoming Reminders */}

@@ -27,7 +27,7 @@ app.use(mongoSanitize()); // Prevent NoSQL injection
 // Global rate limiting
 const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    max: process.env.NODE_ENV === 'production' ? 100 : 5000, // higher limit for testing
     message: 'Too many requests from this IP, please try again later',
     standardHeaders: true,
     legacyHeaders: false,
@@ -60,6 +60,9 @@ app.use('/api/push', require('./routes/pushRoutes'));
 app.use('/api/adherence', require('./routes/adherenceRoutes'));
 app.use('/api/emergency', require('./routes/emergencyRoutes'));
 app.use('/api/interactions', require('./routes/interactionRoutes'));
+app.use('/api/health', require('./routes/healthRoutes'));
+app.use('/api/journal', require('./routes/journalRoutes'));
+app.use('/api/workspaces', require('./routes/workspaceRoutes'));
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -95,3 +98,6 @@ const server = app.listen(PORT, () => {
 
 // Initialize Socket.io
 SocketService.init(server);
+
+// Start Background Workers
+require('./workers/reminderWorker');

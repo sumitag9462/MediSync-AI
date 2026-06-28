@@ -6,16 +6,31 @@ import MissedByHourChart from '../components/charts/MissedByHourChart';
 import StatCard from '../components/cards/StatCard';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
 import EmptyState from '../components/ui/EmptyState';
-import { BarChart, CheckCircle, XCircle } from 'lucide-react';
+import { BarChart, CheckCircle, XCircle, Download } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { generateDoctorReport } from '../utils/pdfGenerator';
+import { otherApi } from '../api/otherApi';
+import { healthApi } from '../api/healthApi';
 
 const AnalyticsPage = () => {
+    const { user } = useAuth();
     const [analyticsData, setAnalyticsData] = useState(null);
+    const [summaryData, setSummaryData] = useState(null);
+    const [symptomsData, setSymptomsData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const doseLogs = await medicineApi.getDoseLogs();
+                const [doseLogs, summaryRes, symptomsRes] = await Promise.all([
+                    medicineApi.getDoseLogs(),
+                    otherApi.getDashboardSummary(),
+                    healthApi.getSymptoms().catch(() => ({ data: [] }))
+                ]);
+                
+                setSummaryData(summaryRes);
+                setSymptomsData(symptomsRes.data || []);
+                
                 if (doseLogs && doseLogs.length > 0) {
                     const totalTaken = doseLogs.filter(l => l.status === 'Taken').length;
                     const totalMissed = doseLogs.filter(l => l.status === 'Skipped' || l.status === 'Missed').length;
@@ -132,11 +147,20 @@ const AnalyticsPage = () => {
             </div>
 
             <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-8 py-12 pb-24">
-                <div className="mb-10 text-center md:text-left">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
-                        Wellness <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Analytics</span>
-                    </h1>
-                    <p className="text-slate-500 mt-2 text-lg font-medium">Your health insights and adherence trends</p>
+                <div className="mb-10 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
+                    <div>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                            Wellness <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Analytics</span>
+                        </h1>
+                        <p className="text-slate-500 mt-2 text-lg font-medium">Your health insights and adherence trends</p>
+                    </div>
+                    
+                    <button 
+                        onClick={() => generateDoctorReport(user, summaryData, summaryData?.activeMedications, symptomsData)}
+                        className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-bold shadow-lg transition-transform hover:scale-105"
+                    >
+                        <Download size={18} /> Export Doctor Report
+                    </button>
                 </div>
 
                 {renderContent()}

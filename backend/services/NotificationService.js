@@ -4,12 +4,20 @@ const logger = require('../utils/logger');
 
 const webpush = require('web-push');
 
-// Configure web-push
-webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT || 'mailto:admin@example.com',
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-);
+// Configure web-push conditionally
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+    try {
+        webpush.setVapidDetails(
+            process.env.VAPID_SUBJECT || 'mailto:admin@example.com',
+            process.env.VAPID_PUBLIC_KEY,
+            process.env.VAPID_PRIVATE_KEY
+        );
+    } catch (e) {
+        logger.warn('Failed to configure web-push VAPID details: ' + e.message);
+    }
+} else {
+    logger.warn('VAPID keys not configured in .env. Push notifications will be disabled.');
+}
 
 const PushSubscription = require('../models/PushSubscription');
 

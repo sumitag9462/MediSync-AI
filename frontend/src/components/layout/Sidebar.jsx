@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Calendar, Settings, BarChart2, ChevronLeft, ChevronRight, Pill, History as HistoryIcon, MapPin, Camera, FileText, Shield, QrCode } from 'lucide-react';
+import { Home, Calendar, Settings, BarChart2, ChevronLeft, ChevronRight, Pill, History as HistoryIcon, MapPin, Camera, FileText, Shield, QrCode, Mic, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
@@ -14,6 +14,8 @@ const Sidebar = ({ user, currentPage, isSidebarOpen, setSidebarOpen }) => {
         { name: 'OCR History', icon: <FileText size={20} />, page: 'ocr-history' },
         { name: 'History', icon: <HistoryIcon size={20} />, page: 'history' },
         { name: 'Analytics', icon: <BarChart2 size={20} />, page: 'analytics' },
+        { name: 'Caregiver', icon: <Users size={20} />, page: 'collaboration' },
+        { name: 'Voice Journal', icon: <Mic size={20} />, page: 'journal' },
         { name: 'Nearby Clinic', icon: <MapPin size={20} />, page: 'nearbyclinic' },
         { name: 'Emergency QR', icon: <QrCode size={20} />, page: 'emergency-card' },
         { name: 'Settings', icon: <Settings size={20} />, page: 'settings' },
