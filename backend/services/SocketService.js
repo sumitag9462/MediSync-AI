@@ -8,8 +8,9 @@ class SocketService {
     init(server) {
         io = new Server(server, {
             cors: {
-                origin: env.CORS_ORIGIN || '*',
-                methods: ['GET', 'POST']
+                origin: function(origin, callback) { callback(null, true); },
+                methods: ['GET', 'POST'],
+                credentials: true
             }
         });
 

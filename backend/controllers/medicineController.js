@@ -25,7 +25,7 @@ const triggerIntelligencePipeline = async (userId, newMedicine) => {
         await SafetyAssessment.findOneAndUpdate(
             { user: userId },
             { $set: { ...analysis, lastUpdated: new Date() } },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: 'after' }
         );
     } catch (error) {
         logger.error('Error in intelligence pipeline:', error);

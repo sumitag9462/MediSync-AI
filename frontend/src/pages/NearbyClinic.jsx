@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyBWlQJ4eS39OcFmpuP_M142ayLdpv84SZw";
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || "AIzaSyBlGd2hP3zTJux5AX2xulrONy6v-EyUNEg";
 
 function loadGoogleMapsScript(callback) {
   if (window.google && window.google.maps) {

@@ -22,7 +22,7 @@ const reminderQueue = new Queue('ReminderQueue', {
  */
 const addReminderJob = async (data, delayMs) => {
     try {
-        const jobId = `${data.scheduleId}-${data.time}-${Date.now()}`;
+        const jobId = `${data.scheduleId}-${data.time.replace(/:/g, '')}-${Date.now()}`;
         await reminderQueue.add('sendReminder', data, {
             jobId, // Unique ID to prevent duplicates if needed
             delay: Math.max(0, delayMs),

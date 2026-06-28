@@ -116,7 +116,7 @@ const updateProfile = async (req, res) => {
         ['name', 'mobile', 'place', 'timezone', 'notifications'].forEach(k => {
             if (req.body[k] !== undefined) updates[k] = req.body[k];
         });
-        const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true }).select('-password');
+        const user = await User.findByIdAndUpdate(req.user._id, updates, { returnDocument: 'after' }).select('-password');
         res.json(user);
     } catch (err) {
         console.error('Update profile error:', err);
@@ -133,7 +133,7 @@ const uploadPhoto = (req, res) => {
         try {
             if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
             const photoPath = `/uploads/avatars/${req.file.filename}`;
-            const user = await User.findByIdAndUpdate(req.user._id, { photo: photoPath }, { new: true }).select('-password');
+            const user = await User.findByIdAndUpdate(req.user._id, { photo: photoPath }, { returnDocument: 'after' }).select('-password');
             return res.json({ photo: photoPath, user });
         } catch (dbErr) {
             console.error('Avatar DB error:', dbErr);

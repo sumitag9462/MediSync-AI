@@ -16,12 +16,6 @@ const CollaborationPage = () => {
 
     useEffect(() => {
         fetchWorkspaces();
-        
-        // Connect to Socket
-        const socket = io(import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000');
-        
-        // Listen to events if we belong to workspaces
-        // We will fetch workspaces first, then join their rooms
     }, []);
 
     useEffect(() => {

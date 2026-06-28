@@ -263,7 +263,7 @@ const Topbar = ({ user, onLogout }) => {
             {user?.photo ? (
               <img
                 className="h-full w-full object-cover"
-                src={`${user.photo.startsWith("/uploads") ? user.photo : `/uploads${user.photo}`}`}
+                src={(user.photo.startsWith('/uploads') || user.photo.startsWith('http')) ? user.photo : `/uploads${user.photo}`}
                 alt="User"
                 onError={(e) => { e.target.onerror = null; e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name || "User"}`; }}
               />

@@ -1,5 +1,5 @@
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1003751011571-lluivo48hngofq2o3sa4qug88uti3rrf.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyALt_y21Wkpd0XfoTpI_E4mtdT6jwrdsjY';
+const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || 'AIzaSyBlGd2hP3zTJux5AX2xulrONy6v-EyUNEg';
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
