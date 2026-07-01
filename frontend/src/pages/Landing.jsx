@@ -10,7 +10,7 @@ import {
   Menu, X, ArrowRight, Zap, BrainCircuit, HeartPulse, Send,
   CheckCircle2, ShieldCheck, Bell
 } from 'lucide-react';
-import heroImg from '../assets/hero-img.png';
+// import heroImg from '../assets/hero-img.png';
 import apiClient from '../api/apiClient';
 import FloatingElements from '../components/ui/FloatingElements';
 import PhoneMockup from '../components/ui/PhoneMockup';
@@ -72,7 +72,7 @@ const ContactForm = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
       <h3 className="text-3xl font-extrabold mb-2 tracking-tight" style={{ color: '#0f172a' }}>Get in Touch</h3>
-      <p className="text-sm mb-8" style={{ color: '#64748b' }}>Have a question? Fill out the form below and we'll get back to you.</p>
+      <p className="text-sm mb-8" style={{ color: '#64748b' }}>Have a question? Fill out the form below and we&apos;ll get back to you.</p>
       <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {['name', 'email', 'phone', 'place'].map((field) => (
@@ -120,7 +120,7 @@ const ContactForm = () => {
 };
 
 // --- Feature Card 3D ---
-const FeatureCard3D = ({ icon, title, children, index }) => {
+const FeatureCard3D = ({ icon, title, children }) => {
   const cardRef = useRef(null);
 
   const handleMouseMove = (e) => {
@@ -170,7 +170,7 @@ const FeatureCard3D = ({ icon, title, children, index }) => {
 // --- Landing Page Main Component ---
 const LandingPage = () => {
   const navigate = useNavigate();
-  const heroRef = useRef(null);
+  // const heroRef = useRef(null);
   const headlineRef = useRef(null);
   const typeRef = useRef(null);
   const statsRef = useRef(null);
@@ -523,7 +523,7 @@ const LandingPage = () => {
                     "Reschedule my 9 AM dose to 10 AM today."
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-slate-700 bg-white/60 border p-4 rounded-2xl text-sm font-semibold" style={{ borderColor: 'rgba(139,92,246,0.08)' }}>
-                      <ArrowRight size={16} className="text-pink-500" /> "{text}"
+                      <ArrowRight size={16} className="text-pink-500" /> &quot;{text}&quot;
                     </li>
                   ))}
                 </ul>
@@ -618,7 +618,7 @@ const LandingPage = () => {
                     <div className="flex items-center gap-1 mb-4 text-yellow-500">
                       {[1,2,3,4,5].map(s => <span key={s}>★</span>)}
                     </div>
-                    <p className="text-slate-600 mb-6 text-sm leading-relaxed">"Absolutely life-changing app. The AI predictions saved me from mixing incompatible meds. The UI is gorgeous and perfectly smooth."</p>
+                    <p className="text-slate-600 mb-6 text-sm leading-relaxed">&quot;Absolutely life-changing app. The AI predictions saved me from mixing incompatible meds. The UI is gorgeous and perfectly smooth.&quot;</p>
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
                          {String.fromCharCode(65 + i)}

@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: { browser: true, es2020: true, serviceworker: true },
   globals: {
     gapi: 'readonly',
     google: 'readonly'

@@ -12,16 +12,16 @@ export const predictionService = {
         }
         
         let morningMisses = 0;
-        let afternoonMisses = 0;
+        let _afternoonMisses = 0;
         let eveningMisses = 0;
-        let nightMisses = 0;
+        let _nightMisses = 0;
 
         missedDoses.forEach(log => {
             const hour = new Date(log.scheduledTime).getHours();
             if (hour >= 6 && hour < 12) morningMisses++;
-            else if (hour >= 12 && hour < 18) afternoonMisses++;
+            else if (hour >= 12 && hour < 18) _afternoonMisses++;
             else if (hour >= 18 && hour < 24) eveningMisses++;
-            else nightMisses++;
+            else _nightMisses++;
         });
 
         const totalMisses = missedDoses.length;

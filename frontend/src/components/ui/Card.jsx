@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 
 export const Card = ({ children, className = '', hover = false }) => {
     const hoverClasses = hover ? "hover:shadow-[0_20px_40px_rgba(139,92,246,0.1)] hover:border-purple-200 transition-all hover:-translate-y-1" : "";

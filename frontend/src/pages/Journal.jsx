@@ -97,7 +97,7 @@ const JournalPage = () => {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Voice Journal</h1>
-                        <p className="text-slate-500 mt-2 text-sm font-medium">Record how you're feeling today. AI will extract insights automatically.</p>
+                        <p className="text-slate-500 mt-2 text-sm font-medium">Record how you&apos;re feeling today. AI will extract insights automatically.</p>
                     </div>
                 </div>
 

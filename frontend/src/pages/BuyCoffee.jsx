@@ -6,7 +6,7 @@ import { useToast } from '../context/ToastContext';
 
 const BuyCoffee = () => {
   const { addToast } = useToast();
-  const [step, setStep] = useState(1);
+  
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);

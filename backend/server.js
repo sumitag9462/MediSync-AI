@@ -9,6 +9,26 @@ const compression = require('compression');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 require('dotenv').config();
 
+// Handle Uncaught Exceptions
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+    console.error(err.name, err.message, err.stack);
+    process.exit(1);
+});
+
+// Handle Unhandled Promise Rejections
+process.on('unhandledRejection', (err) => {
+    console.error('UNHANDLED REJECTION! 💥 Shutting down...');
+    console.error(err.name, err.message, err.stack);
+    if (global.serverInstance) {
+        global.serverInstance.close(() => {
+            process.exit(1);
+        });
+    } else {
+        process.exit(1);
+    }
+});
+
 // Connect to MongoDB
 connectDB();
 
@@ -97,6 +117,7 @@ const SocketService = require('./services/SocketService');
 const server = app.listen(PORT, () => {
     console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
+global.serverInstance = server;
 
 // Initialize Socket.io
 SocketService.init(server);

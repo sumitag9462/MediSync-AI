@@ -5,7 +5,7 @@ import { authApi } from '../api/authApi.js';
 import { googleCalendarApi } from '../services/googleCalendarApi.js';
 import { notificationService } from '../services/notificationService.js';
 import { usePushNotifications } from '../hooks/usePushNotifications.js';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import { Card, CardHeader } from '../components/ui/Card.jsx';
 import { Input } from '../components/ui/Input.jsx';
 import { Button } from '../components/ui/Button.jsx';

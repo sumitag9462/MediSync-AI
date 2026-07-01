@@ -21,11 +21,36 @@ const env = {
     }
 };
 
-// Simple validation
-const requiredKeys = ['MONGO_URI', 'JWT_SECRET'];
+// Comprehensive production validation
+const requiredKeys = [
+    'MONGO_URI', 
+    'JWT_SECRET', 
+    'REDIS_URL',
+    'EMAIL_USER',
+    'EMAIL_PASS',
+    'TWILIO_ACCOUNT_SID',
+    'TWILIO_AUTH_TOKEN',
+    'TWILIO_PHONE_NUMBER',
+    'GEMINI_API_KEY',
+    'VAPID_PUBLIC_KEY',
+    'VAPID_PRIVATE_KEY'
+];
+
+const missingKeys = [];
+
 for (const key of requiredKeys) {
-    if (!env[key]) {
-        console.warn(`[WARNING] Missing required environment variable: ${key}`);
+    if (!process.env[key]) {
+        missingKeys.push(key);
+    }
+}
+
+if (missingKeys.length > 0) {
+    console.error(`[FATAL ERROR] Missing required environment variables: ${missingKeys.join(', ')}`);
+    console.error(`Please provide these variables in your .env file or deployment environment.`);
+    if (process.env.NODE_ENV === 'production') {
+        process.exit(1); // Fail fast in production
+    } else {
+        console.warn(`[WARNING] Backend may not function correctly in development without these variables.`);
     }
 }
 

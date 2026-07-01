@@ -1,16 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || "AIzaSyBlGd2hP3zTJux5AX2xulrONy6v-EyUNEg";
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
 function loadGoogleMapsScript(callback) {
   if (window.google && window.google.maps) {
     callback();
     return;
   }
+  if (!GOOGLE_MAPS_API_KEY) {
+    console.warn("Google Maps API key is missing. Map feature is disabled.");
+    callback(new Error("Missing Google Maps API key"));
+    return;
+  }
   const script = document.createElement("script");
   script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
   script.async = true;
-  script.onload = callback;
+  script.onload = () => callback();
+  script.onerror = () => callback(new Error("Failed to load Google Maps script"));
   document.body.appendChild(script);
 }
 
@@ -38,7 +44,11 @@ const NearbyClinic = () => {
 
   useEffect(() => {
     if (!location) return;
-    loadGoogleMapsScript(() => {
+    loadGoogleMapsScript((err) => {
+      if (err) {
+        setError("Google Maps cannot be loaded. Please ensure API key is configured.");
+        return;
+      }
       const mapInstance = new window.google.maps.Map(mapRef.current, {
         center: location,
         zoom: 14,

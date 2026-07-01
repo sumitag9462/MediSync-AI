@@ -75,6 +75,7 @@ const Chatbot = () => {
                 }
             };
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleVoiceClick = () => {

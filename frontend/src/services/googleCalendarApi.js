@@ -1,5 +1,5 @@
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1003751011571-lluivo48hngofq2o3sa4qug88uti3rrf.apps.googleusercontent.com';
-const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || 'AIzaSyBlGd2hP3zTJux5AX2xulrONy6v-EyUNEg';
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
@@ -14,6 +14,9 @@ const checkScriptsLoaded = (resolve) => {
 
 export const googleCalendarApi = {
     loadGapiScripts: () => {
+        if (!CLIENT_ID || !API_KEY) {
+            return Promise.reject("Google Calendar integration is disabled due to missing configuration.");
+        }
         if (loadingPromise) return loadingPromise;
         loadingPromise = new Promise((resolve, reject) => {
             const scriptGapi = document.createElement('script');

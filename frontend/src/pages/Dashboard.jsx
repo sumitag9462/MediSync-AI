@@ -16,7 +16,7 @@ import SymptomLogger from '../components/SymptomLogger';
 import HealthInsightsPanel from '../components/HealthInsightsPanel';
 import PredictionAlert from '../components/PredictionAlert';
 
-function getGreeting() {
+function _getGreeting() {
     const h = new Date().getHours();
     if (h < 12) return 'Good morning';
     if (h < 17) return 'Good afternoon';
@@ -46,7 +46,7 @@ function useCountUp(target, duration = 1200) {
     return count;
 }
 
-const KPICard = ({ label, value, icon, trend, gradientFromTo, isPercentage }) => {
+const KPICard = ({ label, value, icon, _trend, _gradientFromTo, isPercentage }) => {
     const animatedValue = useCountUp(value);
     return (
         <motion.div
@@ -99,7 +99,7 @@ const KPICard = ({ label, value, icon, trend, gradientFromTo, isPercentage }) =>
     );
 };
 
-const getUniqueColor = (name) => {
+const _getUniqueColor = (name) => {
     const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const colors = [
         { bg: 'bg-violet-400', shadow: 'shadow-[0_0_8px_rgba(167,139,250,0.8)]' },
@@ -118,12 +118,12 @@ const ALL_ACHIEVEMENTS = [
     { id: 'active-week', label: 'Active Week', icon: '📈' },
 ];
 
-const containerVariants = {
+const _containerVariants = {
     hidden: {},
     show: { transition: { staggerChildren: 0.07 } }
 };
 
-const itemVariants = {
+const _itemVariants = {
     hidden: { opacity: 0, y: 10 },
     show: { opacity: 1, y: 0 }
 };
@@ -139,7 +139,7 @@ const DashboardPage = () => {
     }, []);
 
     const [loading, setLoading] = useState(true);
-    const [prediction, setPrediction] = useState(null);
+    const [_prediction, setPrediction] = useState(null);
     const [doseLogsData, setDoseLogsData] = useState([]);
     const [hiddenUpcoming, setHiddenUpcoming] = useState([]);
 
@@ -315,8 +315,8 @@ const DashboardPage = () => {
         ...ach,
         unlocked: unlockedKeys.has(ach.id)
     }));
-    const unlockedCount = achievementsList.filter(a => a.unlocked).length;
-    const totalAchievements = achievementsList.length;
+    const _unlockedCount = achievementsList.filter(a => a.unlocked).length;
+    const _totalAchievements = achievementsList.length;
 
     return (
         <div className="relative min-h-screen flex flex-col font-sans overflow-hidden w-full selection:bg-purple-500/20 bg-[#F2EEFF]">
@@ -353,7 +353,7 @@ const DashboardPage = () => {
                             Good Morning, <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'var(--btn-gradient)' }}>{user?.name ? user.name.split(' ')[0] : 'Sumit'}</span>! 👋
                         </h1>
                         <p className="text-sm text-slate-500 font-medium tracking-wide mt-1">
-                            Here's your health overview for today
+                            Here&apos;s your health overview for today
                         </p>
                     </div>
                 </motion.div>
@@ -411,7 +411,7 @@ const DashboardPage = () => {
                     
                     {/* Left Column */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, flex: '3 1 0%' }}>
-                        {/* Column 1: Today's Schedule */}
+                        {/* Column 1: Today&apos;s Schedule */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -491,7 +491,7 @@ const DashboardPage = () => {
                         <div className="flex-1 space-y-4">
                             {upcomingDoses.map((dose, i) => {
                                 const name = dose.medicationName.split(' ')[0];
-                                const dosage = dose.medicationName.split(' ').slice(1).join(' ');
+                                const _dosage = dose.medicationName.split(' ').slice(1).join(' ');
                                 const colors = ['#10B981', '#F59E0B', '#EC4899', '#06B6D4'];
                                 const color = colors[i % colors.length];
                                 const bgColors = ['#ECFDF5', '#FFFBEB', '#FDF2F8', '#ECFEFF'];
